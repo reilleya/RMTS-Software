@@ -1,0 +1,6 @@
+decorator==4.4.0
+matplotlib==3.0.3
+pyqt-distutils==0.7.3
+PyQt5==5.12.1
+PyQt5-sip==4.19.15
+PyYAML==5.1
