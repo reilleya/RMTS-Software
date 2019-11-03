@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.MainWindow_ui import Ui_MainWindow
-from lib.radio import setupPacket
+from lib.radio import setupPacket, firePacket
 
 class MainWindow(QMainWindow):
 
@@ -31,6 +31,8 @@ class MainWindow(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(1)
 
     def beginFire(self, firingConfig):
-        print(firingConfig)
-        #self.app.rm
+        recordingDur = int(firingConfig['recordingDuration'] * 1000)
+        firingDur = int(firingConfig['firingDuration'] * 1000)
+        firePack = firePacket(recordingDur, firingDur)
+        self.app.rm.sendPacket(firePack)
         self.ui.tabWidget.setCurrentIndex(2)

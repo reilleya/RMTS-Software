@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1019</width>
+    <width>1070</width>
     <height>522</height>
    </rect>
   </property>
@@ -194,6 +194,22 @@
      </item>
     </layout>
    </item>
+   <item alignment="Qt::AlignHCenter">
+    <widget class="CollectionEditor" name="widgetFiringConfig" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>500</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>500</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
    <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
@@ -236,6 +252,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CollectionEditor</class>
+   <extends>QWidget</extends>
+   <header location="global">pyFormGen.collectionEditor</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

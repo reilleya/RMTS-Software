@@ -3,7 +3,7 @@ from threading import Thread
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-class radioPacket():
+class radioRecvPacket():
     def __init__(self, data):
         self.type = data[0]
         self.checksum = data[1]
@@ -21,8 +21,21 @@ class radioPacket():
         high = data[1]
         return (low) + (high * (2**8))
 
+class radioSendPacket():
+    def __init__(self, packetType, seqNum):
+        self.type = packetType
+        self.seqNum = seqNum
 
-class setupPacket(radioPacket):
+    def pack16Bit(self, value):
+        return [value & 0xFF, (value >> 8 & 0xFF)]
+
+    def padPayload(self, payload):
+        return payload + [0 for i in range(0, 8 - len(payload))]
+
+    def getPayload(self):
+        raise Exception("Not implemented")
+
+class setupPacket(radioRecvPacket):
     def __init__(self, data):
         super().__init__(data)
         self.force = self.interpret24Bit(self.payload[0:])
@@ -34,7 +47,7 @@ class setupPacket(radioPacket):
         return out
 
 
-class errorPacket(radioPacket):
+class errorPacket(radioRecvPacket):
     def __init__(self, data):
         super().__init__(data)
         self.storageError = self.payload[0]
@@ -45,7 +58,7 @@ class errorPacket(radioPacket):
         return out
 
 
-class resultPacket(radioPacket):
+class resultPacket(radioRecvPacket):
     def __init__(self, data):
         super().__init__(data)
         self.time = self.interpret16Bit(self.payload)
@@ -55,6 +68,17 @@ class resultPacket(radioPacket):
     def __str__(self):
         out = "#: {}, Time: {}, Force: {}, Pressure: {}".format(self.seqNum, self.time, self.force, self.pressure)
         return out
+
+
+class firePacket(radioSendPacket):
+    def __init__(self, recordingDuration, fireDuration):
+        super().__init__(128, 0)
+        self.recordingDuration = recordingDuration
+        self.fireDuration = fireDuration
+
+    def getPayload(self):
+        payload = self.pack16Bit(self.recordingDuration) + self.pack16Bit(self.fireDuration)
+        return self.padPayload(payload)
 
 
 class RadioManager(QObject):
@@ -82,10 +106,10 @@ class RadioManager(QObject):
         rightLength = len(packet) == RadioManager.PACKET_SIZE
         return checksum and rightLength
 
-    def sendPacket(self, packetType, seqNum, payload):
-        seqNumLow = seqNum & 0xFF
-        seqNumHigh = (seqNum >> 8) & 0xFF
-        pack = [packetType, 0, seqNumHigh, seqNumLow] + payload
+    def sendPacket(self, packet):
+        seqNumLow = packet.seqNum & 0xFF
+        seqNumHigh = (packet.seqNum >> 8) & 0xFF
+        pack = [packet.type, 0, seqNumLow, seqNumHigh] + packet.getPayload()
         pack[1] = (256 - sum(pack)) % 256
         self.toSend.append(bytearray(RadioManager.PREAMBLE + pack))
 

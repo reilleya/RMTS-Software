@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>292</width>
     <height>300</height>
    </rect>
   </property>
@@ -15,34 +15,45 @@
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="labelRecordingDuration">
      <property name="text">
-      <string>Recording Duration</string>
+      <string>Recording Duration:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxRecordingDuration"/>
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxRecordingDuration">
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="labelFiringDuration">
      <property name="text">
-      <string>Firing Duration</string>
+      <string>Firing Duration:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QSpinBox" name="FiringDuration"/>
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxFiringDuration">
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="labelMotorOrientation">
      <property name="text">
-      <string>Motor Orientation</string>
+      <string>Motor Orientation:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
     <widget class="QComboBox" name="comboBox">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
      <item>
       <property name="text">
        <string>Vertical</string>
