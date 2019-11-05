@@ -30,7 +30,7 @@
         <string>Setup</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="tabResults">
+      <widget class="ResultsWidget" name="tabResults">
        <attribute name="title">
         <string>Results</string>
        </attribute>
@@ -76,6 +76,12 @@
    <class>StartWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.startWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ResultsWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui.resultsWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

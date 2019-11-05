@@ -28,7 +28,7 @@ class SetupWidget(QWidget):
         self.ui.widgetFiringConfig.loadProperties(FiringConfig())
 
     def processSetupPacket(self, packet):
-        realForce = round((packet.force - 110000) * 70 / 390000, 1)
+        realForce = round((packet.force - 100000) * 70 / 390000, 1)
         realPressure = round(((packet.pressure - 829000) / 10000) + 14.7, 1)
         hasContinuity = "Yes" if packet.continuity else "No"
         self.ui.lineEditForce.setText("{} Lbf".format(realForce))

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.MainWindow_ui import Ui_MainWindow
-from lib.radio import setupPacket, firePacket
+from lib.radio import setupPacket, firePacket, resultPacket
 
 class MainWindow(QMainWindow):
 
@@ -25,6 +25,8 @@ class MainWindow(QMainWindow):
     def routePacket(self, packet):
         if type(packet) is setupPacket:
             self.ui.tabSetup.processSetupPacket(packet)
+        if type(packet) is resultPacket:
+            self.ui.tabResults.processResultsPacket(packet)
 
     def beginSetup(self, port):
         self.app.rm.run(port)
