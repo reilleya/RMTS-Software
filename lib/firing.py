@@ -1,11 +1,63 @@
+import math
+
 from PyQt5.QtCore import QObject, pyqtSignal
 
 PACKET_STRIDE = 10
 
+class MotorResults():
+    def __init__(self, time, force, pressure, startupTime, propMass, nozzleThroat):
+        self.time = time
+        self.force = force
+        self.pressure = pressure
+        self.numDataPoints = len(time)
+
+        self.startupTime = startupTime
+        self.propMass = propMass
+        self.nozzleThroat = nozzleThroat
+
+    def getTime(self):
+        return self.time
+
+    def getPressure(self):
+        return self.pressure
+
+    def getForce(self):
+        return self.force
+
+    def getImpulse(self):
+        totalImpulse = 0
+        for i in range(1, self.numDataPoints):
+            totalImpulse += (self.time[i] - self.time[i - 1]) * (self.force[i] + self.force[i - 1]) / 2
+        return totalImpulse
+
+    def getBurnTime(self):
+        return self.time[-1]
+
+    def getStartupTime(self):
+        return self.startupTime
+
+    def getPropMass(self):
+        return self.propMass
+
+    def getPeakThrust(self):
+        return max(self.force)
+
+    def getAverageThrust(self):
+        return self.getImpulse() / self.getBurnTime()
+
+    def getMotorDesignation(self):
+        imp = self.getImpulse()
+        if imp < 1.25: # This is to avoid a domain error finding log(0)
+            return 'N/A'
+        return chr(int(math.log(imp/1.25, 2)) + 65) + str(int(self.getAverageThrust()))
+
+    def getISP(self):
+        return self.getImpulse() / (self.getPropMass() * 9.81)
+
 class Firing(QObject):
     """Contains the results of a single firing """
 
-    newGraph = pyqtSignal(list, list, list)
+    newGraph = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
@@ -49,19 +101,9 @@ class Firing(QObject):
 
         burnTime = t[-1] - t[0]
         startupTransient = t[0]
-        print('Burn Time: {} s'.format(round(burnTime, 3)))
-        print('Startup Transient: {} s'.format(round(startupTransient, 3)))
         t = [d - t[0] for d in t]
 
-        totalImpulse = 0
-        for i in range(1, len(t)):
-            totalImpulse += (t[i] - t[i -1 ]) * (f[i] + f[i - 1]) / 2
-        print('Total Impulse: {} Ns'.format(round(totalImpulse, 3)))
-        averageForce = sum(f) / len(f)
-        print('Average Force: {} N'.format(round(averageForce, 3)))
-        print()
-
-        return t, f, p
+        return MotorResults(t, f, p, startupTransient, 0.6, 0)
 
     def addDatapoint(self, packet):
         self.rawData[packet.seqNum] = packet
@@ -69,6 +111,6 @@ class Firing(QObject):
             self.startIndex = packet.seqNum
         elif abs(packet.seqNum - self.startIndex) < PACKET_STRIDE:
             if len(self.rawData) > self.lastSend:
-                t, f, p = self.processRawData()
+                res = self.processRawData()
                 self.lastSend = len(self.rawData)
-                self.newGraph.emit(t, f, p)
+                self.newGraph.emit(res)

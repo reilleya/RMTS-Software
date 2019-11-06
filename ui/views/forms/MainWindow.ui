@@ -7,8 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>697</width>
-    <height>527</height>
+    <height>680</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>680</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>RMTSI</string>
@@ -45,7 +51,7 @@
      <x>0</x>
      <y>0</y>
      <width>697</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -58,7 +64,6 @@
    </widget>
    <addaction name="menuFile"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
