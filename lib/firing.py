@@ -59,12 +59,14 @@ class Firing(QObject):
 
     newGraph = pyqtSignal(object)
 
-    def __init__(self):
+    def __init__(self, converter):
         super().__init__()
         self.origin = 'radio'
         self.rawData = {}
         self.startIndex = None
         self.lastSend = 0
+
+        self.converter = converter
 
     def processRawData(self):
         t = []
@@ -78,11 +80,9 @@ class Firing(QObject):
             f.append(self.rawData[i].force)
             p.append(self.rawData[i].pressure)
 
-        f = [(d - 105000) * 70 / 390000 for d in f]
-
         t = [d / 1000 for d in t]
-        f = [d * 4.448 for d in f]
-        p = [d for d in p]
+        f = self.converter.convertForces(f)
+        p = self.converter.convertPressures(p)
 
         maxForce = max(f)
         endCutoff = f.index(maxForce)
@@ -114,3 +114,29 @@ class Firing(QObject):
                 res = self.processRawData()
                 self.lastSend = len(self.rawData)
                 self.newGraph.emit(res)
+
+    # TODO: Precalculate these when data comes in
+    def getRawTime(self):
+        recv = list(self.rawData.keys())
+        recv.sort()
+        t = []
+        for i in recv:
+            t.append(self.rawData[i].time)
+        return t
+
+    def getRawForce(self):
+        recv = list(self.rawData.keys())
+        recv.sort()
+        f = []
+        for i in recv:
+            f.append(self.rawData[i].force)
+        return f
+
+    def getRawPressure(self):
+        recv = list(self.rawData.keys())
+        recv.sort()
+        p = []
+        for i in recv:
+            p.append(self.rawData[i].pressure)
+        return p
+

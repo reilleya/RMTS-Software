@@ -17,10 +17,14 @@ class GraphWidget(FigureCanvas):
     def setupPlot(self):
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
-        self.plot = self.figure.add_subplot(111)
+        self.forceAxes = self.figure.add_subplot(111)
+        self.pressureAxes = self.forceAxes.twinx()
         self.figure.tight_layout()
 
-    def plotData(self, x, y):
-        self.plot.clear()
-        self.plot.plot(x, y)
+    def plotData(self, x, y, y2 = None):
+        self.forceAxes.clear()
+        self.pressureAxes.clear()
+        self.forceAxes.plot(x, y, color='tab:blue')
+        if y2 is not None:
+            self.pressureAxes.plot(x, y2, color='tab:red')
         self.draw()

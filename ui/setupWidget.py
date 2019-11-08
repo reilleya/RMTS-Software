@@ -17,25 +17,29 @@ class FiringConfig(PropertyCollection):
 
 class SetupWidget(QWidget):
 
-    beginFire = pyqtSignal(dict)
+    beginFire = pyqtSignal(dict, object)
 
     def __init__(self):
         super().__init__()
         self.ui = Ui_SetupWidget()
         self.ui.setupUi(self)
 
+        self.converter = None
         self.ui.pushButtonFire.pressed.connect(self.onFireButtonPressed)
         self.ui.widgetFiringConfig.loadProperties(FiringConfig())
 
+    def setConverter(self, converter):
+        self.converter = converter
+
     def processSetupPacket(self, packet):
-        realForce = round((packet.force - 100000) * 70 / 390000, 1)
-        realPressure = round(((packet.pressure - 829000) / 10000) + 14.7, 1)
+        realForce = round(self.converter.convertForce(packet.force), 1)
+        realPressure = round(self.converter.convertPressure(packet.pressure), 1)
         hasContinuity = "Yes" if packet.continuity else "No"
-        self.ui.lineEditForce.setText("{} Lbf".format(realForce))
+        self.ui.lineEditForce.setText("{} N".format(realForce))
         self.ui.lineEditPressure.setText("{} PSI".format(realPressure))
         self.ui.lineEditContinuity.setText(hasContinuity)
 
     def onFireButtonPressed(self):
         fireData = self.ui.widgetFiringConfig.getProperties()
         # Validate fire object
-        self.beginFire.emit(fireData)
+        self.beginFire.emit(fireData, self.converter)

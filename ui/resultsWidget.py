@@ -12,21 +12,38 @@ class ResultsWidget(QWidget):
         self.ui.setupUi(self)
 
         self.firing = None
+        self.motorData = None
 
-        self.reset()
+        self.ui.checkBoxForce.stateChanged.connect(self.regraphData)
+        self.ui.checkBoxPressure.stateChanged.connect(self.regraphData)
+        self.ui.radioButtonTranslated.toggled.connect(self.regraphData)
+        self.ui.radioButtonRaw.toggled.connect(self.regraphData)
 
     def processResultsPacket(self, packet):
         if self.firing is not None: 
             self.firing.addDatapoint(packet)
 
-    def onFireButtonPressed(self):
-        fireData = self.ui.widgetFiringConfig.getProperties()
-        # Validate fire object
-        self.beginFire.emit(fireData)
-
-    def reset(self):
-        self.firing = Firing()
+    def newFire(self, converter):
+        self.firing = Firing(converter)
         self.firing.newGraph.connect(self.showResults)
+
+    def regraphData(self):
+        if self.ui.radioButtonTranslated.isChecked():
+            if self.motorData is None:
+                return
+            if self.ui.checkBoxForce.isChecked() and self.ui.checkBoxPressure.isChecked():
+                self.ui.widgetGraph.plotData(self.motorData.getTime(), self.motorData.getForce(), self.motorData.getPressure())
+            elif self.ui.checkBoxForce.isChecked() and not self.ui.checkBoxPressure.isChecked():
+                self.ui.widgetGraph.plotData(self.motorData.getTime(), self.motorData.getForce())
+            elif not self.ui.checkBoxForce.isChecked() and self.ui.checkBoxPressure.isChecked():
+                self.ui.widgetGraph.plotData(self.motorData.getTime(), self.motorData.getPressure())
+        else:
+            if self.ui.checkBoxForce.isChecked() and self.ui.checkBoxPressure.isChecked():
+                self.ui.widgetGraph.plotData(self.firing.getRawTime(), self.firing.getRawForce(), self.firing.getRawPressure())
+            elif self.ui.checkBoxForce.isChecked() and not self.ui.checkBoxPressure.isChecked():
+                self.ui.widgetGraph.plotData(self.firing.getRawTime(), self.firing.getRawForce())
+            elif not self.ui.checkBoxForce.isChecked() and self.ui.checkBoxPressure.isChecked():
+                self.ui.widgetGraph.plotData(self.firing.getRawTime(), self.firing.getRawPressure())
 
     def showResults(self, motorData):
         self.ui.labelMotorDesignation.setText(motorData.getMotorDesignation())
@@ -40,4 +57,5 @@ class ResultsWidget(QWidget):
         self.ui.labelPeakThrust.setText("{} N".format(round(motorData.getPeakThrust(), 1)))
         self.ui.labelAverageThrust.setText("{} N".format(round(motorData.getAverageThrust(), 1)))
 
-        self.ui.widgetGraph.plotData(motorData.getTime(), motorData.getForce())
+        self.motorData = motorData
+        self.regraphData()
