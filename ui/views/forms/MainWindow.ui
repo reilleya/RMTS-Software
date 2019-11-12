@@ -23,6 +23,9 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -34,6 +37,11 @@
       <widget class="SetupWidget" name="tabSetup">
        <attribute name="title">
         <string>Setup</string>
+       </attribute>
+      </widget>
+      <widget class="FireWidget" name="tabFire">
+       <attribute name="title">
+        <string>Fire</string>
        </attribute>
       </widget>
       <widget class="ResultsWidget" name="tabResults">
@@ -87,6 +95,12 @@
    <class>ResultsWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.resultsWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FireWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui.fireWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -22,7 +22,7 @@ class StartWidget(QWidget):
         self.ui.pushButtonResults.pressed.connect(self.recvResultsButtonPressed)
 
     def getConverter(self):
-        return Converter(110000, 0.00079836, 500000, 0.2925)
+        return Converter(130000, 0.00079836, 500000, 0.2925)
 
     def setupPortSelector(self):
         for port in comports():

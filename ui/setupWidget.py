@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtCore import pyqtSignal
 
 from pyFormGen.properties import PropertyCollection, FloatProperty, EnumProperty
@@ -17,7 +17,8 @@ class FiringConfig(PropertyCollection):
 
 class SetupWidget(QWidget):
 
-    beginFire = pyqtSignal(dict, object)
+    gotoFirePage = pyqtSignal()
+    newFiringConfig = pyqtSignal(dict)
 
     def __init__(self):
         super().__init__()
@@ -28,18 +29,19 @@ class SetupWidget(QWidget):
         self.ui.pushButtonFire.pressed.connect(self.onFireButtonPressed)
         self.ui.widgetFiringConfig.loadProperties(FiringConfig())
 
-    def setConverter(self, converter):
-        self.converter = converter
+    def setup(self):
+        self.converter = QApplication.instance().getConverter()
 
     def processSetupPacket(self, packet):
         realForce = round(self.converter.convertForce(packet.force), 1)
         realPressure = round(self.converter.convertPressure(packet.pressure), 1)
         hasContinuity = "Yes" if packet.continuity else "No"
         self.ui.lineEditForce.setText("{} N".format(realForce))
-        self.ui.lineEditPressure.setText("{} PSI".format(realPressure))
+        self.ui.lineEditPressure.setText("{} Pa".format(realPressure))
         self.ui.lineEditContinuity.setText(hasContinuity)
 
     def onFireButtonPressed(self):
         fireData = self.ui.widgetFiringConfig.getProperties()
         # Validate fire object
-        self.beginFire.emit(fireData, self.converter)
+        self.newFiringConfig.emit(fireData)
+        self.gotoFirePage.emit()

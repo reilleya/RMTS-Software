@@ -86,14 +86,14 @@ class Firing(QObject):
 
         maxForce = max(f)
         endCutoff = f.index(maxForce)
-        while f[endCutoff] > 0.05 * maxForce:
+        while f[endCutoff] > 0.05 * maxForce and endCutoff < len(f) - 1:
             endCutoff += 1
         endCutoff = min(endCutoff + 10, len(f))
 
         t, f, p = t[:endCutoff], f[:endCutoff], p[:endCutoff]
 
         startCutoff = f.index(maxForce)
-        while f[startCutoff] > 0.05 * maxForce:
+        while f[startCutoff] > 0.05 * maxForce and startCutoff > 0:
             startCutoff -= 1
         endCutoff = max(startCutoff - 15, 0)
 

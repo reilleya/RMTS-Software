@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QApplication
 
 from ui.views.ResultsWidget_ui import Ui_ResultsWidget
 
@@ -23,8 +23,8 @@ class ResultsWidget(QWidget):
         if self.firing is not None: 
             self.firing.addDatapoint(packet)
 
-    def newFire(self, converter):
-        self.firing = Firing(converter)
+    def newFire(self):
+        self.firing = Firing(QApplication.instance().getConverter())
         self.firing.newGraph.connect(self.showResults)
 
     def regraphData(self):

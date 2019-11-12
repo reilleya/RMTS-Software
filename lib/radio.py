@@ -3,7 +3,7 @@ from threading import Thread
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-class radioRecvPacket():
+class RadioRecvPacket():
     def __init__(self, data):
         self.type = data[0]
         self.checksum = data[1]
@@ -21,7 +21,7 @@ class radioRecvPacket():
         high = data[1]
         return (low) + (high * (2**8))
 
-class radioSendPacket():
+class RadioSendPacket():
     def __init__(self, packetType, seqNum):
         self.type = packetType
         self.seqNum = seqNum
@@ -35,7 +35,7 @@ class radioSendPacket():
     def getPayload(self):
         raise Exception("Not implemented")
 
-class setupPacket(radioRecvPacket):
+class SetupPacket(RadioRecvPacket):
     def __init__(self, data):
         super().__init__(data)
         self.force = self.interpret24Bit(self.payload[0:])
@@ -47,7 +47,7 @@ class setupPacket(radioRecvPacket):
         return out
 
 
-class errorPacket(radioRecvPacket):
+class ErrorPacket(RadioRecvPacket):
     def __init__(self, data):
         super().__init__(data)
         self.storageError = self.payload[0]
@@ -58,7 +58,7 @@ class errorPacket(radioRecvPacket):
         return out
 
 
-class resultPacket(radioRecvPacket):
+class ResultPacket(RadioRecvPacket):
     def __init__(self, data):
         super().__init__(data)
         self.time = self.interpret16Bit(self.payload)
@@ -70,7 +70,7 @@ class resultPacket(radioRecvPacket):
         return out
 
 
-class firePacket(radioSendPacket):
+class FirePacket(RadioSendPacket):
     def __init__(self, recordingDuration, fireDuration):
         super().__init__(128, 0)
         self.recordingDuration = recordingDuration
@@ -80,6 +80,13 @@ class firePacket(radioSendPacket):
         payload = self.pack16Bit(self.recordingDuration) + self.pack16Bit(self.fireDuration)
         return self.padPayload(payload)
 
+class StopPacket(RadioSendPacket):
+    def __init__(self):
+        super().__init__(129, 0)
+
+    def getPayload(self):
+        return self.padPayload([])
+
 
 class RadioManager(QObject):
     PACKET_SIZE = 12
@@ -87,9 +94,9 @@ class RadioManager(QObject):
     ESCAPE = 0x11
 
     PACKET_TYPE_MAP = {
-        0: setupPacket,
-        1: errorPacket,
-        2: resultPacket
+        0: SetupPacket,
+        1: ErrorPacket,
+        2: ResultPacket
     }
 
     newPacket = pyqtSignal(object)
