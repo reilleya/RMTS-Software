@@ -23,8 +23,8 @@ class ResultsWidget(QWidget):
         if self.firing is not None: 
             self.firing.addDatapoint(packet)
 
-    def newFire(self):
-        self.firing = Firing(QApplication.instance().getConverter())
+    def setFiring(self, firing):
+        self.firing = firing
         self.firing.newGraph.connect(self.showResults)
 
     def regraphData(self):

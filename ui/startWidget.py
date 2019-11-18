@@ -1,6 +1,6 @@
 import sys
 from serial.tools.list_ports import comports
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtCore import pyqtSignal
 
 from lib.converter import Converter
@@ -16,13 +16,18 @@ class StartWidget(QWidget):
         super().__init__()
         self.ui = Ui_StartWidget()
         self.ui.setupUi(self)
-        self.setupPortSelector()
+        self.setup()
 
         self.ui.pushButtonSetup.pressed.connect(self.setupButtonPressed)
         self.ui.pushButtonResults.pressed.connect(self.recvResultsButtonPressed)
 
+    def setup(self):
+        self.setupPortSelector()
+        self.ui.comboBoxProfile.clear()
+        self.ui.comboBoxProfile.addItems(QApplication.instance().sensorProfileManager.getProfileNames())
+
     def getConverter(self):
-        return Converter(130000, 0.00079836, 500000, 0.2925)
+        return QApplication.instance().sensorProfileManager.getProfile(self.ui.comboBoxProfile.currentText())
 
     def setupPortSelector(self):
         for port in comports():

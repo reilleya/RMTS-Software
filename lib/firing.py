@@ -1,8 +1,27 @@
 import math
 
+from pyFormGen.properties import PropertyCollection, FloatProperty, EnumProperty
 from PyQt5.QtCore import QObject, pyqtSignal
 
 PACKET_STRIDE = 10
+
+class MotorConfig(PropertyCollection):
+    def __init__(self):
+        super().__init__()
+        self.props['motorOrientation'] = EnumProperty('Motor Orientation', ['Vertical', 'Horizontal'])
+        self.props['propellantMass'] = FloatProperty('Propellant Mass', 'kg', 0.01, 100)
+        self.props['throatDiameter'] = FloatProperty('Throat Diameter', 'm', 0.0001, 1)
+
+class FiringConfig(MotorConfig):
+    def __init__(self):
+        super().__init__()
+        self.props['recordingDuration'] = FloatProperty('Recording Duration', 's', 5, 20)
+        self.props['firingDuration'] = FloatProperty('Fire Duration', 's', 0.25, 3)
+
+    def getMotorInfo(self):
+        motorConfig = MotorConfig()
+        motorConfig.setProperties(self.getProperties())
+        return motorConfig
 
 class MotorResults():
     def __init__(self, time, force, pressure, startupTime, propMass, nozzleThroat):
@@ -59,7 +78,7 @@ class Firing(QObject):
 
     newGraph = pyqtSignal(object)
 
-    def __init__(self, converter):
+    def __init__(self, converter=None, motorInfo=None):
         super().__init__()
         self.origin = 'radio'
         self.rawData = {}
@@ -67,6 +86,7 @@ class Firing(QObject):
         self.lastSend = 0
 
         self.converter = converter
+        self.motorInfo = motorInfo
 
     def processRawData(self):
         t = []
@@ -103,17 +123,24 @@ class Firing(QObject):
         startupTransient = t[0]
         t = [d - t[0] for d in t]
 
-        return MotorResults(t, f, p, startupTransient, 0.6, 0)
+        propMass = self.motorInfo.getProperty('propellantMass')
+        throatDia = self.motorInfo.getProperty('throatDiameter')
+        return MotorResults(t, f, p, startupTransient, propMass, throatDia)
 
     def addDatapoint(self, packet):
         self.rawData[packet.seqNum] = packet
         if len(self.rawData) == 1:
             self.startIndex = packet.seqNum
         elif abs(packet.seqNum - self.startIndex) < PACKET_STRIDE:
-            if len(self.rawData) > self.lastSend:
+            if len(self.rawData) > self.lastSend and self.motorInfo is not None:
                 res = self.processRawData()
                 self.lastSend = len(self.rawData)
                 self.newGraph.emit(res)
+
+    def setMotorInfo(self, info):
+        self.motorInfo = info
+        if len(self.rawData) > 0:
+            self.newGraph.emit(self.processRawData())
 
     # TODO: Precalculate these when data comes in
     def getRawTime(self):

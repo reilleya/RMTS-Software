@@ -2,23 +2,13 @@ import sys
 from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtCore import pyqtSignal
 
-from pyFormGen.properties import PropertyCollection, FloatProperty, EnumProperty
-
 from ui.views.SetupWidget_ui import Ui_SetupWidget
-
-class FiringConfig(PropertyCollection):
-    def __init__(self):
-        super().__init__()
-        self.props['recordingDuration'] = FloatProperty('Recording Duration', 's', 5, 20)
-        self.props['firingDuration'] = FloatProperty('Fire Duration', 's', 0.25, 3)
-        self.props['motorOrientation'] = EnumProperty('Motor Orientation', ['Vertical', 'Horizontal'])
-        self.props['propellantMass'] = FloatProperty('Propellant Mass', 'kg', 0.01, 100)
-        self.props['throatDiameter'] = FloatProperty('Throat Diameter', 'm', 0.0001, 1)
+from lib.firing import FiringConfig
 
 class SetupWidget(QWidget):
 
     gotoFirePage = pyqtSignal()
-    newFiringConfig = pyqtSignal(dict)
+    newFiringConfig = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
@@ -29,8 +19,8 @@ class SetupWidget(QWidget):
         self.ui.pushButtonFire.pressed.connect(self.onFireButtonPressed)
         self.ui.widgetFiringConfig.loadProperties(FiringConfig())
 
-    def setup(self):
-        self.converter = QApplication.instance().getConverter()
+    def setup(self, converter):
+        self.converter = converter
 
     def processSetupPacket(self, packet):
         realForce = round(self.converter.convertForce(packet.force), 1)
@@ -41,7 +31,8 @@ class SetupWidget(QWidget):
         self.ui.lineEditContinuity.setText(hasContinuity)
 
     def onFireButtonPressed(self):
-        fireData = self.ui.widgetFiringConfig.getProperties()
+        fireData = FiringConfig()
+        fireData.setProperties(self.ui.widgetFiringConfig.getProperties())
         # Validate fire object
         self.newFiringConfig.emit(fireData)
         self.gotoFirePage.emit()

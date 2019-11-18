@@ -1,9 +1,18 @@
 import sys
+from enum import IntEnum
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.MainWindow_ui import Ui_MainWindow
 from lib.radio import SetupPacket, FirePacket, ResultPacket, StopPacket
+from lib.firing import Firing
+
+class MainWindowPages(IntEnum):
+    START = 0
+    RECV_MOTOR_DATA = 1
+    FIRING_SETUP = 2
+    FIRE = 3
+    RESULTS = 4
 
 class MainWindow(QMainWindow):
 
@@ -15,16 +24,21 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.app = app
 
-        self.ui.tabStart.beginSetup.connect(self.beginSetup)
-        self.ui.tabStart.recvResults.connect(self.recvResults)
+        self.ui.pageStart.beginSetup.connect(self.beginSetup)
+        self.ui.pageStart.recvResults.connect(self.recvResults)
 
-        self.ui.tabSetup.gotoFirePage.connect(self.gotoFirePage)
-        self.ui.tabSetup.newFiringConfig.connect(self.app.setFiringConfig)
+        self.ui.pageSetup.gotoFirePage.connect(self.gotoFirePage)
+        self.ui.pageRecvMotorData.nextPage.connect(self.recvResultsMotorDataSet)
+        self.ui.pageSetup.newFiringConfig.connect(self.newFiringConfig)
 
-        self.ui.tabFire.setup.connect(self.gotoSetupPage)
-        self.ui.tabFire.results.connect(self.gotoResultsPage)
-        self.ui.tabFire.fire.connect(self.sendFire)
-        self.ui.tabFire.stop.connect(self.sendStop)
+        self.ui.pageFire.setup.connect(self.gotoSetupPage)
+        self.ui.pageFire.results.connect(self.gotoResultsPage)
+        self.ui.pageFire.fire.connect(self.sendFire)
+        self.ui.pageFire.stop.connect(self.sendStop)
+
+        self.converter = None
+        self.firingConfig = None
+        self.firing = None
 
     def closeEvent(self, event=None):
         self.closed.emit()
@@ -32,38 +46,53 @@ class MainWindow(QMainWindow):
 
     def routePacket(self, packet):
         if type(packet) is SetupPacket:
-            self.ui.tabSetup.processSetupPacket(packet)
+            self.ui.pageSetup.processSetupPacket(packet)
         if type(packet) is ResultPacket:
-            self.ui.tabResults.processResultsPacket(packet)
+            if self.firing is not None:
+                self.firing.addDatapoint(packet)
+            else:
+                print('Got results packet without a firing to add it to')
+
+    def gotoPage(self, page):
+        self.ui.stackedWidget.setCurrentIndex(int(page))
 
     def gotoSetupPage(self):
-        self.ui.tabSetup.setup()
-        self.ui.tabWidget.setCurrentIndex(1)
+        self.gotoPage(MainWindowPages.FIRING_SETUP)
 
     def gotoFirePage(self):
-        self.ui.tabWidget.setCurrentIndex(2)
+        self.gotoPage(MainWindowPages.FIRE)
+
+    def gotoRecvMotorDataPage(self):
+        self.gotoPage(MainWindowPages.RECV_MOTOR_DATA)
 
     def gotoResultsPage(self):
-        self.ui.tabWidget.setCurrentIndex(3)
+        self.gotoPage(MainWindowPages.RESULTS)
 
 
     def beginSetup(self, port, converter):
         self.app.rm.run(port)
-        self.app.setConverter(converter)
+        self.ui.pageSetup.setup(converter)
+        self.firing = Firing(converter)
+        self.ui.pageResults.setFiring(self.firing)
         self.gotoSetupPage()
+
+    def newFiringConfig(self, config):
+        self.firingConfig = config
+        self.firing.setMotorInfo(config.getMotorInfo())
 
     def recvResults(self, port, converter):
         self.app.rm.run(port)
-        self.app.setConverter(converter)
-        self.ui.tabResults.newFire()
+        self.firing = Firing(converter)
+        self.gotoRecvMotorDataPage()
+
+    def recvResultsMotorDataSet(self, motorData):
+        self.firing.setMotorInfo(motorData)
+        self.ui.pageResults.setFiring(self.firing)
         self.gotoResultsPage()
 
-
     def sendFire(self):
-        firingConfig = self.app.getFiringConfig()
-        self.ui.tabResults.newFire()
-        recordingDur = int(firingConfig['recordingDuration'] * 1000)
-        firingDur = int(firingConfig['firingDuration'] * 1000)
+        recordingDur = int(self.firingConfig.getProperty('recordingDuration') * 1000)
+        firingDur = int(self.firingConfig.getProperty('firingDuration') * 1000)
         firePack = FirePacket(recordingDur, firingDur)
         self.app.rm.sendPacket(firePack)
 

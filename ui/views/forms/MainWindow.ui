@@ -22,33 +22,18 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QStackedWidget" name="stackedWidget">
       <property name="enabled">
        <bool>true</bool>
       </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="StartWidget" name="tabStart">
-       <attribute name="title">
-        <string>Start</string>
-       </attribute>
-      </widget>
-      <widget class="SetupWidget" name="tabSetup">
-       <attribute name="title">
-        <string>Setup</string>
-       </attribute>
-      </widget>
-      <widget class="FireWidget" name="tabFire">
-       <attribute name="title">
-        <string>Fire</string>
-       </attribute>
-      </widget>
-      <widget class="ResultsWidget" name="tabResults">
-       <attribute name="title">
-        <string>Results</string>
-       </attribute>
-      </widget>
+      <widget class="StartWidget" name="pageStart" native="true"/>
+      <widget class="MotorDataWidget" name="pageRecvMotorData"/>
+      <widget class="SetupWidget" name="pageSetup" native="true"/>
+      <widget class="FireWidget" name="pageFire" native="true"/>
+      <widget class="ResultsWidget" name="pageResults" native="true"/>
      </widget>
     </item>
    </layout>
@@ -101,6 +86,12 @@
    <class>FireWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.fireWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MotorDataWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui.motorDataWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

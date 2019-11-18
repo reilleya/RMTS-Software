@@ -113,12 +113,13 @@ class RadioManager(QObject):
         rightLength = len(packet) == RadioManager.PACKET_SIZE
         return checksum and rightLength
 
-    def sendPacket(self, packet):
+    def sendPacket(self, packet, resendCount=5):
         seqNumLow = packet.seqNum & 0xFF
         seqNumHigh = (packet.seqNum >> 8) & 0xFF
         pack = [packet.type, 0, seqNumLow, seqNumHigh] + packet.getPayload()
         pack[1] = (256 - sum(pack)) % 256
-        self.toSend.append(bytearray(RadioManager.PREAMBLE + pack))
+        for i in range(0, resendCount):
+            self.toSend.append(bytearray(RadioManager.PREAMBLE + pack))
 
     def buildPacket(self, packetData):
         if packetData[0] not in RadioManager.PACKET_TYPE_MAP.keys():
