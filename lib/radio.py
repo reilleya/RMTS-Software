@@ -1,4 +1,5 @@
 import serial
+import time
 from threading import Thread
 
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -83,6 +84,20 @@ class FirePacket(RadioSendPacket):
 class StopPacket(RadioSendPacket):
     def __init__(self):
         super().__init__(129, 0)
+
+    def getPayload(self):
+        return self.padPayload([])
+
+class CalStartPacket(RadioSendPacket):
+    def __init__(self):
+        super().__init__(130, 0)
+
+    def getPayload(self):
+        return self.padPayload([])
+
+class CalStopPacket(RadioSendPacket):
+    def __init__(self):
+        super().__init__(131, 0)
 
     def getPayload(self):
         return self.padPayload([])
@@ -175,3 +190,12 @@ class RadioManager(QObject):
 
     def stop(self):
         self.running = False
+
+    def runCalibration(self):
+        calThread = Thread(target=self._calibrationThread)
+        calThread.start()
+
+    def _calibrationThread(self):
+        self.sendPacket(CalStartPacket())
+        time.sleep(1)
+        self.sendPacket(CalStopPacket())

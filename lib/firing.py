@@ -24,15 +24,16 @@ class FiringConfig(MotorConfig):
         return motorConfig
 
 class MotorResults():
-    def __init__(self, time, force, pressure, startupTime, propMass, nozzleThroat):
+    def __init__(self, time, force, pressure, startupTime, motorInfo, rawData):
         self.time = time
         self.force = force
         self.pressure = pressure
         self.numDataPoints = len(time)
 
         self.startupTime = startupTime
-        self.propMass = propMass
-        self.nozzleThroat = nozzleThroat
+        self.motorInfo = motorInfo
+        self.propMass = self.motorInfo.getProperty('propellantMass')
+        self.nozzleThroat = self.motorInfo.getProperty('nozzleThroat')
 
     def getTime(self):
         return self.time
@@ -123,9 +124,7 @@ class Firing(QObject):
         startupTransient = t[0]
         t = [d - t[0] for d in t]
 
-        propMass = self.motorInfo.getProperty('propellantMass')
-        throatDia = self.motorInfo.getProperty('throatDiameter')
-        return MotorResults(t, f, p, startupTransient, propMass, throatDia)
+        return MotorResults(t, f, p, startupTransient, self.motorInfo, self.rawData)
 
     def addDatapoint(self, packet):
         self.rawData[packet.seqNum] = packet
@@ -166,4 +165,3 @@ class Firing(QObject):
         for i in recv:
             p.append(self.rawData[i].pressure)
         return p
-

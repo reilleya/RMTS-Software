@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.MainWindow_ui import Ui_MainWindow
-from lib.radio import SetupPacket, FirePacket, ResultPacket, StopPacket
+from lib.radio import SetupPacket, FirePacket, ResultPacket, StopPacket, CalStartPacket, CalStopPacket
 from lib.firing import Firing
 
 class MainWindowPages(IntEnum):
@@ -30,13 +30,13 @@ class MainWindow(QMainWindow):
         self.ui.pageSetup.gotoFirePage.connect(self.gotoFirePage)
         self.ui.pageRecvMotorData.nextPage.connect(self.recvResultsMotorDataSet)
         self.ui.pageSetup.newFiringConfig.connect(self.newFiringConfig)
+        self.ui.pageSetup.calibrate.connect(self.app.rm.runCalibration)
 
         self.ui.pageFire.setup.connect(self.gotoSetupPage)
         self.ui.pageFire.results.connect(self.gotoResultsPage)
         self.ui.pageFire.fire.connect(self.sendFire)
         self.ui.pageFire.stop.connect(self.sendStop)
 
-        self.converter = None
         self.firingConfig = None
         self.firing = None
 

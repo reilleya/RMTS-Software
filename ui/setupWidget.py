@@ -10,6 +10,8 @@ class SetupWidget(QWidget):
     gotoFirePage = pyqtSignal()
     newFiringConfig = pyqtSignal(object)
 
+    calibrate = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.ui = Ui_SetupWidget()
@@ -19,11 +21,20 @@ class SetupWidget(QWidget):
         self.ui.pushButtonFire.pressed.connect(self.onFireButtonPressed)
         self.ui.widgetFiringConfig.loadProperties(FiringConfig())
 
+        self.buff = []
+
+        self.ui.pushButtonCalibrate.pressed.connect(self.calibrate.emit)
+
     def setup(self, converter):
         self.converter = converter
 
     def processSetupPacket(self, packet):
-        realForce = round(self.converter.convertForce(packet.force), 1)
+        if self.converter is None:
+            return
+        self.buff.append(packet.force)
+        if len(self.buff) > 5:
+            self.buff.pop(0)
+        realForce = round(self.converter.convertForce(sum(self.buff) / len(self.buff)), 1)
         realPressure = round(self.converter.convertPressure(packet.pressure), 1)
         hasContinuity = "Yes" if packet.continuity else "No"
         self.ui.lineEditForce.setText("{} N".format(realForce))
