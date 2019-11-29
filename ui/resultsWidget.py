@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
 
 from ui.views.ResultsWidget_ui import Ui_ResultsWidget
 
@@ -18,6 +18,8 @@ class ResultsWidget(QWidget):
         self.ui.checkBoxPressure.stateChanged.connect(self.regraphData)
         self.ui.radioButtonTranslated.toggled.connect(self.regraphData)
         self.ui.radioButtonRaw.toggled.connect(self.regraphData)
+
+        self.ui.pushButtonCSV.pressed.connect(self.saveCSV)
 
     def processResultsPacket(self, packet):
         if self.firing is not None: 
@@ -59,3 +61,12 @@ class ResultsWidget(QWidget):
 
         self.motorData = motorData
         self.regraphData()
+
+    def saveCSV(self):
+        path = QFileDialog.getSaveFileName(None, 'Save CSV', '', 'Comma Separated Values (*.csv)')[0]
+        if path is not None:
+            if not path.endswith('.csv'):
+                path += '.csv'
+            data = self.motorData.getCSV()
+            with open(path, 'w') as outFile:
+                outFile.write(data)

@@ -33,7 +33,7 @@ class MotorResults():
         self.startupTime = startupTime
         self.motorInfo = motorInfo
         self.propMass = self.motorInfo.getProperty('propellantMass')
-        self.nozzleThroat = self.motorInfo.getProperty('nozzleThroat')
+        self.nozzleThroat = self.motorInfo.getProperty('throatDiameter')
 
     def getTime(self):
         return self.time
@@ -73,6 +73,17 @@ class MotorResults():
 
     def getISP(self):
         return self.getImpulse() / (self.getPropMass() * 9.81)
+
+    def getCSV(self):
+        forceUnit = 'N'
+        pressureUnit = 'Pa'
+        out = 'time(s),force({}),pressure({})'.format(forceUnit, pressureUnit)
+        for i in range(0, self.numDataPoints):
+            convTime = round(self.time[i], 4)
+            convForce = round(self.force[i], 4)
+            convPressure = round(self.pressure[i], 4)
+            out+= "\n{},{},{}".format(convTime, convForce, convPressure)
+        return out
 
 class Firing(QObject):
     """Contains the results of a single firing """
