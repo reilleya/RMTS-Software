@@ -58,6 +58,11 @@ class ResultsWidget(QWidget):
 
         self.ui.labelPeakThrust.setText("{} N".format(round(motorData.getPeakThrust(), 1)))
         self.ui.labelAverageThrust.setText("{} N".format(round(motorData.getAverageThrust(), 1)))
+        self.ui.labelDatapoints.setText(str(motorData.getNumDataPoints()))
+
+        self.ui.labelPeakPressure.setText("{} Pa".format(round(motorData.getPeakPressure(), 3)))
+        self.ui.labelAveragePressure.setText("{} Pa".format(round(motorData.getAveragePressure(), 3)))
+        self.ui.labelCStar.setText("{} m/s".format(round(motorData.getCStar(), 3)))
 
         self.motorData = motorData
         self.regraphData()

@@ -475,6 +475,27 @@
           </item>
          </layout>
         </item>
+        <item row="3" column="3">
+         <layout class="QHBoxLayout" name="horizontalLayoutDatapoints">
+          <item>
+           <widget class="QLabel" name="labelDatapointsText">
+            <property name="text">
+             <string>Datapoints:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelDatapoints">
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
       </widget>
      </item>

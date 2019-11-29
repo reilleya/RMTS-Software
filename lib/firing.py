@@ -35,6 +35,9 @@ class MotorResults():
         self.propMass = self.motorInfo.getProperty('propellantMass')
         self.nozzleThroat = self.motorInfo.getProperty('throatDiameter')
 
+    def getNumDataPoints(self):
+        return self.numDataPoints
+
     def getTime(self):
         return self.time
 
@@ -64,6 +67,22 @@ class MotorResults():
 
     def getAverageThrust(self):
         return self.getImpulse() / self.getBurnTime()
+
+    def getPeakPressure(self):
+        return max(self.pressure)
+
+    def getIntegratedPressure(self):
+        totalPressure = 0
+        for i in range(1, self.numDataPoints):
+            totalPressure += (self.time[i] - self.time[i - 1]) * (self.pressure[i] + self.pressure[i - 1]) / 2
+        return totalPressure
+
+    def getAveragePressure(self):
+        return self.getIntegratedPressure() / self.getBurnTime()
+
+    def getCStar(self):
+        throatArea = 3.14159 * (self.nozzleThroat / 2)**2
+        return throatArea * self.getIntegratedPressure() / (self.propMass * 9.81)
 
     def getMotorDesignation(self):
         imp = self.getImpulse()
