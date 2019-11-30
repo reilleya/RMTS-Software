@@ -7,10 +7,10 @@ class Converter():
         self.pressureRatio = pressureRatio
 
     def convertForce(self, force):
-        return self.forceRatio * (force - self.forceOffset)
+        return self.forceRatio * force + self.forceOffset
 
     def convertPressure(self, pressure):
-        return self.pressureRatio * (pressure - self.pressureOffset)
+        return self.pressureRatio * pressure + self.pressureOffset
 
     def convertForces(self, forces):
         return [self.convertForce(f) for f in forces]

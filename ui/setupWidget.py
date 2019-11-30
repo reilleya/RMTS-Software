@@ -5,6 +5,17 @@ from PyQt5.QtCore import pyqtSignal
 from ui.views.SetupWidget_ui import Ui_SetupWidget
 from lib.firing import FiringConfig
 
+class LowPass():
+    def __init__(self, historyLength):
+        self.maxSize = historyLength
+        self._buffer = []
+
+    def addData(self, data):
+        self._buffer.append(data)
+        if len(self._buffer) > self.maxSize:
+            self._buffer.pop(0)
+        return sum(self._buffer) / len(self._buffer)
+
 class SetupWidget(QWidget):
 
     gotoFirePage = pyqtSignal()
@@ -21,7 +32,8 @@ class SetupWidget(QWidget):
         self.ui.pushButtonFire.pressed.connect(self.onFireButtonPressed)
         self.ui.widgetFiringConfig.loadProperties(FiringConfig())
 
-        self.buff = []
+        self.forceBuff = LowPass(5)
+        self.pressureBuff = LowPass(5)
 
         self.ui.pushButtonCalibrate.pressed.connect(self.calibrate.emit)
 
@@ -31,11 +43,9 @@ class SetupWidget(QWidget):
     def processSetupPacket(self, packet):
         if self.converter is None:
             return
-        self.buff.append(packet.force)
-        if len(self.buff) > 5:
-            self.buff.pop(0)
-        realForce = round(self.converter.convertForce(sum(self.buff) / len(self.buff)), 1)
-        realPressure = round(self.converter.convertPressure(packet.pressure), 1)
+
+        realForce = round(self.converter.convertForce(self.forceBuff.addData(packet.force)), 1)
+        realPressure = round(self.converter.convertPressure(self.pressureBuff.addData(packet.pressure)), 1)
         hasContinuity = "Yes" if packet.continuity else "No"
         self.ui.lineEditForce.setText("{} N".format(realForce))
         self.ui.lineEditPressure.setText("{} Pa".format(realPressure))

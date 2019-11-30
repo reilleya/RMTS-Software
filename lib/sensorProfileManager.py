@@ -11,7 +11,7 @@ class SensorProfileManager(QObject):
         self.profiles = {}
 
     def loadProfiles(self):
-        self.profiles = {'1MT/1600PSI': Converter(105000, 0.00117669, 500000, 0.2925)}
+        self.profiles = {'1MT/1600PSI': Converter(-129.125946, 0.001196223066, -1248467.135, 1.642723486)}
         self.profilesChanged.emit()
 
     def getProfile(self, name):
