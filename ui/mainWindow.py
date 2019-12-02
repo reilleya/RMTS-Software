@@ -13,6 +13,7 @@ class MainWindowPages(IntEnum):
     FIRING_SETUP = 2
     FIRE = 3
     RESULTS = 4
+    PREFERENCES = 5
 
 class MainWindow(QMainWindow):
 
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow):
 
         self.ui.pageStart.beginSetup.connect(self.beginSetup)
         self.ui.pageStart.recvResults.connect(self.recvResults)
+        self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
 
         self.ui.pageSetup.gotoFirePage.connect(self.gotoFirePage)
         self.ui.pageRecvMotorData.nextPage.connect(self.recvResultsMotorDataSet)
@@ -36,6 +38,8 @@ class MainWindow(QMainWindow):
         self.ui.pageFire.results.connect(self.gotoResultsPage)
         self.ui.pageFire.fire.connect(self.sendFire)
         self.ui.pageFire.stop.connect(self.sendStop)
+
+        self.ui.pagePreferences.back.connect(self.gotoStartPage)
 
         self.firingConfig = None
         self.firing = None
@@ -56,6 +60,9 @@ class MainWindow(QMainWindow):
     def gotoPage(self, page):
         self.ui.stackedWidget.setCurrentIndex(int(page))
 
+    def gotoStartPage(self):
+        self.gotoPage(MainWindowPages.START)
+
     def gotoSetupPage(self):
         self.gotoPage(MainWindowPages.FIRING_SETUP)
 
@@ -67,6 +74,10 @@ class MainWindow(QMainWindow):
 
     def gotoResultsPage(self):
         self.gotoPage(MainWindowPages.RESULTS)
+
+    def gotoPreferencesPage(self):
+        self.ui.pagePreferences.setup()
+        self.gotoPage(MainWindowPages.PREFERENCES)
 
 
     def beginSetup(self, port, converter):

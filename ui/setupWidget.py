@@ -30,6 +30,7 @@ class SetupWidget(QWidget):
 
         self.converter = None
         self.ui.pushButtonFire.pressed.connect(self.onFireButtonPressed)
+        self.ui.widgetFiringConfig.setPreferences(QApplication.instance().getPreferences())
         self.ui.widgetFiringConfig.loadProperties(FiringConfig())
 
         self.forceBuff = LowPass(5)
@@ -44,11 +45,11 @@ class SetupWidget(QWidget):
         if self.converter is None:
             return
 
-        realForce = round(self.converter.convertForce(self.forceBuff.addData(packet.force)), 1)
-        realPressure = round(self.converter.convertPressure(self.pressureBuff.addData(packet.pressure)), 1)
+        realForce = self.converter.convertForce(self.forceBuff.addData(packet.force))
+        realPressure = self.converter.convertPressure(self.pressureBuff.addData(packet.pressure))
         hasContinuity = "Yes" if packet.continuity else "No"
-        self.ui.lineEditForce.setText("{} N".format(realForce))
-        self.ui.lineEditPressure.setText("{} Pa".format(realPressure))
+        self.ui.lineEditForce.setText(QApplication.instance().convertToUserAndFormat(realForce, 'N', 1))
+        self.ui.lineEditPressure.setText(QApplication.instance().convertToUserAndFormat(realPressure, 'Pa', 1))
         self.ui.lineEditContinuity.setText(hasContinuity)
 
     def onFireButtonPressed(self):

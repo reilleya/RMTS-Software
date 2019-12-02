@@ -17,13 +17,14 @@ class MotorDataWidget(QWidget):
 
         self.ui.pushButtonNext.pressed.connect(self.nextPressed)
         self.ui.pushButtonBack.pressed.connect(self.back.emit)
+        self.ui.motorData.setPreferences(QApplication.instance().getPreferences())
         self.ui.motorData.loadProperties(MotorConfig())
 
     def setup(self):
         self.converter = QApplication.instance().getConverter()
 
     def nextPressed(self):
-        fireData = MotorConfig()
-        fireData.setProperties(self.ui.motorData.getProperties())
-        # Validate fire object
-        self.nextPage.emit(fireData)
+        motorData = MotorConfig()
+        motorData.setProperties(self.ui.motorData.getProperties())
+        # Validate motor data object
+        self.nextPage.emit(motorData)

@@ -11,6 +11,7 @@ class StartWidget(QWidget):
 
     beginSetup = pyqtSignal(str, object)
     recvResults = pyqtSignal(str, object)
+    editPreferences = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -20,6 +21,7 @@ class StartWidget(QWidget):
 
         self.ui.pushButtonSetup.pressed.connect(self.setupButtonPressed)
         self.ui.pushButtonResults.pressed.connect(self.recvResultsButtonPressed)
+        self.ui.pushButtonPreferences.pressed.connect(self.editPreferences.emit)
 
     def setup(self):
         self.setupPortSelector()

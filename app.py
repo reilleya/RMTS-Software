@@ -5,6 +5,7 @@ from PyQt5.QtCore import pyqtSignal
 
 from lib.radio import RadioManager
 from lib.sensorProfileManager import SensorProfileManager
+from lib.preferencesManager import PreferencesManager
 from ui.mainWindow import MainWindow
 
 class App(QApplication):
@@ -17,6 +18,8 @@ class App(QApplication):
         self.rm = RadioManager()
         self.sensorProfileManager = SensorProfileManager()
         self.sensorProfileManager.loadProfiles()
+        self.preferencesManager = PreferencesManager()
+        self.preferencesManager.loadPreferences()
 
         self.window = MainWindow(self)
         self.rm.newPacket.connect(self.window.routePacket)
@@ -35,3 +38,12 @@ class App(QApplication):
         msg.setInformativeText(str(exception))
         msg.setWindowTitle(title)
         msg.exec_()
+
+    def convertToUserUnits(self, value, units):
+        return self.preferencesManager.preferences.convert(value, units)
+
+    def convertToUserAndFormat(self, value, units, places):
+        return self.preferencesManager.preferences.convFormat(value, units, places)
+
+    def getPreferences(self):
+        return self.preferencesManager.preferences

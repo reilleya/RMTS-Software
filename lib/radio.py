@@ -120,6 +120,7 @@ class RadioManager(QObject):
         super().__init__()
         self.toSend = []
         self.port = None
+        self._lastPacketRecv = 0
         self.setupSerialThread()
 
     @staticmethod
@@ -199,3 +200,6 @@ class RadioManager(QObject):
         self.sendPacket(CalStartPacket())
         time.sleep(1)
         self.sendPacket(CalStopPacket())
+
+    def getDataAge():
+        pass

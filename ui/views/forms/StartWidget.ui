@@ -247,9 +247,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="pushButtonPreferences">
           <property name="text">
-           <string>Settings</string>
+           <string>Preferences</string>
           </property>
          </widget>
         </item>

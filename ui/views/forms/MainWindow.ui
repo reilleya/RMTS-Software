@@ -29,11 +29,12 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="StartWidget" name="pageStart" native="true"/>
+      <widget class="StartWidget" name="pageStart"/>
       <widget class="MotorDataWidget" name="pageRecvMotorData"/>
-      <widget class="SetupWidget" name="pageSetup" native="true"/>
-      <widget class="FireWidget" name="pageFire" native="true"/>
-      <widget class="ResultsWidget" name="pageResults" native="true"/>
+      <widget class="SetupWidget" name="pageSetup"/>
+      <widget class="FireWidget" name="pageFire"/>
+      <widget class="ResultsWidget" name="pageResults"/>
+      <widget class="PreferencesWidget" name="pagePreferences"/>
      </widget>
     </item>
    </layout>
@@ -92,6 +93,12 @@
    <class>MotorDataWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.motorDataWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PreferencesWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui.preferencesWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
