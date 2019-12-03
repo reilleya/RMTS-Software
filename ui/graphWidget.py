@@ -3,6 +3,7 @@ matplotlib.use('Qt5Agg')
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from PyQt5.QtWidgets import QApplication
 
 class GraphWidget(FigureCanvas):
     def __init__(self, parent):
@@ -19,12 +20,27 @@ class GraphWidget(FigureCanvas):
         self.canvas = FigureCanvas(self.figure)
         self.forceAxes = self.figure.add_subplot(111)
         self.pressureAxes = self.forceAxes.twinx()
-        self.figure.tight_layout()
+        #self.figure.tight_layout()
 
-    def plotData(self, x, y, y2 = None):
+    def convertAndPlot(self, time, force=None, pressure=None):
+        app = QApplication.instance()
+        if force is not None:
+            force = app.convertAllToUserUnits(force, 'N')
+        if pressure is not None:
+            pressure = app.convertAllToUserUnits(pressure, 'Pa')
+        self.plotData(time, force, pressure)
+        self.forceAxes.set_xlabel('Time (s)')
+        if force is not None:
+            self.forceAxes.set_ylabel('Force ({})'.format(app.getUserUnit('N')))
+        if pressure is not None:
+            self.pressureAxes.set_ylabel('Pressure ({})'.format(app.getUserUnit('Pa')))
+        self.draw()
+
+    def plotData(self, time, force=None, pressure=None):
         self.forceAxes.clear()
         self.pressureAxes.clear()
-        self.forceAxes.plot(x, y, color='tab:blue')
-        if y2 is not None:
-            self.pressureAxes.plot(x, y2, color='tab:red')
+        if force is not None:
+            self.forceAxes.plot(time, force, color='tab:blue')
+        if pressure is not None:
+            self.pressureAxes.plot(time, pressure, color='tab:red')
         self.draw()

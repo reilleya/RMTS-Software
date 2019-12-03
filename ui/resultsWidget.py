@@ -30,39 +30,40 @@ class ResultsWidget(QWidget):
         self.firing.newGraph.connect(self.showResults)
 
     def regraphData(self):
+        force = None
+        pressure = None
         if self.ui.radioButtonTranslated.isChecked():
             if self.motorData is None:
                 return
-            if self.ui.checkBoxForce.isChecked() and self.ui.checkBoxPressure.isChecked():
-                self.ui.widgetGraph.plotData(self.motorData.getTime(), self.motorData.getForce(), self.motorData.getPressure())
-            elif self.ui.checkBoxForce.isChecked() and not self.ui.checkBoxPressure.isChecked():
-                self.ui.widgetGraph.plotData(self.motorData.getTime(), self.motorData.getForce())
-            elif not self.ui.checkBoxForce.isChecked() and self.ui.checkBoxPressure.isChecked():
-                self.ui.widgetGraph.plotData(self.motorData.getTime(), self.motorData.getPressure())
+            if self.ui.checkBoxForce.isChecked():
+                force = self.motorData.getForce()
+            if self.ui.checkBoxPressure.isChecked():
+                pressure = self.motorData.getPressure()
+            self.ui.widgetGraph.convertAndPlot(self.motorData.getTime(), force=force, pressure=pressure)
         else:
-            if self.ui.checkBoxForce.isChecked() and self.ui.checkBoxPressure.isChecked():
-                self.ui.widgetGraph.plotData(self.firing.getRawTime(), self.firing.getRawForce(), self.firing.getRawPressure())
-            elif self.ui.checkBoxForce.isChecked() and not self.ui.checkBoxPressure.isChecked():
-                self.ui.widgetGraph.plotData(self.firing.getRawTime(), self.firing.getRawForce())
-            elif not self.ui.checkBoxForce.isChecked() and self.ui.checkBoxPressure.isChecked():
-                self.ui.widgetGraph.plotData(self.firing.getRawTime(), self.firing.getRawPressure())
+            if self.ui.checkBoxForce.isChecked():
+                force = self.firing.getRawForce()
+            if self.ui.checkBoxPressure.isChecked():
+                pressure = self.firing.getRawPressure()
+            self.ui.widgetGraph.plotData(self.firing.getRawTime(), force=force, pressure=pressure)
 
     def showResults(self, motorData):
+        app = QApplication.instance()
         self.ui.labelMotorDesignation.setText(motorData.getMotorDesignation())
-        self.ui.labelBurnTime.setText("{} s".format(round(motorData.getBurnTime(), 3)))
-        self.ui.labelStartupTime.setText("{} s".format(round(motorData.getStartupTime(), 3)))
+        self.ui.labelBurnTime.setText(app.convertToUserAndFormat(motorData.getBurnTime(), 's', 3))
+        self.ui.labelStartupTime.setText(app.convertToUserAndFormat(motorData.getStartupTime(), 's', 3))
 
-        self.ui.labelImpulse.setText("{} Ns".format(round(motorData.getImpulse(), 1)))
-        self.ui.labelPropellantMass.setText("{} Kg".format(round(motorData.getPropMass(), 3)))
-        self.ui.labelISP.setText("{} s".format(round(motorData.getISP(), 3)))
+        self.ui.labelImpulse.setText(app.convertToUserAndFormat(motorData.getImpulse(), 'Ns', 1))
+        self.ui.labelPropellantMass.setText(app.convertToUserAndFormat(motorData.getPropMass(), 'kg', 3))
+        self.ui.labelISP.setText(app.convertToUserAndFormat(motorData.getISP(), 's', 3))
 
-        self.ui.labelPeakThrust.setText("{} N".format(round(motorData.getPeakThrust(), 1)))
-        self.ui.labelAverageThrust.setText("{} N".format(round(motorData.getAverageThrust(), 1)))
+        self.ui.labelPeakThrust.setText(app.convertToUserAndFormat(motorData.getPeakThrust(), 'N', 1))
+        self.ui.labelAverageThrust.setText(app.convertToUserAndFormat(motorData.getAverageThrust(), 'N', 1))
         self.ui.labelDatapoints.setText(str(motorData.getNumDataPoints()))
 
-        self.ui.labelPeakPressure.setText("{} Pa".format(round(motorData.getPeakPressure(), 3)))
-        self.ui.labelAveragePressure.setText("{} Pa".format(round(motorData.getAveragePressure(), 3)))
-        self.ui.labelCStar.setText("{} m/s".format(round(motorData.getCStar(), 3)))
+        self.ui.labelPeakPressure.setText(app.convertToUserAndFormat(motorData.getPeakPressure(), 'Pa', 3))
+        self.ui.labelAveragePressure.setText(app.convertToUserAndFormat(motorData.getAveragePressure(), 'Pa', 3))
+        self.ui.labelCStar.setText(app.convertToUserAndFormat(motorData.getCStar(), 'm/s', 3))
 
         self.motorData = motorData
         self.regraphData()

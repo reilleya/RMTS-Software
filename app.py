@@ -42,8 +42,14 @@ class App(QApplication):
     def convertToUserUnits(self, value, units):
         return self.preferencesManager.preferences.convert(value, units)
 
+    def convertAllToUserUnits(self, values, units):
+        return self.preferencesManager.preferences.convertAll(values, units)
+
     def convertToUserAndFormat(self, value, units, places):
         return self.preferencesManager.preferences.convFormat(value, units, places)
+
+    def getUserUnit(self, unit):
+        return self.preferencesManager.preferences.getUnit(unit)
 
     def getPreferences(self):
         return self.preferencesManager.preferences

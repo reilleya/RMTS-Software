@@ -70,6 +70,7 @@ class MainWindow(QMainWindow):
         self.gotoPage(MainWindowPages.FIRE)
 
     def gotoRecvMotorDataPage(self):
+        self.ui.pageRecvMotorData.setup()
         self.gotoPage(MainWindowPages.RECV_MOTOR_DATA)
 
     def gotoResultsPage(self):
