@@ -34,6 +34,7 @@ class MotorResults():
         self.motorInfo = motorInfo
         self.propMass = self.motorInfo.getProperty('propellantMass')
         self.nozzleThroat = self.motorInfo.getProperty('throatDiameter')
+        self.raw = rawData
 
     def getNumDataPoints(self):
         return self.numDataPoints
@@ -93,6 +94,15 @@ class MotorResults():
     def getISP(self):
         return self.getImpulse() / (self.getPropMass() * 9.81)
 
+    def getRawTime(self):
+        return self.raw['time']
+
+    def getRawForce(self):
+        return self.raw['force']
+
+    def getRawPressure(self):
+        return self.raw['pressure']
+
     def getCSV(self):
         forceUnit = 'N'
         pressureUnit = 'Pa'
@@ -131,6 +141,8 @@ class Firing(QObject):
             f.append(self.rawData[i].force)
             p.append(self.rawData[i].pressure)
 
+        raw = {'time':t[:], 'force':f[:], 'pressure':p[:]}
+
         t = [d / 1000 for d in t]
         f = self.converter.convertForces(f)
         p = self.converter.convertPressures(p)
@@ -154,7 +166,7 @@ class Firing(QObject):
         startupTransient = t[0]
         t = [d - t[0] for d in t]
 
-        return MotorResults(t, f, p, startupTransient, self.motorInfo, self.rawData)
+        return MotorResults(t, f, p, startupTransient, self.motorInfo, raw)
 
     def addDatapoint(self, packet):
         self.rawData[packet.seqNum] = packet
@@ -170,28 +182,3 @@ class Firing(QObject):
         self.motorInfo = info
         if len(self.rawData) > 0:
             self.newGraph.emit(self.processRawData())
-
-    # TODO: Precalculate these when data comes in
-    def getRawTime(self):
-        recv = list(self.rawData.keys())
-        recv.sort()
-        t = []
-        for i in recv:
-            t.append(self.rawData[i].time)
-        return t
-
-    def getRawForce(self):
-        recv = list(self.rawData.keys())
-        recv.sort()
-        f = []
-        for i in recv:
-            f.append(self.rawData[i].force)
-        return f
-
-    def getRawPressure(self):
-        recv = list(self.rawData.keys())
-        recv.sort()
-        p = []
-        for i in recv:
-            p.append(self.rawData[i].pressure)
-        return p

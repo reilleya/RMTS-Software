@@ -42,10 +42,10 @@ class ResultsWidget(QWidget):
             self.ui.widgetGraph.convertAndPlot(self.motorData.getTime(), force=force, pressure=pressure)
         else:
             if self.ui.checkBoxForce.isChecked():
-                force = self.firing.getRawForce()
+                force = self.motorData.getRawForce()
             if self.ui.checkBoxPressure.isChecked():
-                pressure = self.firing.getRawPressure()
-            self.ui.widgetGraph.plotData(self.firing.getRawTime(), force=force, pressure=pressure)
+                pressure = self.motorData.getRawPressure()
+            self.ui.widgetGraph.plotData(self.motorData.getRawTime(), force=force, pressure=pressure)
 
     def showResults(self, motorData):
         app = QApplication.instance()

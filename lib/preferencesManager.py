@@ -35,4 +35,4 @@ class PreferencesManager(QObject):
 
     def loadDefault(self):
         self.preferences = UnitPreferences()
-        self.preferences.setProperties({'m':'in', 'm/s':'ft/s', 'N':'N', 'Ns':'Ns', 'Pa':'psi', 'kg': 'lb', 'kg/m^3':'lb/in^3'})
+        self.preferences.setProperties({'m':'in', 'm/s':'ft/s', 'N':'N', 'Ns':'Ns', 'Pa':'psi', 'kg':'lb', 'kg/m^3':'lb/in^3'})
