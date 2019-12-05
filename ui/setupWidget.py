@@ -20,6 +20,7 @@ class SetupWidget(QWidget):
 
     gotoFirePage = pyqtSignal()
     newFiringConfig = pyqtSignal(object)
+    back = pyqtSignal()
 
     calibrate = pyqtSignal()
 
@@ -32,6 +33,7 @@ class SetupWidget(QWidget):
         self.ui.pushButtonFire.pressed.connect(self.onFireButtonPressed)
         self.ui.widgetFiringConfig.setPreferences(QApplication.instance().getPreferences())
         self.ui.widgetFiringConfig.loadProperties(FiringConfig())
+        self.ui.pushButtonBack.pressed.connect(self.back.emit) # Todo: dispose of firing
 
         self.forceBuff = LowPass(5)
         self.pressureBuff = LowPass(5)

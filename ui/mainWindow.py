@@ -31,6 +31,8 @@ class MainWindow(QMainWindow):
 
         self.ui.pageSetup.gotoFirePage.connect(self.gotoFirePage)
         self.ui.pageRecvMotorData.nextPage.connect(self.recvResultsMotorDataSet)
+
+        self.ui.pageSetup.back.connect(self.gotoStartPage)
         self.ui.pageSetup.newFiringConfig.connect(self.newFiringConfig)
         self.ui.pageSetup.calibrate.connect(self.app.rm.runCalibration)
 
@@ -38,6 +40,8 @@ class MainWindow(QMainWindow):
         self.ui.pageFire.results.connect(self.gotoResultsPage)
         self.ui.pageFire.fire.connect(self.sendFire)
         self.ui.pageFire.stop.connect(self.sendStop)
+
+        self.ui.pageResults.back.connect(self.gotoStartPage)
 
         self.ui.pagePreferences.back.connect(self.gotoStartPage)
 

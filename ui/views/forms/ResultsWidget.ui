@@ -133,7 +133,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="pushButtonBack">
           <property name="text">
            <string>Back</string>
           </property>

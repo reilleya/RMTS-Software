@@ -1,11 +1,15 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
+from PyQt5.QtCore import pyqtSignal
 
 from ui.views.ResultsWidget_ui import Ui_ResultsWidget
 
 from lib.firing import Firing
 
 class ResultsWidget(QWidget):
+
+    back = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.ui = Ui_ResultsWidget()
@@ -20,6 +24,8 @@ class ResultsWidget(QWidget):
         self.ui.radioButtonRaw.toggled.connect(self.regraphData)
 
         self.ui.pushButtonCSV.pressed.connect(self.saveCSV)
+
+        self.ui.pushButtonBack.pressed.connect(self.back.emit) # Todo: confirm they have saved and clear firing and plot
 
     def processResultsPacket(self, packet):
         if self.firing is not None: 

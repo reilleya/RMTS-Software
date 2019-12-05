@@ -9,6 +9,7 @@ class MotorConfig(PropertyCollection):
     def __init__(self):
         super().__init__()
         self.props['motorOrientation'] = EnumProperty('Motor Orientation', ['Vertical', 'Horizontal'])
+        self.props['hardwareMass'] = FloatProperty('Motor Dry Mass', 'kg', 0.01, 100)
         self.props['propellantMass'] = FloatProperty('Propellant Mass', 'kg', 0.01, 100)
         self.props['throatDiameter'] = FloatProperty('Throat Diameter', 'm', 0.0001, 1)
 
@@ -165,6 +166,11 @@ class Firing(QObject):
         burnTime = t[-1] - t[0]
         startupTransient = t[0]
         t = [d - t[0] for d in t]
+
+        if self.motorInfo.getProperty('motorOrientation') == 'Vertical':
+            for i in range(0, len(t)):
+                f[i] -= self.motorInfo.getProperty('hardwareMass') * 9.81
+                f[i] -= (self.motorInfo.getProperty('propellantMass')  * 9.81 * (t[i] / burnTime))
 
         return MotorResults(t, f, p, startupTransient, self.motorInfo, raw)
 
