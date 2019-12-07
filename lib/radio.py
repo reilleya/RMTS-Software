@@ -6,6 +6,8 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 class RadioRecvPacket():
     def __init__(self, data):
+        if data is None:
+            return
         self.type = data[0]
         self.checksum = data[1]
         self.seqNum = self.interpret16Bit(data[2:4])
@@ -62,6 +64,8 @@ class ErrorPacket(RadioRecvPacket):
 class ResultPacket(RadioRecvPacket):
     def __init__(self, data):
         super().__init__(data)
+        if data is None:
+            return
         self.time = self.interpret16Bit(self.payload)
         self.force = self.interpret24Bit(self.payload[2:])
         self.pressure = self.interpret24Bit(self.payload[5:])

@@ -1,4 +1,5 @@
 import sys
+import yaml
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
 from PyQt5.QtCore import pyqtSignal
 
@@ -23,6 +24,7 @@ class ResultsWidget(QWidget):
         self.ui.radioButtonTranslated.toggled.connect(self.regraphData)
         self.ui.radioButtonRaw.toggled.connect(self.regraphData)
 
+        self.ui.pushButtonFIRE.pressed.connect(self.saveFIRE)
         self.ui.pushButtonCSV.pressed.connect(self.saveCSV)
 
         self.ui.pushButtonBack.pressed.connect(self.back.emit) # Todo: confirm they have saved and clear firing and plot
@@ -73,6 +75,14 @@ class ResultsWidget(QWidget):
 
         self.motorData = motorData
         self.regraphData()
+
+    def saveFIRE(self):
+        path = QFileDialog.getSaveFileName(None, 'Save FIRE', '', 'Firing Data File (*.fire)')[0]
+        if path is not None:
+            if not path.endswith('.fire'):
+                path += '.fire'
+            with open(path, 'w') as outFile:
+                yaml.dump(self.firing.toDictionary(), outFile)
 
     def saveCSV(self):
         path = QFileDialog.getSaveFileName(None, 'Save CSV', '', 'Comma Separated Values (*.csv)')[0]

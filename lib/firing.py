@@ -3,6 +3,9 @@ import math
 from pyFormGen.properties import PropertyCollection, FloatProperty, EnumProperty
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from .converter import Converter
+from .radio import ResultPacket
+
 PACKET_STRIDE = 10
 
 class MotorConfig(PropertyCollection):
@@ -188,3 +191,24 @@ class Firing(QObject):
         self.motorInfo = info
         if len(self.rawData) > 0:
             self.newGraph.emit(self.processRawData())
+
+    def toDictionary(self):
+        out = {
+            'rawData': {i: {'t': v.time, 'f': v.force, 'p':v.pressure} for i, v in self.rawData.items()},
+            'motorInfo': self.motorInfo.getProperties(),
+            'converter': self.converter.toDictionary()
+        }
+        return out
+
+    def fromDictionary(self, data):
+        self.converter = Converter.fromDictionary(data['converter'])
+        self.motorInfo = MotorConfig()
+        self.motorInfo.setProperties(data['motorInfo'])
+        self.rawData = {}
+        for index, element in data['rawData'].items():
+            packet = ResultPacket(None) # Todo: don't use packets for this
+            packet.time = element['t']
+            packet.force = element['f']
+            packet.pressure = element['p']
+            self.rawData[index] = packet
+        self.newGraph.emit(self.processRawData())

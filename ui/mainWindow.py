@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
         self.ui.pageStart.beginSetup.connect(self.beginSetup)
         self.ui.pageStart.recvResults.connect(self.recvResults)
         self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
+        self.ui.pageStart.showFireFile.connect(self.showLoadedFiring)
 
         self.ui.pageSetup.gotoFirePage.connect(self.gotoFirePage)
         self.ui.pageRecvMotorData.nextPage.connect(self.recvResultsMotorDataSet)
@@ -115,3 +116,9 @@ class MainWindow(QMainWindow):
     def sendStop(self):
         stopPack = StopPacket()
         self.app.rm.sendPacket(stopPack)
+
+    def showLoadedFiring(self, data):
+        self.firing = Firing()
+        self.ui.pageResults.setFiring(self.firing)
+        self.firing.fromDictionary(data)
+        self.gotoResultsPage()
