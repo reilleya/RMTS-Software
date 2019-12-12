@@ -6,6 +6,9 @@ class Converter():
         self.pressureOffset = pressureOffset
         self.pressureRatio = pressureRatio
 
+    def forceToRaw(self, force):
+        return (force - self.forceOffset) / self.forceRatio
+
     def convertForce(self, force):
         return self.forceRatio * force + self.forceOffset
 

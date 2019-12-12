@@ -87,7 +87,7 @@ class MotorResults():
 
     def getCStar(self):
         throatArea = 3.14159 * (self.nozzleThroat / 2)**2
-        return throatArea * self.getIntegratedPressure() / (self.propMass * 9.81)
+        return throatArea * self.getIntegratedPressure() / (self.propMass)
 
     def getMotorDesignation(self):
         imp = self.getImpulse()
@@ -147,33 +147,47 @@ class Firing(QObject):
 
         raw = {'time':t[:], 'force':f[:], 'pressure':p[:]}
 
+        # Remove amplifier offset
+        start = f[:10] # Assumes that there are 10+ points before thrust begins. TODO: the firmware should wait 10.
+        startAverage = sum(start)/len(start)
+        if self.motorInfo.getProperty('motorOrientation') == 'Vertical':
+            zero = (self.motorInfo.getProperty('hardwareMass') + self.motorInfo.getProperty('hardwareMass')) * 9.81
+        else:
+            zero = 0
+        offset = startAverage - self.converter.forceToRaw(zero)
+        f = [d - offset for d in f]
+
+        # Convert to proper units
         t = [d / 1000 for d in t]
         f = self.converter.convertForces(f)
+        if self.motorInfo.getProperty('motorOrientation') == 'Vertical':
+            for i in range(0, len(t)):
+                f[i] -= self.motorInfo.getProperty('hardwareMass') * 9.81
+                f[i] -= self.motorInfo.getProperty('propellantMass') * 9.81
         p = self.converter.convertPressures(p)
 
+        # Trim data from the end
         maxForce = max(f)
         endCutoff = f.index(maxForce)
         while f[endCutoff] > 0.05 * maxForce and endCutoff < len(f) - 1:
             endCutoff += 1
         endCutoff = min(endCutoff + 10, len(f))
-
         t, f, p = t[:endCutoff], f[:endCutoff], p[:endCutoff]
 
+        # Trim data from the start
         startCutoff = f.index(maxForce)
         while f[startCutoff] > 0.05 * maxForce and startCutoff > 0:
             startCutoff -= 1
         endCutoff = max(startCutoff - 15, 0)
-
         t, f, p = t[startCutoff:], f[startCutoff:], p[startCutoff:]
 
+        # Final adjustments and calculations
         burnTime = t[-1] - t[0]
         startupTransient = t[0]
         t = [d - t[0] for d in t]
-
         if self.motorInfo.getProperty('motorOrientation') == 'Vertical':
-            for i in range(0, len(t)):
-                f[i] -= self.motorInfo.getProperty('hardwareMass') * 9.81
-                f[i] -= (self.motorInfo.getProperty('propellantMass')  * 9.81 * (t[i] / burnTime))
+            for i, time in enumerate(t):
+                f[i] += (time / burnTime) * self.motorInfo.getProperty('propellantMass') * 9.81
 
         return MotorResults(t, f, p, startupTransient, self.motorInfo, raw)
 
