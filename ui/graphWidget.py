@@ -20,7 +20,6 @@ class GraphWidget(FigureCanvas):
         self.canvas = FigureCanvas(self.figure)
         self.forceAxes = self.figure.add_subplot(111)
         self.pressureAxes = self.forceAxes.twinx()
-        #self.figure.tight_layout()
 
     def convertAndPlot(self, time, force=None, pressure=None):
         app = QApplication.instance()
@@ -43,4 +42,6 @@ class GraphWidget(FigureCanvas):
             self.forceAxes.plot(time, force, color='tab:blue')
         if pressure is not None:
             self.pressureAxes.plot(time, pressure, color='tab:red')
+        self.forceAxes.set_ylim(bottom=0)
+        self.pressureAxes.set_ylim(bottom=0)
         self.draw()

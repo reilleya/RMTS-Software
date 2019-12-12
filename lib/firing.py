@@ -8,6 +8,14 @@ from .radio import ResultPacket
 
 PACKET_STRIDE = 10
 
+def rejectOutliers(d):
+    # If a point is more than 2 times either of its neighbors, something is wrong and it should be smoothed out
+    if len(d) > 3:
+        for i in range(1, len(d) - 1):
+            if (d[i] > 2 * d[i - 1] and d[i] > 2 * d[i + 1]):
+                d[i] = (d[i - 1] + d[i + 1]) / 2
+    return d
+
 class MotorConfig(PropertyCollection):
     def __init__(self):
         super().__init__()
@@ -146,6 +154,9 @@ class Firing(QObject):
             p.append(self.rawData[i].pressure)
 
         raw = {'time':t[:], 'force':f[:], 'pressure':p[:]}
+
+        f = rejectOutliers(f)
+        p = rejectOutliers(p)
 
         # Remove amplifier offset
         start = f[:10] # Assumes that there are 10+ points before thrust begins. TODO: the firmware should wait 10.
