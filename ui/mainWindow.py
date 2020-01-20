@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.app = app
 
-        self.ui.pageStart.beginSetup.connect(self.beginSetup)
+        self.ui.pageStart.beginSetup.connect(self.gotoFirePage)
         self.ui.pageStart.recvResults.connect(self.recvResults)
         self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
         self.ui.pageStart.showFireFile.connect(self.showLoadedFiring)

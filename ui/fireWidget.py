@@ -21,8 +21,8 @@ class FireWidget(QWidget):
         self.ui.lineEditStop.textChanged.connect(self.stopBoxTextChanged)
         self.ui.pushButtonFire.pressed.connect(self.fireButtonPressed)
         self.ui.pushButtonStop.pressed.connect(self.stop.emit)
-        self.ui.pushButtonSetup.pressed.connect(self.setupButtonPressed)
-        self.ui.pushButtonResults.pressed.connect(self.results.emit)
+        #self.ui.pushButtonSetup.pressed.connect(self.setupButtonPressed)
+        #self.ui.pushButtonResults.pressed.connect(self.results.emit)
 
     def reset(self):
         self.ui.pushButtonStop.setEnabled(False)
