@@ -1,34 +1,34 @@
+from enum import Enum
+
+class ConverterType(Enum):
+    LOAD_CELL = 0
+    PRESSURE_TRANSDUCER = 1
 
 class Converter():
-    def __init__(self, forceOffset, forceRatio, pressureOffset, pressureRatio):
-        self.forceOffset = forceOffset
-        self.forceRatio = forceRatio
-        self.pressureOffset = pressureOffset
-        self.pressureRatio = pressureRatio
 
-    def forceToRaw(self, force):
-        return (force - self.forceOffset) / self.forceRatio
+    TYPES = {}
 
-    def convertForce(self, force):
-        return self.forceRatio * force + self.forceOffset
+    def __init__(self, transducer, offset, ratio):
+        self.transducer = transducer
+        self.offset = offset
+        self.ratio = ratio
 
-    def convertPressure(self, pressure):
-        return self.pressureRatio * pressure + self.pressureOffset
+    def convert(self, force):
+        return self.ratio * force + self.offset
 
-    def convertForces(self, forces):
-        return [self.convertForce(f) for f in forces]
+    def toRaw(self, force):
+        return (force - self.offset) / self.ratio
 
-    def convertPressures(self, pressures):
-        return [self.convertPressure(p) for p in pressures]
+    def convertMultiple(self, readings):
+        return [self.convert(r) for r in readings]
 
     @staticmethod
     def fromDictionary(d):
-        return Converter(d['forceOffset'], d['forceRatio'], d['pressureOffset'], d['pressureRatio'])
+        return Converter(d['type'], d['offset'], d['ratio'])
 
     def toDictionary(self):
         return {
-            'forceOffset': self.forceOffset,
-            'forceRatio': self.forceRatio,
-            'pressureOffset': self.pressureOffset,
-            'pressureRatio': self.pressureRatio
+            'type': self.transducer,
+            'offset': self.forceRatio,
+            'ratio': self.pressureOffset,
         }

@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>1050</width>
-    <height>800</height>
+    <height>750</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>1050</width>
-    <height>800</height>
+    <height>750</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -21,9 +21,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBoxSetup">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -39,7 +39,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="labelSetup">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -52,12 +52,12 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayoutSetup">
         <property name="rightMargin">
          <number>5</number>
         </property>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
+         <layout class="QVBoxLayout" name="verticalLayoutHardware">
           <property name="bottomMargin">
            <number>6</number>
           </property>
@@ -75,7 +75,7 @@
            <widget class="TransducerSelectorWidget" name="widgetTransducerSelector" native="true"/>
           </item>
           <item>
-           <spacer name="verticalSpacer">
+           <spacer name="verticalSpacerHardware">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -102,12 +102,12 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="horizontalLayoutConnect">
         <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
-         <spacer name="horizontalSpacer_3">
+         <spacer name="horizontalSpacerConnect">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -120,7 +120,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="pushButtonConnect">
           <property name="minimumSize">
            <size>
             <width>100</width>
@@ -144,7 +144,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="groupBoxConfirm">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -168,21 +168,21 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_9">
       <item>
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="labelConfirm">
         <property name="text">
          <string>Before installing the igniter, ensure that the transducers are functioning.</string>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <layout class="QHBoxLayout" name="horizontalLayoutStats">
         <property name="rightMargin">
          <number>0</number>
         </property>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <layout class="QVBoxLayout" name="verticalLayoutDataAge">
           <item>
-           <widget class="QLineEdit" name="lineEdit_3">
+           <widget class="QLineEdit" name="lineEditDataAge">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -207,7 +207,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="labelDataAge">
             <property name="font">
              <font>
               <pointsize>20</pointsize>
@@ -224,12 +224,12 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayoutForce">
           <property name="rightMargin">
            <number>6</number>
           </property>
           <item>
-           <widget class="QLineEdit" name="lineEdit_4">
+           <widget class="QLineEdit" name="lineEditForce">
             <property name="minimumSize">
              <size>
               <width>350</width>
@@ -254,7 +254,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="labelForce">
             <property name="font">
              <font>
               <pointsize>20</pointsize>
@@ -271,12 +271,12 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
+         <layout class="QVBoxLayout" name="verticalLayoutPressure">
           <property name="rightMargin">
            <number>6</number>
           </property>
           <item>
-           <widget class="QLineEdit" name="lineEdit_5">
+           <widget class="QLineEdit" name="lineEditPressure">
             <property name="minimumSize">
              <size>
               <width>350</width>
@@ -301,7 +301,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="labelPressure">
             <property name="font">
              <font>
               <pointsize>20</pointsize>
@@ -318,12 +318,12 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayoutContinuity">
           <property name="rightMargin">
            <number>6</number>
           </property>
           <item>
-           <widget class="QLineEdit" name="lineEdit_6">
+           <widget class="QLineEdit" name="lineEditContinuity">
             <property name="font">
              <font>
               <family>DejaVu Sans Mono</family>
@@ -342,7 +342,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="labelContinuity">
             <property name="font">
              <font>
               <pointsize>20</pointsize>
@@ -364,7 +364,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="groupBoxFire">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -376,14 +376,14 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_8">
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="labelArm">
         <property name="text">
          <string>Type &quot;ARM&quot; into the box to arm, and press &quot;Fire&quot; to fire the motor and begin recording.</string>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayoutFire">
         <item>
          <widget class="QLineEdit" name="lineEditArm">
           <property name="maximumSize">
@@ -395,7 +395,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer">
+         <spacer name="horizontalSpacerFire">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -409,6 +409,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonFire">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
             <width>100</width>
@@ -429,21 +432,21 @@
        </layout>
       </item>
       <item>
-       <widget class="Line" name="line">
+       <widget class="Line" name="lineFire">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="labelStop">
         <property name="text">
          <string>Type &quot;STOP&quot; into the box to enable the button, and press it when the motor has finished firing and the recording should end.</string>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayoutStop">
         <property name="topMargin">
          <number>0</number>
         </property>
@@ -458,7 +461,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_2">
+         <spacer name="horizontalSpacerStop">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -472,6 +475,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonStop">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
             <width>100</width>
@@ -495,19 +501,32 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutNavigation">
      <property name="topMargin">
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="pushButtonBack">
        <property name="text">
         <string>Back</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_4">
+      <spacer name="horizontalSpacerNavigation">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -520,7 +539,10 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_5">
+      <widget class="QPushButton" name="pushButtonResults">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>View Results</string>
        </property>

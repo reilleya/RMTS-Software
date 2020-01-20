@@ -35,7 +35,6 @@ class MainWindow(QMainWindow):
 
         self.ui.pageSetup.back.connect(self.gotoStartPage)
         self.ui.pageSetup.newFiringConfig.connect(self.newFiringConfig)
-        self.ui.pageSetup.calibrate.connect(self.app.rm.runCalibration)
 
         self.ui.pageFire.setup.connect(self.gotoSetupPage)
         self.ui.pageFire.results.connect(self.gotoResultsPage)

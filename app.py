@@ -3,7 +3,6 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
-from lib.radio import RadioManager
 from lib.sensorProfileManager import SensorProfileManager
 from lib.preferencesManager import PreferencesManager
 from ui.mainWindow import MainWindow
@@ -15,15 +14,12 @@ class App(QApplication):
 
     def __init__(self, args):
         super().__init__(args)
-        self.rm = RadioManager()
         self.sensorProfileManager = SensorProfileManager()
         self.sensorProfileManager.loadProfiles()
         self.preferencesManager = PreferencesManager()
         self.preferencesManager.loadPreferences()
 
         self.window = MainWindow(self)
-        self.rm.newPacket.connect(self.window.routePacket)
-        self.window.closed.connect(self.rm.stop)
         self.window.show()
 
     def outputMessage(self, content, title='RMTSI'):

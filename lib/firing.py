@@ -159,7 +159,7 @@ class Firing(QObject):
         p = rejectOutliers(p)
 
         # Remove amplifier offset
-        start = f[:10] # Assumes that there are 10+ points before thrust begins. TODO: the firmware should wait 10.
+        start = f[:10] # Assumes that there are 10+ points before thrust begins. The firmware waits 10 before firing.
         startAverage = sum(start)/len(start)
         if self.motorInfo.getProperty('motorOrientation') == 'Vertical':
             zero = (self.motorInfo.getProperty('hardwareMass') + self.motorInfo.getProperty('hardwareMass')) * 9.81
