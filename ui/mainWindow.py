@@ -38,8 +38,6 @@ class MainWindow(QMainWindow):
 
         self.ui.pageFire.setup.connect(self.gotoSetupPage)
         self.ui.pageFire.results.connect(self.gotoResultsPage)
-        self.ui.pageFire.fire.connect(self.sendFire)
-        self.ui.pageFire.stop.connect(self.sendStop)
 
         self.ui.pageResults.back.connect(self.gotoStartPage)
 
@@ -84,14 +82,6 @@ class MainWindow(QMainWindow):
         self.ui.pagePreferences.setup()
         self.gotoPage(MainWindowPages.PREFERENCES)
 
-
-    def beginSetup(self, port, converter):
-        self.app.rm.run(port)
-        self.ui.pageSetup.setup(converter)
-        self.firing = Firing(converter)
-        self.ui.pageResults.setFiring(self.firing)
-        self.gotoSetupPage()
-
     def newFiringConfig(self, config):
         self.firingConfig = config
         self.firing.setMotorInfo(config.getMotorInfo())
@@ -105,16 +95,6 @@ class MainWindow(QMainWindow):
         self.firing.setMotorInfo(motorData)
         self.ui.pageResults.setFiring(self.firing)
         self.gotoResultsPage()
-
-    def sendFire(self):
-        recordingDur = int(self.firingConfig.getProperty('recordingDuration') * 1000)
-        firingDur = int(self.firingConfig.getProperty('firingDuration') * 1000)
-        firePack = FirePacket(recordingDur, firingDur)
-        self.app.rm.sendPacket(firePack)
-
-    def sendStop(self):
-        stopPack = StopPacket()
-        self.app.rm.sendPacket(stopPack)
 
     def showLoadedFiring(self, data):
         self.firing = Firing()

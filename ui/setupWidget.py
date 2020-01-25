@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.SetupWidget_ui import Ui_SetupWidget
-from lib.firing import FiringConfig
+from lib.motor import FiringConfig
 
 class LowPass():
     def __init__(self, historyLength):

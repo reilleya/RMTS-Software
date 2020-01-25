@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.MotorDataWidget_ui import Ui_MotorDataWidget
-from lib.firing import MotorConfig
+from lib.motor import MotorConfig
 
 class MotorDataWidget(QWidget):
 
