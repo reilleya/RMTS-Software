@@ -31,7 +31,6 @@
       </property>
       <widget class="StartWidget" name="pageStart"/>
       <widget class="MotorDataWidget" name="pageRecvMotorData"/>
-      <widget class="SetupWidget" name="pageSetup"/>
       <widget class="FireWidget" name="pageFire"/>
       <widget class="ResultsWidget" name="pageResults"/>
       <widget class="PreferencesWidget" name="pagePreferences"/>
@@ -46,12 +45,6 @@
   </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>SetupWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">ui.setupWidget</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>StartWidget</class>
    <extends>QWidget</extends>

@@ -49,3 +49,6 @@ class App(QApplication):
 
     def getPreferences(self):
         return self.preferencesManager.preferences
+
+    def newResult(self, motorInfo):
+        self.window.ui.pageResults.showResults(motorInfo)

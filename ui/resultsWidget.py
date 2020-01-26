@@ -16,7 +16,6 @@ class ResultsWidget(QWidget):
         self.ui = Ui_ResultsWidget()
         self.ui.setupUi(self)
 
-        self.firing = None
         self.motorData = None
 
         self.ui.checkBoxForce.stateChanged.connect(self.regraphData)
@@ -28,14 +27,6 @@ class ResultsWidget(QWidget):
         self.ui.pushButtonCSV.pressed.connect(self.saveCSV)
 
         self.ui.pushButtonBack.pressed.connect(self.back.emit) # Todo: confirm they have saved and clear firing and plot
-
-    def processResultsPacket(self, packet):
-        if self.firing is not None: 
-            self.firing.addDatapoint(packet)
-
-    def setFiring(self, firing):
-        self.firing = firing
-        self.firing.newGraph.connect(self.showResults)
 
     def regraphData(self):
         force = None
@@ -82,7 +73,7 @@ class ResultsWidget(QWidget):
             if not path.endswith('.fire'):
                 path += '.fire'
             with open(path, 'w') as outFile:
-                yaml.dump(self.firing.toDictionary(), outFile)
+                yaml.dump(self.motorData.toDictionary(), outFile)
 
     def saveCSV(self):
         path = QFileDialog.getSaveFileName(None, 'Save CSV', '', 'Comma Separated Values (*.csv)')[0]

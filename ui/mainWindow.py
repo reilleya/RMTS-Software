@@ -10,10 +10,9 @@ from lib.firing import Firing
 class MainWindowPages(IntEnum):
     START = 0
     RECV_MOTOR_DATA = 1
-    FIRING_SETUP = 2
-    FIRE = 3
-    RESULTS = 4
-    PREFERENCES = 5
+    SETUP_FIRE = 2
+    RESULTS = 3
+    PREFERENCES = 4
 
 class MainWindow(QMainWindow):
 
@@ -25,18 +24,13 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.app = app
 
-        self.ui.pageStart.beginSetup.connect(self.gotoFirePage)
+        self.ui.pageStart.beginSetup.connect(self.gotoSetupPage)
         self.ui.pageStart.recvResults.connect(self.recvResults)
         self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
         self.ui.pageStart.showFireFile.connect(self.showLoadedFiring)
 
-        self.ui.pageSetup.gotoFirePage.connect(self.gotoFirePage)
         self.ui.pageRecvMotorData.nextPage.connect(self.recvResultsMotorDataSet)
 
-        self.ui.pageSetup.back.connect(self.gotoStartPage)
-        self.ui.pageSetup.newFiringConfig.connect(self.newFiringConfig)
-
-        self.ui.pageFire.setup.connect(self.gotoSetupPage)
         self.ui.pageFire.results.connect(self.gotoResultsPage)
 
         self.ui.pageResults.back.connect(self.gotoStartPage)
@@ -50,15 +44,6 @@ class MainWindow(QMainWindow):
         self.closed.emit()
         sys.exit()
 
-    def routePacket(self, packet):
-        if type(packet) is SetupPacket:
-            self.ui.pageSetup.processSetupPacket(packet)
-        if type(packet) is ResultPacket:
-            if self.firing is not None:
-                self.firing.addDatapoint(packet)
-            else:
-                print('Got results packet without a firing to add it to')
-
     def gotoPage(self, page):
         self.ui.stackedWidget.setCurrentIndex(int(page))
 
@@ -66,10 +51,7 @@ class MainWindow(QMainWindow):
         self.gotoPage(MainWindowPages.START)
 
     def gotoSetupPage(self):
-        self.gotoPage(MainWindowPages.FIRING_SETUP)
-
-    def gotoFirePage(self):
-        self.gotoPage(MainWindowPages.FIRE)
+        self.gotoPage(MainWindowPages.SETUP_FIRE)
 
     def gotoRecvMotorDataPage(self):
         self.ui.pageRecvMotorData.setup()

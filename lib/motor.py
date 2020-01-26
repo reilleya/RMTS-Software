@@ -1,3 +1,5 @@
+import math
+
 from pyFormGen.properties import PropertyCollection, FloatProperty, EnumProperty
 
 class MotorConfig(PropertyCollection):
@@ -20,7 +22,7 @@ class FiringConfig(MotorConfig):
         return motorConfig
 
 class MotorResults():
-    def __init__(self, time, force, pressure, startupTime, motorInfo, rawData):
+    def __init__(self, time, force, pressure, startupTime, motorInfo, rawData, forceConv, presConv):
         self.time = time
         self.force = force
         self.pressure = pressure
@@ -28,6 +30,8 @@ class MotorResults():
 
         self.startupTime = startupTime
         self.motorInfo = motorInfo
+        self.forceConv = forceConv
+        self.presConv = presConv
         self.propMass = self.motorInfo.getProperty('propellantMass')
         self.nozzleThroat = self.motorInfo.getProperty('throatDiameter')
         self.raw = rawData
@@ -110,6 +114,15 @@ class MotorResults():
             out+= "\n{},{},{}".format(convTime, convForce, convPressure)
         return out
 
+    def toDictionary(self):
+        out = {
+            'rawData': self.raw,
+            'motorInfo': self.motorInfo.getProperties(),
+            'forceConv': self.forceConv.toDictionary(),
+            'pressureConv': self.presConv.toDictionary()
+        }
+        return out
+
 def rejectOutliers(d):
     # If a point is more than 2 times either of its neighbors, something is wrong and it should be smoothed out
     if len(d) > 3:
@@ -118,7 +131,7 @@ def rejectOutliers(d):
                 d[i] = (d[i - 1] + d[i + 1]) / 2
     return d
 
-def processRawData(self, rawData, forceConv, presConv, motorInfo):
+def processRawData(rawData, forceConv, presConv, motorInfo):
     t = rawData['time']
     f = rawData['force']
     p = rawData['pressure']
@@ -168,4 +181,4 @@ def processRawData(self, rawData, forceConv, presConv, motorInfo):
         for i, time in enumerate(t):
             f[i] += (time / burnTime) * motorInfo.getProperty('propellantMass') * 9.81
 
-    return MotorResults(t, f, p, startupTransient, motorInfo, rawData)
+    return MotorResults(t, f, p, startupTransient, motorInfo, rawData, forceConv, presConv)

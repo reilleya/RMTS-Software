@@ -81,8 +81,9 @@ class FireWidget(QWidget):
         fireData.setProperties(self.ui.firingConfig.getProperties())
         self.firing = Firing(self.forceConv, self.pressConv, fireData, port)
         self.firing.newSetupPacket.connect(self.newPacket)
+        self.firing.newGraph.connect(QApplication.instance().newResult)
         self.firing.fired.connect(self.enableResults)
-        self.firing.stopped.connect(self.showResulta)
+        #self.firing.stopped.connect(self.showResults)
 
         self.toggleSetupFields(False)
 
@@ -116,3 +117,6 @@ class FireWidget(QWidget):
             print("Tried to stop without a firing!")
             return
         self.firing.stop()
+
+    def enableResults(self):
+        self.ui.pushButtonResults.setEnabled(True)

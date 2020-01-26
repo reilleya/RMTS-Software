@@ -1,5 +1,3 @@
-import math
-
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from .converter import Converter
@@ -74,7 +72,11 @@ class Firing(QObject):
         self.radioManager.sendPacket(stopPack)
         self.stopped.emit()
 
-    # Outdated:
+    def exit(self):
+        self.radioManager.stop()
+        return True
+
+    # Todo: Outdated:
     def toDictionary(self):
         out = {
             'rawData': {i: {'t': v.time, 'f': v.force, 'p':v.pressure} for i, v in self.rawData.items()},

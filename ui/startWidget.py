@@ -22,7 +22,7 @@ class StartWidget(QWidget):
 
         self.ui.pushButtonSetup.pressed.connect(self.beginSetup.emit)
         #self.ui.pushButtonResults.pressed.connect(self.recvResultsButtonPressed)
-        #self.ui.pushButtonPreferences.pressed.connect(self.editPreferences.emit)
+        self.ui.pushButtonPreferences.pressed.connect(self.editPreferences.emit)
         #self.ui.pushButtonSavedData.pressed.connect(self.showSavedResultsPressed)
 
     def setup(self):

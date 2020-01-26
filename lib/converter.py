@@ -29,6 +29,6 @@ class Converter():
     def toDictionary(self):
         return {
             'type': self.transducer,
-            'offset': self.forceRatio,
-            'ratio': self.pressureOffset,
+            'offset': self.offset,
+            'ratio': self.ratio,
         }
