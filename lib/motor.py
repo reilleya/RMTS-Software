@@ -131,6 +131,8 @@ def rejectOutliers(d):
                 d[i] = (d[i - 1] + d[i + 1]) / 2
     return d
 
+NUM_CAL_FRAMES = 10
+
 def processRawData(rawData, forceConv, presConv, motorInfo):
     t = rawData['time']
     f = rawData['force']
@@ -140,7 +142,8 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     p = rejectOutliers(p)
 
     # Remove amplifier offset
-    start = f[:10] # Assumes that there are 10+ points before thrust begins. The firmware waits 10 before firing.
+    # Assumes that there are 10+ points before thrust begins. The firmware waits 10 before firing to make sure.
+    start = f[:NUM_CAL_FRAMES]
     startAverage = sum(start)/len(start)
     if motorInfo.getProperty('motorOrientation') == 'Vertical':
         zero = (motorInfo.getProperty('hardwareMass') + motorInfo.getProperty('hardwareMass')) * 9.81
@@ -175,7 +178,7 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
 
     # Final adjustments and calculations
     burnTime = t[-1] - t[0]
-    startupTransient = t[0]
+    startupTransient = t[0] - (rawData['time'][NUM_CAL_FRAMES - 1] / 1000)
     t = [d - t[0] for d in t]
     if motorInfo.getProperty('motorOrientation') == 'Vertical':
         for i, time in enumerate(t):
