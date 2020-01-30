@@ -32,6 +32,9 @@ class FireWidget(QWidget):
                             self.ui.widgetPortSelector, self.ui.widgetTransducerSelector, self.ui.firingConfig,
                             self.ui.pushButtonConnect
                            ]
+        self.firingFields = [
+                                self.ui.lineEditArm, self.ui.lineEditStop
+                            ]
 
         self.ui.pushButtonConnect.pressed.connect(self.connect)
 
@@ -53,6 +56,8 @@ class FireWidget(QWidget):
 
         self.firing = None
 
+        self.errors = []
+
         self.forceConv = None # Move to firing?
         self.pressConv = None
 
@@ -65,12 +70,17 @@ class FireWidget(QWidget):
         self.ui.firingConfig.loadProperties(FiringConfig())
 
         # Fire
+        self.toggleFiringFields(False)
         self.ui.pushButtonStop.setEnabled(False)
         self.ui.pushButtonFire.setEnabled(False)
         self.ui.pushButtonResults.setEnabled(True)
 
     def toggleSetupFields(self, enabled):
         for field in self.setupFields:
+            field.setEnabled(enabled)
+
+    def toggleFiringFields(self, enabled):
+        for field in self.firingFields:
             field.setEnabled(enabled)
 
     def connect(self):
@@ -81,11 +91,13 @@ class FireWidget(QWidget):
         fireData.setProperties(self.ui.firingConfig.getProperties())
         self.firing = Firing(self.forceConv, self.pressConv, fireData, port)
         self.firing.newSetupPacket.connect(self.newPacket)
+        self.firing.newErrorPacket.connect(self.recordError)
         self.firing.newGraph.connect(QApplication.instance().newResult)
         self.firing.fired.connect(self.enableResults)
         #self.firing.stopped.connect(self.showResults)
 
         self.toggleSetupFields(False)
+        self.toggleFiringFields(True)
 
     def newPacket(self, packet):
         if self.tared:
@@ -120,3 +132,17 @@ class FireWidget(QWidget):
 
     def enableResults(self):
         self.ui.pushButtonResults.setEnabled(True)
+
+    def recordError(self, packet):
+        newError = False
+        for error in packet.getErrors():
+            if error not in self.errors:
+                self.errors.append(error)
+                newError = True
+        if newError:
+            output = "The RMTS board reported the following error(s):\n\n"
+            output += "\n".join(self.errors)
+            output += "\n\n Please resolve them and restart the device before continuing."
+            QApplication.instance().outputMessage(output)
+        if len(self.errors) > 0:
+            self.toggleFiringFields(False)

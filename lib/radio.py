@@ -4,6 +4,8 @@ from threading import Thread
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from .errors import formatErrorMessage
+
 class RadioRecvPacket():
     def __init__(self, data):
         if data is None:
@@ -59,6 +61,11 @@ class ErrorPacket(RadioRecvPacket):
     def __str__(self):
         out = "Storage: {}, ADC: {}".format(self.storageError, self.adcError)
         return out
+
+    def getErrors(self):
+        errors = [self.storageError, self.adcError]
+        strErrors = [formatErrorMessage(device, code) for device, code in enumerate(errors)]
+        return [error for index, error in enumerate(strErrors) if errors[index] != 0]
 
 
 class ResultPacket(RadioRecvPacket):
