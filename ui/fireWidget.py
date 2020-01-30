@@ -146,3 +146,6 @@ class FireWidget(QWidget):
             QApplication.instance().outputMessage(output)
         if len(self.errors) > 0:
             self.toggleFiringFields(False)
+
+    def exit(self): # TODO: confirm before closing if connected to radio
+        self.firing.exit()

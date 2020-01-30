@@ -74,7 +74,6 @@ class Firing(QObject):
 
     def exit(self):
         self.radioManager.stop()
-        return True
 
     # Todo: Outdated:
     def toDictionary(self):

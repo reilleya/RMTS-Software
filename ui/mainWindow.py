@@ -42,6 +42,7 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event=None):
         self.closed.emit()
+        self.ui.pageFire.exit()
         sys.exit()
 
     def gotoPage(self, page):
