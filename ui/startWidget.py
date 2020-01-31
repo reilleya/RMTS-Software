@@ -13,6 +13,7 @@ class StartWidget(QWidget):
     beginSetup = pyqtSignal()
     recvResults = pyqtSignal()
     editPreferences = pyqtSignal()
+    calibrate = pyqtSignal()
     showFireFile = pyqtSignal(dict)
 
     def __init__(self):
@@ -24,6 +25,7 @@ class StartWidget(QWidget):
         #self.ui.pushButtonResults.pressed.connect(self.recvResultsButtonPressed)
         self.ui.pushButtonPreferences.pressed.connect(self.editPreferences.emit)
         #self.ui.pushButtonSavedData.pressed.connect(self.showSavedResultsPressed)
+        self.ui.pushButtonCalibrate.pressed.connect(self.calibrate.emit)
 
     def setup(self):
         self.setupPortSelector()

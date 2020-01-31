@@ -13,6 +13,7 @@ class MainWindowPages(IntEnum):
     SETUP_FIRE = 2
     RESULTS = 3
     PREFERENCES = 4
+    CALIBRATE = 5
 
 class MainWindow(QMainWindow):
 
@@ -27,6 +28,7 @@ class MainWindow(QMainWindow):
         self.ui.pageStart.beginSetup.connect(self.gotoSetupPage)
         self.ui.pageStart.recvResults.connect(self.recvResults)
         self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
+        self.ui.pageStart.calibrate.connect(self.gotoCalibratePage)
         self.ui.pageStart.showFireFile.connect(self.showLoadedFiring)
 
         self.ui.pageRecvMotorData.nextPage.connect(self.recvResultsMotorDataSet)
@@ -37,12 +39,15 @@ class MainWindow(QMainWindow):
 
         self.ui.pagePreferences.back.connect(self.gotoStartPage)
 
+        self.ui.pageCalibrate.back.connect(self.gotoStartPage)
+
         self.firingConfig = None
         self.firing = None
 
     def closeEvent(self, event=None):
         self.closed.emit()
         self.ui.pageFire.exit()
+        self.ui.pageCalibrate.exit()
         sys.exit()
 
     def gotoPage(self, page):
@@ -60,6 +65,9 @@ class MainWindow(QMainWindow):
 
     def gotoResultsPage(self):
         self.gotoPage(MainWindowPages.RESULTS)
+
+    def gotoCalibratePage(self):
+        self.gotoPage(MainWindowPages.CALIBRATE)
 
     def gotoPreferencesPage(self):
         self.ui.pagePreferences.setup()

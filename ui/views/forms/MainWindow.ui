@@ -34,6 +34,7 @@
       <widget class="FireWidget" name="pageFire"/>
       <widget class="ResultsWidget" name="pageResults"/>
       <widget class="PreferencesWidget" name="pagePreferences"/>
+      <widget class="CalibrateWidget" name="pageCalibrate"/>
      </widget>
     </item>
    </layout>
@@ -73,6 +74,12 @@
    <class>PreferencesWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.preferencesWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CalibrateWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui.calibrateWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

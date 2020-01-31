@@ -3,21 +3,11 @@ import sys
 from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtCore import pyqtSignal
 
+from lib.filter import LowPass
 from lib.radio import RadioManager, SetupPacket, FirePacket, ResultPacket, StopPacket
 from lib.motor import FiringConfig
 from lib.firing import Firing
 from ui.views.FireWidget_ui import Ui_FireWidget
-
-class LowPass():
-    def __init__(self, historyLength):
-        self.maxSize = historyLength
-        self._buffer = []
-
-    def addData(self, data):
-        self._buffer.append(data)
-        if len(self._buffer) > self.maxSize:
-            self._buffer.pop(0)
-        return sum(self._buffer) / len(self._buffer)
 
 class FireWidget(QWidget):
 
@@ -148,4 +138,5 @@ class FireWidget(QWidget):
             self.toggleFiringFields(False)
 
     def exit(self): # TODO: confirm before closing if connected to radio
-        self.firing.exit()
+        if self.firing is not None:
+            self.firing.exit()
