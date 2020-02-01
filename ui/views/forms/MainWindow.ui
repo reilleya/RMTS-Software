@@ -30,7 +30,7 @@
        <number>0</number>
       </property>
       <widget class="StartWidget" name="pageStart"/>
-      <widget class="MotorDataWidget" name="pageRecvMotorData"/>
+      <widget class="MotorDataWidget" name="pageRawDataMotorInfo"/>
       <widget class="FireWidget" name="pageFire"/>
       <widget class="ResultsWidget" name="pageResults"/>
       <widget class="PreferencesWidget" name="pagePreferences"/>

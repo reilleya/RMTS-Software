@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="TransducerSelectorWidget" name="widgetTransducerSelector" native="true"/>
+   </item>
    <item alignment="Qt::AlignHCenter">
     <widget class="CollectionEditor" name="motorData" native="true">
      <property name="minimumSize">
@@ -84,6 +87,12 @@
    <class>CollectionEditor</class>
    <extends>QWidget</extends>
    <header location="global">pyFormGen.collectionEditor</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TransducerSelectorWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui.transducerSelectorWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
