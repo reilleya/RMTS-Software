@@ -11,10 +11,13 @@ class MotorConfig(PropertyCollection):
         self.props['throatDiameter'] = FloatProperty('Throat Diameter', 'm', 0.0001, 1)
 
 class FiringConfig(MotorConfig):
-    def __init__(self):
+    def __init__(self, propDict=None):
         super().__init__()
         self.props['recordingDuration'] = FloatProperty('Recording Duration', 's', 5, 20)
         self.props['firingDuration'] = FloatProperty('Fire Duration', 's', 0.25, 3)
+
+        if propDict is not None:
+            self.setProperties(propDict)
 
     def getMotorInfo(self):
         motorConfig = MotorConfig()

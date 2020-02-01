@@ -25,7 +25,7 @@ class StartWidget(QWidget):
         self.ui.pushButtonSetup.pressed.connect(self.beginSetup.emit)
         #self.ui.pushButtonResults.pressed.connect(self.recvResultsButtonPressed)
         self.ui.pushButtonPreferences.pressed.connect(self.editPreferences.emit)
-        #self.ui.pushButtonSavedData.pressed.connect(self.showSavedResultsPressed)
+        self.ui.pushButtonSavedData.pressed.connect(self.showSavedResultsPressed)
         self.ui.pushButtonCalibrate.pressed.connect(self.calibrate.emit)
         self.ui.pushButtonEditTransducer.pressed.connect(self.editTransducer.emit)
 
@@ -33,11 +33,6 @@ class StartWidget(QWidget):
         self.setupPortSelector()
         self.ui.comboBoxProfile.clear()
         self.ui.comboBoxProfile.addItems(QApplication.instance().sensorProfileManager.getProfileNames())
-
-    def recvResultsButtonPressed(self):
-        port = self.ui.comboBoxPort.currentText()
-
-        self.recvResults.emit(port, self.getConverter())
 
     def showSavedResultsPressed(self):
         path = QFileDialog.getOpenFileName(None, 'Load FIRE', '', 'Firing Data File (*.fire)')[0]

@@ -4,8 +4,9 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.MainWindow_ui import Ui_MainWindow
-from lib.radio import SetupPacket, FirePacket, ResultPacket, StopPacket, CalStartPacket, CalStopPacket
-from lib.firing import Firing
+from lib.converter import Converter
+from lib.motor import processRawData, FiringConfig
+
 
 class MainWindowPages(IntEnum):
     START = 0
@@ -27,13 +28,10 @@ class MainWindow(QMainWindow):
         self.app = app
 
         self.ui.pageStart.beginSetup.connect(self.gotoSetupPage)
-        self.ui.pageStart.recvResults.connect(self.recvResults)
         self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
         self.ui.pageStart.calibrate.connect(self.gotoCalibratePage)
         self.ui.pageStart.editTransducer.connect(self.gotoEditTransducerPage)
         self.ui.pageStart.showFireFile.connect(self.showLoadedFiring)
-
-        self.ui.pageRecvMotorData.nextPage.connect(self.recvResultsMotorDataSet)
 
         self.ui.pageFire.results.connect(self.gotoResultsPage)
 
@@ -44,9 +42,6 @@ class MainWindow(QMainWindow):
         self.ui.pageCalibrate.back.connect(self.gotoStartPage)
 
         self.ui.pageEditTransducer.back.connect(self.gotoStartPage)
-
-        self.firingConfig = None
-        self.firing = None
 
     def closeEvent(self, event=None):
         self.closed.emit()
@@ -85,18 +80,11 @@ class MainWindow(QMainWindow):
         self.firingConfig = config
         self.firing.setMotorInfo(config.getMotorInfo())
 
-    def recvResults(self, port, converter):
-        self.app.rm.run(port)
-        self.firing = Firing(converter)
-        self.gotoRecvMotorDataPage()
-
-    def recvResultsMotorDataSet(self, motorData):
-        self.firing.setMotorInfo(motorData)
-        self.ui.pageResults.setFiring(self.firing)
-        self.gotoResultsPage()
-
     def showLoadedFiring(self, data):
-        self.firing = Firing()
-        self.ui.pageResults.setFiring(self.firing)
-        self.firing.fromDictionary(data)
+        motor = processRawData(data['rawData'],
+            Converter(data['forceConv']),
+            Converter(data['pressureConv']),
+            FiringConfig(data['motorInfo'])
+        )
+        self.app.newResult(motor)
         self.gotoResultsPage()
