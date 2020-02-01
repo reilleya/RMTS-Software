@@ -36,6 +36,7 @@ class MotorResults():
         self.forceConv = forceConv
         self.presConv = presConv
         self.propMass = self.motorInfo.getProperty('propellantMass')
+        self.hardwareMass = self.motorInfo.getProperty('hardwareMass')
         self.nozzleThroat = self.motorInfo.getProperty('throatDiameter')
         self.raw = rawData
 
@@ -65,6 +66,9 @@ class MotorResults():
 
     def getPropMass(self):
         return self.propMass
+
+    def getHardwareMass(self):
+        return self.hardwareMass
 
     def getPeakThrust(self):
         return max(self.force)
@@ -137,9 +141,9 @@ def rejectOutliers(d):
 NUM_CAL_FRAMES = 10
 
 def processRawData(rawData, forceConv, presConv, motorInfo):
-    t = rawData['time']
-    f = rawData['force']
-    p = rawData['pressure']
+    t = rawData['time'][:]
+    f = rawData['force'][:]
+    p = rawData['pressure'][:]
 
     f = rejectOutliers(f)
     p = rejectOutliers(p)

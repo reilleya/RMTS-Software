@@ -30,18 +30,14 @@ class Firing(QObject):
         self.radioManager.run(port)
 
     def processRawData(self):
-        t = []
-        f = []
-        p = []
+        raw = {'time': [], 'force': [], 'pressure': []}
 
         recv = list(self.rawData.keys())
         recv.sort()
         for i in recv:
-            t.append(self.rawData[i].time)
-            f.append(self.rawData[i].force)
-            p.append(self.rawData[i].pressure)
-
-        raw = {'time':t[:], 'force':f[:], 'pressure':p[:]}
+            raw['time'].append(self.rawData[i].time)
+            raw['force'].append(self.rawData[i].force)
+            raw['pressure'].append(self.rawData[i].pressure)
 
         return processRawData(raw, self.forceConverter, self.pressureConverter, self.motorInfo)
 

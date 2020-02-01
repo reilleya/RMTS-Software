@@ -89,11 +89,11 @@
         <property name="title">
          <string>Save</string>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QPushButton" name="pushButtonFIRE">
+          <widget class="QPushButton" name="pushButtonCSV">
            <property name="text">
-            <string>Firing Data</string>
+            <string>CSV</string>
            </property>
           </widget>
          </item>
@@ -105,9 +105,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButtonCSV">
+          <widget class="QPushButton" name="pushButtonFIRE">
            <property name="text">
-            <string>CSV</string>
+            <string>Firing Data</string>
            </property>
           </widget>
          </item>

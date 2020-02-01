@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.ResultsWidget_ui import Ui_ResultsWidget
+from .engExporterWidget import engExportWidget
 
 from lib.firing import Firing
 
@@ -18,12 +19,16 @@ class ResultsWidget(QWidget):
 
         self.motorData = None
 
+        self.engExporter = engExportWidget()
+        self.engExporter.newData.connect(self.exportENG)
+
         self.ui.checkBoxForce.stateChanged.connect(self.regraphData)
         self.ui.checkBoxPressure.stateChanged.connect(self.regraphData)
         self.ui.radioButtonTranslated.toggled.connect(self.regraphData)
         self.ui.radioButtonRaw.toggled.connect(self.regraphData)
 
         self.ui.pushButtonFIRE.pressed.connect(self.saveFIRE)
+        self.ui.pushButtonENG.pressed.connect(self.saveENG)
         self.ui.pushButtonCSV.pressed.connect(self.saveCSV)
 
         self.ui.pushButtonBack.pressed.connect(self.back.emit) # Todo: confirm they have saved and clear firing and plot
@@ -83,3 +88,44 @@ class ResultsWidget(QWidget):
             data = self.motorData.getCSV()
             with open(path, 'w') as outFile:
                 outFile.write(data)
+
+    def saveENG(self):
+        self.engExporter.show()
+
+    def exportENG(self, config):
+        title = 'Save ENG'
+        formats = 'RASP ENG File (*.eng)'
+        if config['append'] == 'Append':
+            mode = 'a'
+            path = QFileDialog.getSaveFileName(None, title, '', formats, options=QFileDialog.DontConfirmOverwrite)[0]
+        else:
+            mode = 'w'
+            path = QFileDialog.getSaveFileName(None, title, '', formats)[0]
+        if path is not None:
+            if not path.endswith('.eng'):
+                path += '.eng'
+            with open(path, mode) as outFile:
+                propMass = self.motorData.getPropMass()
+                contents = ' '.join([config['designation'],
+                                     str(round(config['diameter'] * 1000, 6)),
+                                     str(round(config['length'] * 1000, 6)),
+                                     'P',
+                                     str(round(propMass, 6)),
+                                     str(round(propMass + self.motorData.getHardwareMass(), 6)),
+                                     config['manufacturer']
+                                     ]) + '\n'
+
+                timeData = self.motorData.getTime()
+                forceData = self.motorData.getForce()
+                # Add on a 0-thrust datapoint right after the burn to satisfy RAS Aero
+                if forceData[-1] != 0:
+                    timeData.append(timeData[-1] + 0.01)
+                    forceData.append(0)
+                for time, force in zip(timeData, forceData):
+                    if time == 0 and force == 0: # Increase the first point so it isn't 0 thrust
+                        force += 0.01
+                    contents += str(round(time, 4)) + ' ' + str(round(force, 4)) + '\n'
+
+                contents += ';\n;\n'
+
+                outFile.write(contents)

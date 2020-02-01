@@ -25,9 +25,9 @@ class MotorDataWidget(QWidget):
             if datapoint == '0,0,0':
                 break
             parts = datapoint.split(',')
-            self.raw['time'].append(float(parts[0]))
-            self.raw['force'].append(float(parts[1]))
-            self.raw['pressure'].append(float(parts[2]))
+            self.raw['time'].append(int(parts[0]))
+            self.raw['force'].append(int(parts[1]))
+            self.raw['pressure'].append(int(parts[2]))
         self.ui.widgetTransducerSelector.reset()
         self.ui.motorData.setPreferences(QApplication.instance().getPreferences())
         self.ui.motorData.loadProperties(MotorConfig())
