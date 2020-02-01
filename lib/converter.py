@@ -1,34 +1,26 @@
+from pyFormGen.properties import PropertyCollection, StringProperty, FloatProperty, EnumProperty
 from enum import Enum
 
 class ConverterType(Enum):
     LOAD_CELL = 0
     PRESSURE_TRANSDUCER = 1
 
-class Converter():
+class Converter(PropertyCollection):
+    def __init__(self, propDict=None):
+        super().__init__()
+        self.props['name'] = StringProperty('Name')
+        self.props['type'] = EnumProperty('Type', ['Load Cell', 'Pressure Transducer'])
+        self.props['ratio'] = FloatProperty('Ratio', '', -1e10, 1e10)
+        self.props['offset'] = FloatProperty('Offset', '', -1e10, 1e10)
 
-    TYPES = {}
+        if propDict is not None:
+            self.setProperties(propDict)
 
-    def __init__(self, transducer, offset, ratio):
-        self.transducer = transducer
-        self.offset = offset
-        self.ratio = ratio
+    def convert(self, reading):
+        return self.getProperty('ratio') * reading + self.getProperty('offset')
 
-    def convert(self, force):
-        return self.ratio * force + self.offset
-
-    def toRaw(self, force):
-        return (force - self.offset) / self.ratio
+    def toRaw(self, value):
+        return (value - self.getProperty('offset')) / self.getProperty('ratio')
 
     def convertMultiple(self, readings):
         return [self.convert(r) for r in readings]
-
-    @staticmethod
-    def fromDictionary(d):
-        return Converter(d['type'], d['offset'], d['ratio'])
-
-    def toDictionary(self):
-        return {
-            'type': self.transducer,
-            'offset': self.offset,
-            'ratio': self.ratio,
-        }

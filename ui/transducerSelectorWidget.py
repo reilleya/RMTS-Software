@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QApplication
 
-from lib.converter import ConverterType
 from ui.views.TransducerSelectorWidget_ui import Ui_TransducerSelectorWidget
 
 class TransducerSelectorWidget(QWidget):
@@ -13,8 +12,8 @@ class TransducerSelectorWidget(QWidget):
 
     def reset(self):
         self.ui.comboBoxLoadCell.clear()
-        self.ui.comboBoxLoadCell.addItems(self.transducerManger.getProfileNames(ConverterType.LOAD_CELL))
-        self.ui.comboBoxPressureTransducer.addItems(self.transducerManger.getProfileNames(ConverterType.PRESSURE_TRANSDUCER))
+        self.ui.comboBoxLoadCell.addItems(self.transducerManger.getProfileNames('Load Cell'))
+        self.ui.comboBoxPressureTransducer.addItems(self.transducerManger.getProfileNames('Pressure Transducer'))
 
     def getConverters(self):
         force = self.transducerManger.getProfile(self.ui.comboBoxLoadCell.currentText())

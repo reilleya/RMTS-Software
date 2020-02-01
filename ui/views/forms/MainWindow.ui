@@ -35,6 +35,7 @@
       <widget class="ResultsWidget" name="pageResults"/>
       <widget class="PreferencesWidget" name="pagePreferences"/>
       <widget class="CalibrateWidget" name="pageCalibrate"/>
+      <widget class="TransducerEditorWidget" name="pageEditTransducer"/>
      </widget>
     </item>
    </layout>
@@ -80,6 +81,12 @@
    <class>CalibrateWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.calibrateWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TransducerEditorWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui.transducerEditorWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

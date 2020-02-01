@@ -10,29 +10,29 @@ class SensorProfileManager(QObject):
 
     def __init__(self):
         super().__init__()
-        self.profiles = {}
+        self.profiles = []
 
     def loadProfiles(self):
         try:
             with open(self.profilesPath, 'r') as readLocation:
-                fileData = yaml.load(readLocation)
-                self.profiles = {name: Converter.fromDictionary(fileData[name]) for name in fileData}
+                self.profiles = [Converter(properties) for properties in yaml.load(readLocation)]
                 self.profilesChanged.emit()
         except Exception as err:
             print('Could not read sensor profiles, using default. Error: ' + str(err))
-            self.savePreferences()
+            self.saveProfiles()
 
-        self.saveProfiles()
         self.profilesChanged.emit()
 
     def saveProfiles(self):
         with open(self.profilesPath, 'w') as saveLocation:
-            yaml.dump({name:self.profiles[name].toDictionary() for name in self.profiles}, saveLocation)
+            yaml.dump([profile.getProperties() for profile in self.profiles], saveLocation)
 
     def getProfile(self, name):
-        return self.profiles[name]
+        for profile in self.profiles:
+            if profile.getProperty('name') == name:
+                return profile
 
     def getProfileNames(self, filterType=None):
         if filterType is None:
-            return self.profiles.keys()
-        return filter(lambda name: self.profiles[name].transducer == filterType, self.profiles.keys())
+            return [prof.getProperty('name') for prof in self.profiles]
+        return filter(lambda name: self.getProfile(name).getProperty('type') == filterType, self.getProfileNames())

@@ -118,8 +118,8 @@ class MotorResults():
         out = {
             'rawData': self.raw,
             'motorInfo': self.motorInfo.getProperties(),
-            'forceConv': self.forceConv.toDictionary(),
-            'pressureConv': self.presConv.toDictionary()
+            'forceConv': self.forceConv.getProperties(),
+            'pressureConv': self.presConv.getProperties()
         }
         return out
 
