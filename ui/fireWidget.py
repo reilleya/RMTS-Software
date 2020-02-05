@@ -11,6 +11,7 @@ from ui.views.FireWidget_ui import Ui_FireWidget
 
 class FireWidget(QWidget):
 
+    back = pyqtSignal()
     results = pyqtSignal()
 
     def __init__(self):
@@ -35,6 +36,7 @@ class FireWidget(QWidget):
 
         self.ui.firingConfig.setPreferences(QApplication.instance().getPreferences())
 
+        self.ui.pushButtonBack.pressed.connect(self.backPressed)
         self.ui.pushButtonResults.pressed.connect(self.results.emit)
 
         self.reset()
@@ -140,3 +142,8 @@ class FireWidget(QWidget):
     def exit(self): # TODO: confirm before closing if connected to radio
         if self.firing is not None:
             self.firing.exit()
+
+    def backPressed(self): # TODO: confirm before closing if connected to radio
+        if self.firing is not None:
+            self.firing.exit()
+        self.back.emit()

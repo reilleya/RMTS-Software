@@ -34,6 +34,7 @@ class MainWindow(QMainWindow):
         self.ui.pageRawDataMotorInfo.back.connect(self.gotoStartPage)
         self.ui.pageRawDataMotorInfo.nextPage.connect(self.gotoResultsPage)
 
+        self.ui.pageFire.back.connect(self.gotoStartPage)
         self.ui.pageFire.results.connect(self.gotoResultsPage)
 
         self.ui.pageResults.back.connect(self.gotoStartPage)
@@ -57,6 +58,7 @@ class MainWindow(QMainWindow):
         self.gotoPage(MainWindowPages.START)
 
     def gotoSetupPage(self):
+        self.ui.pageFire.reset()
         self.gotoPage(MainWindowPages.SETUP_FIRE)
 
     def gotoRawDataMotorInfoPage(self, raw):

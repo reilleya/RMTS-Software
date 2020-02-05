@@ -13,6 +13,7 @@ class TransducerSelectorWidget(QWidget):
     def reset(self):
         self.ui.comboBoxLoadCell.clear()
         self.ui.comboBoxLoadCell.addItems(self.transducerManger.getProfileNames('Load Cell'))
+        self.ui.comboBoxPressureTransducer.clear()
         self.ui.comboBoxPressureTransducer.addItems(self.transducerManger.getProfileNames('Pressure Transducer'))
 
     def getConverters(self):
