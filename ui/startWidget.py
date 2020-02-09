@@ -27,7 +27,7 @@ class StartWidget(QWidget):
         self.ui.setupUi(self)
 
         self.ui.pushButtonSetup.pressed.connect(self.beginSetup.emit)
-        #self.ui.pushButtonResults.pressed.connect(self.recvResultsButtonPressed)
+        self.ui.pushButtonRecvResults.pressed.connect(self.recvResults.emit)
         self.ui.pushButtonCalibrate.pressed.connect(self.calibrate.emit)
 
         self.ui.pushButtonRawData.pressed.connect(self.processRawData)

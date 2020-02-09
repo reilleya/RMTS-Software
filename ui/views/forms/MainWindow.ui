@@ -36,6 +36,7 @@
       <widget class="PreferencesWidget" name="pagePreferences"/>
       <widget class="CalibrateWidget" name="pageCalibrate"/>
       <widget class="TransducerEditorWidget" name="pageEditTransducer"/>
+      <widget class="RecvResultsWidget" name="pageRecvResults"/>
      </widget>
     </item>
    </layout>
@@ -87,6 +88,12 @@
    <class>TransducerEditorWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.transducerEditorWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RecvResultsWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">ui.recvResultsWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

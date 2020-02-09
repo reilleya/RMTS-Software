@@ -50,3 +50,8 @@ class GraphWidget(FigureCanvas):
         self.forceAxes.set_ylim(bottom=0)
         self.pressureAxes.set_ylim(bottom=0)
         self.draw()
+
+    def clear(self):
+        self.forceAxes.clear()
+        self.pressureAxes.clear()
+        self.draw()

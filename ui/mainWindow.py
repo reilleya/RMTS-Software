@@ -13,6 +13,7 @@ class MainWindowPages(IntEnum):
     PREFERENCES = 4
     CALIBRATE = 5
     EDIT_TRANSDUCER = 6
+    RECV_RESULTS = 7
 
 class MainWindow(QMainWindow):
 
@@ -25,6 +26,7 @@ class MainWindow(QMainWindow):
         self.app = app
 
         self.ui.pageStart.beginSetup.connect(self.gotoSetupPage)
+        self.ui.pageStart.recvResults.connect(self.gotoRecvResultsPage)
         self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
         self.ui.pageStart.calibrate.connect(self.gotoCalibratePage)
         self.ui.pageStart.editTransducer.connect(self.gotoEditTransducerPage)
@@ -37,7 +39,7 @@ class MainWindow(QMainWindow):
         self.ui.pageFire.back.connect(self.gotoStartPage)
         self.ui.pageFire.results.connect(self.gotoResultsPage)
 
-        self.ui.pageResults.back.connect(self.gotoStartPage)
+        self.ui.pageResults.back.connect(self.exitResults)
 
         self.ui.pagePreferences.back.connect(self.gotoStartPage)
 
@@ -45,10 +47,14 @@ class MainWindow(QMainWindow):
 
         self.ui.pageEditTransducer.back.connect(self.gotoStartPage)
 
+        self.ui.pageRecvResults.back.connect(self.gotoStartPage)
+        self.ui.pageRecvResults.results.connect(self.gotoResultsPage)
+
     def closeEvent(self, event=None):
         self.closed.emit()
         self.ui.pageFire.exit()
         self.ui.pageCalibrate.exit()
+        self.ui.pageRecvResults.exit()
         sys.exit()
 
     def gotoPage(self, page):
@@ -66,6 +72,7 @@ class MainWindow(QMainWindow):
         self.gotoPage(MainWindowPages.RAW_DATA_MOTOR_INFO)
 
     def gotoResultsPage(self):
+        self.ui.pageResults.reset()
         self.gotoPage(MainWindowPages.RESULTS)
 
     def gotoCalibratePage(self):
@@ -78,3 +85,12 @@ class MainWindow(QMainWindow):
     def gotoEditTransducerPage(self):
         self.ui.pageEditTransducer.setup()
         self.gotoPage(MainWindowPages.EDIT_TRANSDUCER)
+
+    def gotoRecvResultsPage(self):
+        self.ui.pageRecvResults.setup()
+        self.gotoPage(MainWindowPages.RECV_RESULTS)
+
+    def exitResults(self):
+        self.ui.pageRecvResults.exit()
+        self.ui.pageFire.exit()
+        self.gotoStartPage()

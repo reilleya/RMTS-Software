@@ -33,6 +33,19 @@ class ResultsWidget(QWidget):
 
         self.ui.pushButtonBack.pressed.connect(self.back.emit) # Todo: confirm they have saved and clear firing and plot
 
+        self.resultsFields = [
+            self.ui.labelMotorDesignation, self.ui.labelBurnTime, self.ui.labelStartupTime,
+            self.ui.labelImpulse, self.ui.labelPropellantMass, self.ui.labelISP,
+            self.ui.labelPeakThrust, self.ui.labelAverageThrust, self.ui.labelDatapoints,
+            self.ui.labelPeakPressure, self.ui.labelAveragePressure, self.ui.labelCStar
+        ]
+
+    def reset(self):
+        self.motorData = None
+        self.ui.widgetGraph.clear()
+        for field in self.resultsFields:
+            field.setText('-')
+
     def regraphData(self):
         force = None
         pressure = None
