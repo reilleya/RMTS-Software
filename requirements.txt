@@ -4,3 +4,5 @@ pyqt-distutils==0.7.3
 PyQt5==5.12.1
 PyQt5-sip==4.19.15
 PyYAML==5.1
+pySerial==3.4
+git+https://github.com/reilleya/pyFormGen.git
