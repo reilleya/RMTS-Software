@@ -1,5 +1,7 @@
 import sys
 import yaml
+import binascii
+
 from serial.tools.list_ports import comports
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
 from PyQt5.QtCore import pyqtSignal
@@ -15,7 +17,7 @@ class StartWidget(QWidget):
     recvResults = pyqtSignal()
     calibrate = pyqtSignal()
 
-    showRawData = pyqtSignal(str)
+    showRawData = pyqtSignal(bytes)
     showResultsPage = pyqtSignal()
 
     editPreferences = pyqtSignal()
@@ -52,7 +54,7 @@ class StartWidget(QWidget):
                 self.showResultsPage.emit()
 
     def processRawData(self):
-        path = QFileDialog.getOpenFileName(None, 'Load Raw Data', '', 'Raw Firing Data File (*.TXT)')[0]
+        path = QFileDialog.getOpenFileName(None, 'Load Raw Data', '', 'Raw Firing Data File (*.LOG)')[0]
         if path != '':
-            with open(path, 'r') as fileData:
-                self.showRawData.emit(fileData.read())
+            with open(path, 'rb') as fileData:
+                self.showRawData.emit(binascii.hexlify(fileData.read()))

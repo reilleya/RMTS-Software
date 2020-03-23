@@ -20,14 +20,23 @@ class MotorDataWidget(QWidget):
 
     def setup(self, data):
         self.raw = {'time': [], 'force': [], 'pressure': []}
-        data = data.split('\n')
-        for datapoint in data:
-            if datapoint == '0,0,0':
-                break
-            parts = datapoint.split(',')
-            self.raw['time'].append(int(parts[0]))
-            self.raw['force'].append(int(parts[1]))
-            self.raw['pressure'].append(int(parts[2]))
+        rawFrames = []
+        minTime = 0
+
+        # Cut the data up into frames of the correct size
+        for start in range(0, len(data), 16):
+            rawFrames.append(data[start:start+16])
+        # Separate the frames into time, force, and pressure
+        for frame in rawFrames:
+            # Account for (16 bit) time looping around
+            t = minTime + int(frame[0:2], 16) + (256 * int(frame[2:4], 16))
+            if len(self.raw['time']) > 0 and t < self.raw['time'][-1]:
+                minTime += 2 ** 16
+                t += minTime
+            self.raw['time'].append(t)
+            self.raw['force'].append(int(frame[4:6], 16) + (int(frame[6:8], 16) << 8) + (int(frame[8:10], 16) << 16))
+            self.raw['pressure'].append(int(frame[10:12], 16) + (int(frame[12:14], 16) << 8) + (int(frame[14:16], 16) << 16))
+
         self.ui.widgetTransducerSelector.reset()
         self.ui.motorData.setPreferences(QApplication.instance().getPreferences())
         self.ui.motorData.loadProperties(MotorConfig())
