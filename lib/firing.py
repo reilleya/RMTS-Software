@@ -57,9 +57,8 @@ class Firing(QObject):
                     self.newGraph.emit(res)
 
     def fire(self):
-        recordingDur = int(self.motorInfo.getProperty('recordingDuration') * 1000)
         firingDur = int(self.motorInfo.getProperty('firingDuration') * 1000)
-        firePack = FirePacket(recordingDur, firingDur)
+        firePack = FirePacket(firingDur)
         self.radioManager.sendPacket(firePack)
         self.fired.emit()
 

@@ -30,14 +30,14 @@ class MainWindow(QMainWindow):
         self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
         self.ui.pageStart.calibrate.connect(self.gotoCalibratePage)
         self.ui.pageStart.editTransducer.connect(self.gotoEditTransducerPage)
-        self.ui.pageStart.showResultsPage.connect(self.gotoResultsPage)
+        self.ui.pageStart.showResultsPage.connect(lambda: self.gotoResultsPage(False))
         self.ui.pageStart.showRawData.connect(self.gotoRawDataMotorInfoPage)
 
         self.ui.pageRawDataMotorInfo.back.connect(self.gotoStartPage)
-        self.ui.pageRawDataMotorInfo.nextPage.connect(self.gotoResultsPage)
+        self.ui.pageRawDataMotorInfo.nextPage.connect(lambda: self.gotoResultsPage(False))
 
         self.ui.pageFire.back.connect(self.gotoStartPage)
-        self.ui.pageFire.results.connect(self.gotoResultsPage)
+        self.ui.pageFire.results.connect(lambda: self.gotoResultsPage(True))
 
         self.ui.pageResults.back.connect(self.exitResults)
 
@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
         self.ui.pageEditTransducer.back.connect(self.gotoStartPage)
 
         self.ui.pageRecvResults.back.connect(self.gotoStartPage)
-        self.ui.pageRecvResults.results.connect(self.gotoResultsPage)
+        self.ui.pageRecvResults.results.connect(lambda: self.gotoResultsPage(True))
 
     def closeEvent(self, event=None):
         self.closed.emit()
@@ -71,8 +71,9 @@ class MainWindow(QMainWindow):
         self.ui.pageRawDataMotorInfo.setup(raw)
         self.gotoPage(MainWindowPages.RAW_DATA_MOTOR_INFO)
 
-    def gotoResultsPage(self):
-        self.ui.pageResults.reset()
+    def gotoResultsPage(self, reset):
+        if reset:
+            self.ui.pageResults.reset()
         self.gotoPage(MainWindowPages.RESULTS)
 
     def gotoCalibratePage(self):

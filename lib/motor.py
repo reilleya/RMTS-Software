@@ -13,7 +13,6 @@ class MotorConfig(PropertyCollection):
 class FiringConfig(MotorConfig):
     def __init__(self, propDict=None):
         super().__init__()
-        self.props['recordingDuration'] = FloatProperty('Recording Duration', 's', 5, 20)
         self.props['firingDuration'] = FloatProperty('Fire Duration', 's', 0.25, 3)
 
         if propDict is not None:

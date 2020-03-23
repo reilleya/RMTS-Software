@@ -83,13 +83,13 @@ class ResultPacket(RadioRecvPacket):
 
 
 class FirePacket(RadioSendPacket):
-    def __init__(self, recordingDuration, fireDuration):
+    def __init__(self, fireDuration):
         super().__init__(128, 0)
-        self.recordingDuration = recordingDuration
         self.fireDuration = fireDuration
 
     def getPayload(self):
-        payload = self.pack16Bit(self.recordingDuration) + self.pack16Bit(self.fireDuration)
+        # First 16 bits is the deprecated recording time
+        payload = self.pack16Bit(0) + self.pack16Bit(self.fireDuration)
         return self.padPayload(payload)
 
 class StopPacket(RadioSendPacket):
