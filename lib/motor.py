@@ -150,13 +150,18 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     # Remove amplifier offset
     # Assumes that there are 10+ points before thrust begins. The firmware waits 10 before firing to make sure.
     start = f[:NUM_CAL_FRAMES]
-    startAverage = sum(start)/len(start)
+    start.sort()
+    startAverage = start[5]
     if motorInfo.getProperty('motorOrientation') == 'Vertical':
         zero = (motorInfo.getProperty('hardwareMass') + motorInfo.getProperty('hardwareMass')) * 9.81
     else:
         zero = 0
     offset = startAverage - forceConv.toRaw(zero)
     f = [d - offset for d in f]
+
+    t = t[NUM_CAL_FRAMES:]
+    f = f[NUM_CAL_FRAMES:]
+    p = p[NUM_CAL_FRAMES:]
 
     # Convert to proper units
     t = [d / 1000 for d in t]
