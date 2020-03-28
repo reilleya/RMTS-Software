@@ -66,6 +66,7 @@ class FireWidget(QWidget):
         self.ui.pushButtonStop.setEnabled(False)
         self.ui.pushButtonFire.setEnabled(False)
         self.ui.pushButtonResults.setEnabled(True)
+        self.ui.widgetDataAge.reset(False)
 
     def toggleSetupFields(self, enabled):
         for field in self.setupFields:
@@ -88,6 +89,9 @@ class FireWidget(QWidget):
         self.firing.fired.connect(self.enableResults)
         #self.firing.stopped.connect(self.showResults)
 
+        self.ui.widgetDataAge.start()
+        self.firing.newSetupPacket.connect(self.ui.widgetDataAge.reset)
+        self.firing.newErrorPacket.connect(self.ui.widgetDataAge.reset)
         self.toggleSetupFields(False)
         self.toggleFiringFields(True)
 

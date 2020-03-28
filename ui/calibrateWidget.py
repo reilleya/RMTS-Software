@@ -23,6 +23,7 @@ class CalibrateWidget(QWidget):
     def reset(self):
         self.ui.lineEditLoadCell.setText("")
         self.ui.lineEditPressureTransducer.setText("")
+        self.ui.widgetDataAge.reset(False)
 
     def backPressed(self):
         self.exit()
@@ -35,6 +36,7 @@ class CalibrateWidget(QWidget):
         self.calibrationRun = Calibration(port)
         self.calibrationRun.newLoadCellReading.connect(self.updateLoadCellOutput)
         self.calibrationRun.newPressureTransducerReading.connect(self.updatePressureTransducerOutput)
+        self.calibrationRun.resetDataAge.connect(self.ui.widgetDataAge.reset)
 
     def updateLoadCellOutput(self, value):
         self.ui.lineEditLoadCell.setText(str(int(value)))

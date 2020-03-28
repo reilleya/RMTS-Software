@@ -153,14 +153,14 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>150</width>
+       <width>175</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>1050</width>
-       <height>150</height>
+       <height>175</height>
       </size>
      </property>
      <property name="title">
@@ -182,7 +182,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayoutDataAge">
           <item>
-           <widget class="QLineEdit" name="lineEditDataAge">
+           <widget class="DataAgeWidget" name="widgetDataAge">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -196,7 +196,7 @@
              </font>
             </property>
             <property name="text">
-             <string>- s</string>
+             <string>0.0</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -365,10 +365,16 @@
    </item>
    <item>
     <widget class="QGroupBox" name="groupBoxFire">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>175</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>140</height>
+       <height>175</height>
       </size>
      </property>
      <property name="title">
@@ -414,13 +420,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>125</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>100</width>
+            <width>125</width>
             <height>16777215</height>
            </size>
           </property>
@@ -480,13 +486,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>125</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>100</width>
+            <width>125</width>
             <height>100</height>
            </size>
           </property>
@@ -570,6 +576,11 @@
    <extends>QWidget</extends>
    <header location="global">ui.transducerSelectorWidget</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DataAgeWidget</class>
+   <extends>QLineEdit</extends>
+   <header location="global">ui.dataAgeWidget</header>
   </customwidget>
  </customwidgets>
  <resources/>
