@@ -24,13 +24,13 @@ class GraphWidget(FigureCanvas):
         self.forceAxes = self.figure.add_subplot(111)
         self.pressureAxes = self.forceAxes.twinx()
 
-    def convertAndPlot(self, time, force=None, pressure=None):
+    def convertAndPlot(self, time, force=None, pressure=None, gridLines=False):
         app = QApplication.instance()
         if force is not None:
             force = app.convertAllToUserUnits(force, 'N')
         if pressure is not None:
             pressure = app.convertAllToUserUnits(pressure, 'Pa')
-        self.plotData(time, force, pressure)
+        self.plotData(time, force, pressure, gridLines)
         self.forceAxes.set_xlabel('Time (s)')
         if force is not None:
             self.forceAxes.set_ylabel('Force ({})'.format(app.getUserUnit('N')))
@@ -40,7 +40,7 @@ class GraphWidget(FigureCanvas):
             self.pressureAxes.yaxis.label.set_color(PRESSURE_COLOR)
         self.draw()
 
-    def plotData(self, time, force=None, pressure=None):
+    def plotData(self, time, force=None, pressure=None, gridLines=False):
         self.forceAxes.clear()
         self.pressureAxes.clear()
         if force is not None:
@@ -48,6 +48,7 @@ class GraphWidget(FigureCanvas):
         if pressure is not None:
             self.pressureAxes.plot(time, pressure, color=PRESSURE_COLOR)
         self.forceAxes.set_ylim(bottom=0)
+        self.forceAxes.grid(gridLines)
         self.pressureAxes.set_ylim(bottom=0)
         self.draw()
 

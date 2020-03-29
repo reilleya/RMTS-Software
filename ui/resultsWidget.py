@@ -24,6 +24,7 @@ class ResultsWidget(QWidget):
 
         self.ui.checkBoxForce.stateChanged.connect(self.regraphData)
         self.ui.checkBoxPressure.stateChanged.connect(self.regraphData)
+        self.ui.checkBoxGridLines.stateChanged.connect(self.regraphData)
         self.ui.radioButtonTranslated.toggled.connect(self.regraphData)
         self.ui.radioButtonRaw.toggled.connect(self.regraphData)
 
@@ -49,6 +50,7 @@ class ResultsWidget(QWidget):
     def regraphData(self):
         force = None
         pressure = None
+        grid = self.ui.checkBoxGridLines.isChecked()
         if self.ui.radioButtonTranslated.isChecked():
             if self.motorData is None:
                 return
@@ -56,13 +58,13 @@ class ResultsWidget(QWidget):
                 force = self.motorData.getForce()
             if self.ui.checkBoxPressure.isChecked():
                 pressure = self.motorData.getPressure()
-            self.ui.widgetGraph.convertAndPlot(self.motorData.getTime(), force=force, pressure=pressure)
+            self.ui.widgetGraph.convertAndPlot(self.motorData.getTime(), force=force, pressure=pressure, gridLines=grid)
         else:
             if self.ui.checkBoxForce.isChecked():
                 force = self.motorData.getRawForce()
             if self.ui.checkBoxPressure.isChecked():
                 pressure = self.motorData.getRawPressure()
-            self.ui.widgetGraph.plotData(self.motorData.getRawTime(), force=force, pressure=pressure)
+            self.ui.widgetGraph.plotData(self.motorData.getRawTime(), force=force, pressure=pressure, gridLines=grid)
 
     def showResults(self, motorData):
         app = QApplication.instance()

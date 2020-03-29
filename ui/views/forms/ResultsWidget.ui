@@ -47,6 +47,23 @@
          <string>Show</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBoxForce">
+           <property name="text">
+            <string>Force</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QRadioButton" name="radioButtonRaw">
+           <property name="text">
+            <string>Raw</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="1" colspan="2">
           <widget class="QRadioButton" name="radioButtonTranslated">
            <property name="text">
@@ -64,20 +81,10 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxForce">
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="checkBoxGridLines">
            <property name="text">
-            <string>Force</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QRadioButton" name="radioButtonRaw">
-           <property name="text">
-            <string>Raw</string>
+            <string>Grid Lines</string>
            </property>
           </widget>
          </item>
