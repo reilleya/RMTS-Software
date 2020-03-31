@@ -1,10 +1,19 @@
+from enum import Enum
+
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from .converter import Converter
-from .radio import RadioManager, SetupPacket, FirePacket, ResultPacket, ErrorPacket, StopPacket
+from .radio import RadioManager, SetupPacket, FirePacket, ResultPacket, ErrorPacket, StopPacket, VersionPacket
 from .motor import processRawData
+from .firmwareVersions import checkVersionPacket
 
 PACKET_STRIDE = 10
+
+class VERSION_CHECK_STATE(Enum):
+    UNCHECKED = 1
+    SUCCESS = 2
+    FAILURE = 3
+
 
 class Firing(QObject):
     newGraph = pyqtSignal(object)
@@ -17,6 +26,8 @@ class Firing(QObject):
 
     def __init__(self, forceConverter, pressureConverter, motorInfo, port):
         super().__init__()
+        self.versionChecked = VERSION_CHECK_STATE.UNCHECKED
+
         self.rawData = {}
         self.startIndex = None
         self.lastSend = 0
@@ -42,6 +53,16 @@ class Firing(QObject):
         return processRawData(raw, self.forceConverter, self.pressureConverter, self.motorInfo)
 
     def newPacket(self, packet):
+        if type(packet) is VersionPacket and self.versionChecked == VERSION_CHECK_STATE.UNCHECKED:
+            if checkVersionPacket(packet):
+                self.versionChecked = VERSION_CHECK_STATE.SUCCESS
+            else:
+                self.versionChecked = VERSION_CHECK_STATE.FAILURE
+                print('Board reported an unsupported hardware or software revision.')
+            return
+        if not self.versionChecked == VERSION_CHECK_STATE.SUCCESS:
+            # Don't process any packets until we are sure we know how to talk to this board
+            return
         if type(packet) is SetupPacket:
             self.newSetupPacket.emit(packet)
         elif type(packet) is ErrorPacket:
@@ -57,6 +78,10 @@ class Firing(QObject):
                     self.newGraph.emit(res)
 
     def fire(self):
+        if not self.versionChecked:
+            # This method should never be called if a version check hasn't passed, but just in case...
+            print('Attempted to fire without version check!')
+            return
         firingDur = int(self.motorInfo.getProperty('firingDuration') * 1000)
         firePack = FirePacket(firingDur)
         self.radioManager.sendPacket(firePack)
