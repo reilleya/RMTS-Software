@@ -7,6 +7,7 @@ from lib.filter import LowPass
 from lib.radio import RadioManager, SetupPacket, FirePacket, ResultPacket, StopPacket
 from lib.motor import FiringConfig
 from lib.firing import Firing
+from lib.logger import logger
 from ui.views.FireWidget_ui import Ui_FireWidget
 
 class FireWidget(QWidget):
@@ -102,28 +103,35 @@ class FireWidget(QWidget):
         else:
             self.tareData.append(packet.force)
             if len(self.tareData) == 10:
-                self.tareOffset = self.forceConv.convert(sum(self.tareData) / len(self.tareData))
+                tareAvg = sum(self.tareData) / len(self.tareData)
+                self.tareOffset = self.forceConv.convert(tareAvg)
                 self.tared = True
+                logger.log('Tare complete, offset = ({:.4f} conv, {:.4f} raw)'.format(self.tareOffset, tareAvg))
         realPressure = self.pressConv.convert(self.pressureBuff.addData(packet.pressure))
         self.ui.lineEditPressure.setText(QApplication.instance().convertToUserAndFormat(realPressure, 'Pa', 1))
         self.ui.lineEditContinuity.setText("Yes" if packet.continuity else "No")
 
     def armBoxTextChanged(self):
-        self.ui.pushButtonFire.setEnabled(self.ui.lineEditArm.text() == "ARM")
+        enabled = self.ui.lineEditArm.text() == "ARM"
+        self.ui.pushButtonFire.setEnabled(enabled)
+        if enabled:
+            logger.log('Fire button enabled')
 
     def stopBoxTextChanged(self):
         self.ui.pushButtonStop.setEnabled(self.ui.lineEditStop.text() == "STOP")
 
     def fireButtonPressed(self):
         if self.firing is None:
-            print("Tried to fire without a firing!")
+            logger.error("Tried to fire without a firing!")
             return
+        logger.log('Fire button pressed')
         self.firing.fire()
 
     def stopButtonPressed(self):
         if self.firing is None:
-            print("Tried to stop without a firing!")
+            logger.error("Tried to stop without a firing!")
             return
+        logger.log('Stop button pressed')
         self.firing.stop()
 
     def enableResults(self):

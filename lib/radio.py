@@ -5,6 +5,7 @@ from threading import Thread
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from .errors import formatErrorMessage
+from .logger import logger
 
 class RadioRecvPacket():
     def __init__(self, data):
@@ -159,7 +160,7 @@ class RadioManager(QObject):
 
     def buildPacket(self, packetData):
         if packetData[0] not in RadioManager.PACKET_TYPE_MAP.keys():
-            print('Invalid packet with type {} received'.format(packetData[0]))
+            logger.error('Invalid packet with type {} received'.format(packetData[0]))
             return
         packetCons = RadioManager.PACKET_TYPE_MAP[packetData[0]]
         pack = packetCons(packetData)
@@ -172,6 +173,7 @@ class RadioManager(QObject):
 
     def _serialThread(self):
         with serial.Serial(self.port, 9600) as serport:
+            logger.log('Connected to radio on port ({})'.format(self.port))
             self.closed = False
             escape = False
             packetBuff = []
@@ -197,13 +199,14 @@ class RadioManager(QObject):
                     packet = self.toSend.pop(0)
                     serport.write(packet)
         self.closed = True
+        logger.log('Serial thread exited')
 
     def run(self, port):
         if self.running:
             self.stop()
             self.setupSerialThread()
             while not self.closed and port == self.port:
-                print("Waiting for port to close before reopening.")
+                logger.warn("Waiting for port to close before reopening.")
                 pass
         self.port = port
         self.running = True

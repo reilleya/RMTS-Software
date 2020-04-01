@@ -3,6 +3,7 @@ import yaml
 
 from pyFormGen.unitPreferences import UnitPreferences
 from pyFormGen.collectionEditor import CollectionEditor
+from .logger import logger
 
 class PreferencesManager(QObject):
 
@@ -16,11 +17,11 @@ class PreferencesManager(QObject):
     def loadPreferences(self):
         try:
             with open(self.preferencesPath, 'r') as readLocation:
-                fileData = yaml.load(readLocation) 
+                fileData = yaml.full_load(readLocation)
                 self.preferences.setProperties(fileData)
                 self.preferencesChanged.emit()
         except Exception as err:
-            print('Could not read preferences, using default. Error: ' + str(err))
+            logger.error('Could not read preferences, using default. Error: ' + str(err))
             self.loadDefault()
             self.savePreferences()
 

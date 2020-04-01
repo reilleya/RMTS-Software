@@ -2,6 +2,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 import yaml
 
 from lib.converter import ConverterType, Converter
+from .logger import logger
 
 class SensorProfileManager(QObject):
 
@@ -15,10 +16,10 @@ class SensorProfileManager(QObject):
     def loadProfiles(self):
         try:
             with open(self.profilesPath, 'r') as readLocation:
-                self.profiles = [Converter(properties) for properties in yaml.load(readLocation)]
+                self.profiles = [Converter(properties) for properties in yaml.full_load(readLocation)]
                 self.profilesChanged.emit()
         except Exception as err:
-            print('Could not read sensor profiles, using default. Error: ' + str(err))
+            logger.error('Could not read sensor profiles, using default. Error: ' + str(err))
             self.saveProfiles()
 
         self.profilesChanged.emit()

@@ -5,6 +5,7 @@ from PyQt5.QtCore import pyqtSignal
 
 from lib.sensorProfileManager import SensorProfileManager
 from lib.preferencesManager import PreferencesManager
+from lib.logger import logger
 from ui.mainWindow import MainWindow
 
 class App(QApplication):
@@ -20,6 +21,7 @@ class App(QApplication):
         self.preferencesManager.loadPreferences()
 
         self.window = MainWindow(self)
+        logger.log('Showing window')
         self.window.show()
 
     def outputMessage(self, content, title='RMTSI'):

@@ -6,6 +6,8 @@ from .converter import Converter
 from .radio import RadioManager, SetupPacket, FirePacket, ResultPacket, ErrorPacket, StopPacket, VersionPacket
 from .motor import processRawData
 from .firmwareVersions import checkVersionPacket
+from .logger import logger
+
 
 PACKET_STRIDE = 10
 
@@ -55,10 +57,11 @@ class Firing(QObject):
     def newPacket(self, packet):
         if type(packet) is VersionPacket and self.versionChecked == VERSION_CHECK_STATE.UNCHECKED:
             if checkVersionPacket(packet):
+                logger.log('Board version check passed ({})'.format(packet))
                 self.versionChecked = VERSION_CHECK_STATE.SUCCESS
             else:
+                logger.error('Board version check failed ({})'.format(packet))
                 self.versionChecked = VERSION_CHECK_STATE.FAILURE
-                print('Board reported an unsupported hardware or software revision.')
             return
         if not self.versionChecked == VERSION_CHECK_STATE.SUCCESS:
             # Don't process any packets until we are sure we know how to talk to this board
@@ -80,7 +83,7 @@ class Firing(QObject):
     def fire(self):
         if not self.versionChecked:
             # This method should never be called if a version check hasn't passed, but just in case...
-            print('Attempted to fire without version check!')
+            logger.error('Attempted to fire without version check!')
             return
         firingDur = int(self.motorInfo.getProperty('firingDuration') * 1000)
         firePack = FirePacket(firingDur)
