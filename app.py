@@ -54,3 +54,10 @@ class App(QApplication):
 
     def newResult(self, motorInfo):
         self.window.ui.pageResults.showResults(motorInfo)
+
+    def configureLiveResults(self, size):
+        self.window.ui.pageResults.setupLive(size)
+
+    # No packet argument because this is just for resetting data age
+    def newResultsPacket(self):
+        self.window.ui.pageResults.newResultsPacket()

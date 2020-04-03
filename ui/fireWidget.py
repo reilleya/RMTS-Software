@@ -92,6 +92,8 @@ class FireWidget(QWidget):
         self.firing = Firing(self.forceConv, self.pressConv, fireData, port)
         self.firing.newSetupPacket.connect(self.newPacket)
         self.firing.newErrorPacket.connect(self.recordError)
+        self.firing.fullSizeKnown.connect(QApplication.instance().configureLiveResults)
+        self.firing.newResultsPacket.connect(QApplication.instance().newResultsPacket)
         self.firing.newGraph.connect(QApplication.instance().newResult)
         self.firing.stopped.connect(self.enableResults)
 

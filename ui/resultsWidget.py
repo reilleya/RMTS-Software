@@ -19,6 +19,7 @@ class ResultsWidget(QWidget):
         self.ui.setupUi(self)
 
         self.motorData = None
+        self.liveMode = False
 
         self.engExporter = engExportWidget()
         self.engExporter.newData.connect(self.exportENG)
@@ -33,7 +34,7 @@ class ResultsWidget(QWidget):
         self.ui.pushButtonENG.pressed.connect(self.saveENG)
         self.ui.pushButtonCSV.pressed.connect(self.saveCSV)
 
-        self.ui.pushButtonBack.pressed.connect(self.back.emit) # Todo: confirm they have saved and clear firing and plot
+        self.ui.pushButtonBack.pressed.connect(self.backPressed)
 
         self.resultsFields = [
             self.ui.labelMotorDesignation, self.ui.labelBurnTime, self.ui.labelStartupTime,
@@ -42,11 +43,23 @@ class ResultsWidget(QWidget):
             self.ui.labelPeakPressure, self.ui.labelAveragePressure, self.ui.labelCStar
         ]
 
+        self.reset()
+
     def reset(self):
         self.motorData = None
         self.ui.widgetGraph.clear()
         for field in self.resultsFields:
             field.setText('-')
+        self.liveMode = False
+        self.ui.groupBoxRecvResults.setVisible(False)
+        self.ui.widgetDataAge.reset(False)
+
+    def setupLive(self, firingLength):
+        self.liveMode = True
+        self.ui.groupBoxRecvResults.setVisible(True)
+        self.ui.progressBarReceived.setMaximum(firingLength)
+        self.ui.progressBarReceived.setValue(0)
+        self.ui.widgetDataAge.start()
 
     def regraphData(self):
         force = None
@@ -85,8 +98,14 @@ class ResultsWidget(QWidget):
         self.ui.labelAveragePressure.setText(app.convertToUserAndFormat(motorData.getAveragePressure(), 'Pa', 3))
         self.ui.labelCStar.setText(app.convertToUserAndFormat(motorData.getCStar(), 'm/s', 3))
 
+        if self.liveMode:
+            self.ui.progressBarReceived.setValue(len(motorData.getRawTime()))
+
         self.motorData = motorData
         self.regraphData()
+
+    def newResultsPacket(self):
+        self.ui.widgetDataAge.reset()
 
     def saveFIRE(self):
         path = QFileDialog.getSaveFileName(None, 'Save FIRE', '', 'Firing Data File (*.fire)')[0]
@@ -149,3 +168,8 @@ class ResultsWidget(QWidget):
                 contents += ';\n;\n'
 
                 outFile.write(contents)
+
+    def backPressed(self):
+        # Todo: confirm they have saved if in self.liveMode
+        self.reset()
+        self.back.emit()

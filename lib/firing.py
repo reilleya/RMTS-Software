@@ -1,4 +1,5 @@
 from enum import Enum
+from math import ceil
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -21,6 +22,9 @@ class Firing(QObject):
     newGraph = pyqtSignal(object)
     newSetupPacket = pyqtSignal(object)
     newErrorPacket = pyqtSignal(object)
+
+    fullSizeKnown = pyqtSignal(int)
+    newResultsPacket = pyqtSignal()
 
     fired = pyqtSignal()
     stopped = pyqtSignal()
@@ -71,12 +75,19 @@ class Firing(QObject):
         elif type(packet) is ErrorPacket:
             self.newErrorPacket.emit(packet)
         elif type(packet) is ResultPacket:
+            self.newResultsPacket.emit()
             self.rawData[packet.seqNum] = packet
             if len(self.rawData) == 1:
                 logger.log('Got first result packet, setting start index to {}'.format(packet.seqNum))
                 self.startIndex = packet.seqNum
             elif abs(packet.seqNum - self.startIndex) < PACKET_STRIDE:
                 logger.log('Latest seq num ({}) close to start index ({})'.format(packet.seqNum, self.startIndex))
+                if self.lastSend == 0:
+                    # The number of datapoints in a recording is always a multiple of 64 so we can figure out the
+                    # size of the recording from the partial data assuming we got one of the last 64 datapoints.
+                    # If not, it isn't a big deal because only the progress bar is impacted.
+                    fullSize = ceil(max(self.rawData.keys()) / 64) * 64
+                    self.fullSizeKnown.emit(fullSize)
                 if len(self.rawData) > self.lastSend and self.motorInfo is not None:
                     logger.log('Processing more data ({}->{})'.format(self.lastSend, len(self.rawData)))
                     res = self.processRawData()

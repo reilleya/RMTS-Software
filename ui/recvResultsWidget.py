@@ -40,6 +40,8 @@ class RecvResultsWidget(QWidget):
         motorConfig.setProperties(self.ui.widgetMotorConfig.getProperties())
         self.firing = Firing(self.forceConv, self.pressConv, motorConfig, port)
         self.firing.newGraph.connect(QApplication.instance().newResult)
+        self.firing.fullSizeKnown.connect(QApplication.instance().configureLiveResults)
+        self.firing.newResultsPacket.connect(QApplication.instance().newResultsPacket)
 
         self.results.emit()
 
