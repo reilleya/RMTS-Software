@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.MainWindow_ui import Ui_MainWindow
+from lib.logger import logger
 
 class MainWindowPages(IntEnum):
     START = 0
@@ -14,6 +15,17 @@ class MainWindowPages(IntEnum):
     CALIBRATE = 5
     EDIT_TRANSDUCER = 6
     RECV_RESULTS = 7
+
+PAGE_NAMES = {
+    0: 'Start',
+    1: 'Raw data motor info',
+    2: 'Setup fire',
+    3: 'Results',
+    4: 'Preferences',
+    5: 'Calibrate',
+    6: 'Transducer editor',
+    7: 'Receive results'
+}
 
 class MainWindow(QMainWindow):
 
@@ -55,9 +67,11 @@ class MainWindow(QMainWindow):
         self.ui.pageFire.exit()
         self.ui.pageCalibrate.exit()
         self.ui.pageRecvResults.exit()
+        logger.log('Application exited')
         sys.exit()
 
     def gotoPage(self, page):
+        logger.log('Navigating to "{}" page (id = {})'.format(PAGE_NAMES[page], page))
         self.ui.stackedWidget.setCurrentIndex(int(page))
 
     def gotoStartPage(self):

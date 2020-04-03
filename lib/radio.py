@@ -41,6 +41,9 @@ class RadioSendPacket():
     def getPayload(self):
         raise Exception("Not implemented")
 
+    def __str__(self):
+        return "Unlabeled packet with type {}".format(self.type)
+
 class SetupPacket(RadioRecvPacket):
     def __init__(self, data):
         super().__init__(data)
@@ -101,12 +104,18 @@ class FirePacket(RadioSendPacket):
         payload = self.pack16Bit(0) + self.pack16Bit(self.fireDuration)
         return self.padPayload(payload)
 
+    def __str__(self):
+        return 'Fire packet, duration = {} s'.format(self.fireDuration)
+
 class StopPacket(RadioSendPacket):
     def __init__(self):
         super().__init__(129, 0)
 
     def getPayload(self):
         return self.padPayload([])
+
+    def __str__(self):
+        return "Stop packet"
 
 class CalStartPacket(RadioSendPacket):
     def __init__(self):
@@ -151,6 +160,7 @@ class RadioManager(QObject):
         return checksum and rightLength
 
     def sendPacket(self, packet, resendCount=5):
+        logger.log('Sending packet with details ({}) {} times'.format(packet, resendCount))
         seqNumLow = packet.seqNum & 0xFF
         seqNumHigh = (packet.seqNum >> 8) & 0xFF
         pack = [packet.type, 0, seqNumLow, seqNumHigh] + packet.getPayload()
@@ -223,6 +233,3 @@ class RadioManager(QObject):
         self.sendPacket(CalStartPacket())
         time.sleep(1)
         self.sendPacket(CalStopPacket())
-
-    def getDataAge():
-        pass

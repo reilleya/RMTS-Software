@@ -7,6 +7,7 @@ from ui.views.ResultsWidget_ui import Ui_ResultsWidget
 from .engExporterWidget import engExportWidget
 
 from lib.firing import Firing
+from lib.logger import logger
 
 class ResultsWidget(QWidget):
 
@@ -92,6 +93,7 @@ class ResultsWidget(QWidget):
         if path is not None:
             if not path.endswith('.fire'):
                 path += '.fire'
+            logger.log('Saving firing to {}'.format(path))
             with open(path, 'w') as outFile:
                 yaml.dump(self.motorData.toDictionary(), outFile)
 
@@ -101,10 +103,12 @@ class ResultsWidget(QWidget):
             if not path.endswith('.csv'):
                 path += '.csv'
             data = self.motorData.getCSV()
+            logger.log('Saving CSV to {}'.format(path))
             with open(path, 'w') as outFile:
                 outFile.write(data)
 
     def saveENG(self):
+        logger.log('Showing ENG exporter')
         self.engExporter.show()
 
     def exportENG(self, config):
@@ -119,6 +123,7 @@ class ResultsWidget(QWidget):
         if path is not None:
             if not path.endswith('.eng'):
                 path += '.eng'
+            logger.log('Saving ENG to {} (Mode={})'.format(path, config['append']))
             with open(path, mode) as outFile:
                 propMass = self.motorData.getPropMass()
                 contents = ' '.join([config['designation'],

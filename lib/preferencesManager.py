@@ -26,6 +26,7 @@ class PreferencesManager(QObject):
             self.savePreferences()
 
     def savePreferences(self):
+        logger.log('Saving preferences...')
         with open(self.preferencesPath, 'w') as saveLocation:
             yaml.dump(self.preferences.getProperties(), saveLocation)
 

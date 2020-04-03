@@ -73,9 +73,12 @@ class Firing(QObject):
         elif type(packet) is ResultPacket:
             self.rawData[packet.seqNum] = packet
             if len(self.rawData) == 1:
+                logger.log('Got first result packet, setting start index to {}'.format(packet.seqNum))
                 self.startIndex = packet.seqNum
             elif abs(packet.seqNum - self.startIndex) < PACKET_STRIDE:
+                logger.log('Latest seq num ({}) close to start index ({})'.format(packet.seqNum, self.startIndex))
                 if len(self.rawData) > self.lastSend and self.motorInfo is not None:
+                    logger.log('Processing more data ({}->{})'.format(self.lastSend, len(self.rawData)))
                     res = self.processRawData()
                     self.lastSend = len(self.rawData)
                     self.newGraph.emit(res)

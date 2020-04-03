@@ -69,6 +69,8 @@ class FireWidget(QWidget):
         self.ui.pushButtonResults.setEnabled(True)
         self.ui.widgetDataAge.reset(False)
 
+        self.ui.pushButtonResults.setEnabled(False)
+
     def toggleSetupFields(self, enabled):
         for field in self.setupFields:
             field.setEnabled(enabled)
@@ -78,17 +80,20 @@ class FireWidget(QWidget):
             field.setEnabled(enabled)
 
     def connect(self):
+        logger.log('Connect clicked, setting up firing')
         port = self.ui.widgetPortSelector.getPort()
         self.forceConv, self.pressConv = self.ui.widgetTransducerSelector.getConverters()
+        trans = 'Using LC profile: "{}", PT: "{}"'
+        logger.log(trans.format(self.forceConv.getProperty('name'), self.pressConv.getProperty('name')))
 
         fireData = FiringConfig()
         fireData.setProperties(self.ui.firingConfig.getProperties())
+        logger.log('Firing properties: {}'.format(fireData.getProperties()))
         self.firing = Firing(self.forceConv, self.pressConv, fireData, port)
         self.firing.newSetupPacket.connect(self.newPacket)
         self.firing.newErrorPacket.connect(self.recordError)
         self.firing.newGraph.connect(QApplication.instance().newResult)
-        self.firing.fired.connect(self.enableResults)
-        #self.firing.stopped.connect(self.showResults)
+        self.firing.stopped.connect(self.enableResults)
 
         self.ui.widgetDataAge.start()
         self.firing.newSetupPacket.connect(self.ui.widgetDataAge.reset)
@@ -144,6 +149,7 @@ class FireWidget(QWidget):
                 self.errors.append(error)
                 newError = True
         if newError:
+            logger.log('Got an error packet with details ({})'.format(packet))
             output = "The RMTS board reported the following error(s):\n\n"
             output += "\n".join(self.errors)
             output += "\n\n Please resolve them and restart the device before continuing."
