@@ -3,6 +3,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
+from pyFormGen.units import convert
+
 from lib.sensorProfileManager import SensorProfileManager
 from lib.preferencesManager import PreferencesManager
 from lib.logger import logger
@@ -40,6 +42,10 @@ class App(QApplication):
     def convertToUserUnits(self, value, units):
         return self.preferencesManager.preferences.convert(value, units)
 
+    def convertFromUserUnits(self, value, baseUnit):
+        inUnit = self.preferencesManager.preferences.getUnit(baseUnit)
+        return convert(value, inUnit, baseUnit)
+
     def convertAllToUserUnits(self, values, units):
         return self.preferencesManager.preferences.convertAll(values, units)
 
@@ -61,3 +67,6 @@ class App(QApplication):
     # No packet argument because this is just for resetting data age
     def newResultsPacket(self):
         self.window.ui.pageResults.newResultsPacket()
+
+    def newCalibration(self, calibration):
+        self.window.ui.pageCalibration.newCalibration(calibration)

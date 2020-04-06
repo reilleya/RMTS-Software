@@ -12,9 +12,10 @@ class MainWindowPages(IntEnum):
     SETUP_FIRE = 2
     RESULTS = 3
     PREFERENCES = 4
-    CALIBRATE = 5
+    CALIBRATION = 5
     EDIT_TRANSDUCER = 6
     RECV_RESULTS = 7
+    CALIBRATION_SETUP = 8
 
 PAGE_NAMES = {
     0: 'Start',
@@ -22,9 +23,10 @@ PAGE_NAMES = {
     2: 'Setup fire',
     3: 'Results',
     4: 'Preferences',
-    5: 'Calibrate',
+    5: 'Calibration',
     6: 'Transducer editor',
-    7: 'Receive results'
+    7: 'Receive results',
+    8: 'Calibration setup'
 }
 
 class MainWindow(QMainWindow):
@@ -40,7 +42,7 @@ class MainWindow(QMainWindow):
         self.ui.pageStart.beginSetup.connect(self.gotoSetupPage)
         self.ui.pageStart.recvResults.connect(self.gotoRecvResultsPage)
         self.ui.pageStart.editPreferences.connect(self.gotoPreferencesPage)
-        self.ui.pageStart.calibrate.connect(self.gotoCalibratePage)
+        self.ui.pageStart.calibrate.connect(self.gotoCalibrationSetupPage)
         self.ui.pageStart.editTransducer.connect(self.gotoEditTransducerPage)
         self.ui.pageStart.showResultsPage.connect(lambda: self.gotoResultsPage(False))
         self.ui.pageStart.showRawData.connect(self.gotoRawDataMotorInfoPage)
@@ -55,18 +57,21 @@ class MainWindow(QMainWindow):
 
         self.ui.pagePreferences.back.connect(self.gotoStartPage)
 
-        self.ui.pageCalibrate.back.connect(self.gotoStartPage)
+        self.ui.pageCalibration.back.connect(self.gotoStartPage)
 
         self.ui.pageEditTransducer.back.connect(self.gotoStartPage)
 
         self.ui.pageRecvResults.back.connect(self.gotoStartPage)
         self.ui.pageRecvResults.results.connect(lambda: self.gotoResultsPage(True))
 
+        self.ui.pageCalibrationSetup.back.connect(self.gotoStartPage)
+        self.ui.pageCalibrationSetup.nextPage.connect(self.gotoCalibrationPage)
+
     def closeEvent(self, event=None):
         self.closed.emit()
         self.ui.pageFire.exit()
-        self.ui.pageCalibrate.exit()
         self.ui.pageRecvResults.exit()
+        self.ui.pageCalibrationSetup.exit()
         logger.log('Application exited')
         sys.exit()
 
@@ -90,8 +95,11 @@ class MainWindow(QMainWindow):
             self.ui.pageResults.reset()
         self.gotoPage(MainWindowPages.RESULTS)
 
-    def gotoCalibratePage(self):
-        self.gotoPage(MainWindowPages.CALIBRATE)
+    def gotoCalibrationSetupPage(self):
+        self.gotoPage(MainWindowPages.CALIBRATION_SETUP)
+
+    def gotoCalibrationPage(self):
+        self.gotoPage(MainWindowPages.CALIBRATION)
 
     def gotoPreferencesPage(self):
         self.ui.pagePreferences.setup()

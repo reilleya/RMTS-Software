@@ -5,11 +5,15 @@ class ConverterType(Enum):
     LOAD_CELL = 0
     PRESSURE_TRANSDUCER = 1
 
-class Converter(PropertyCollection):
+class BaseConverter(PropertyCollection):
     def __init__(self, propDict=None):
         super().__init__()
         self.props['name'] = StringProperty('Name')
         self.props['type'] = EnumProperty('Type', ['Load Cell', 'Pressure Transducer'])
+
+class Converter(BaseConverter):
+    def __init__(self, propDict=None):
+        super().__init__()
         self.props['ratio'] = FloatProperty('Ratio', '', -1e10, 1e10)
         self.props['offset'] = FloatProperty('Offset', '', -1e10, 1e10)
 

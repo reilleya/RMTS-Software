@@ -34,9 +34,10 @@
       <widget class="FireWidget" name="pageFire"/>
       <widget class="ResultsWidget" name="pageResults"/>
       <widget class="PreferencesWidget" name="pagePreferences"/>
-      <widget class="CalibrateWidget" name="pageCalibrate"/>
+      <widget class="CalibrationWidget" name="pageCalibration"/>
       <widget class="TransducerEditorWidget" name="pageEditTransducer"/>
       <widget class="RecvResultsWidget" name="pageRecvResults"/>
+      <widget class="CalibrationSetupWidget" name="pageCalibrationSetup"/>
      </widget>
     </item>
    </layout>
@@ -79,12 +80,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CalibrateWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">ui.calibrateWidget</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>TransducerEditorWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.transducerEditorWidget</header>
@@ -94,6 +89,18 @@
    <class>RecvResultsWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.recvResultsWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CalibrationSetupWidget</class>
+   <extends>QWidget</extends>
+   <header>ui.calibrationSetupWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CalibrationWidget</class>
+   <extends>QWidget</extends>
+   <header>ui.calibrationWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

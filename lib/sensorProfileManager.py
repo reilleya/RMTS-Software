@@ -25,6 +25,7 @@ class SensorProfileManager(QObject):
         self.profilesChanged.emit()
 
     def saveProfiles(self):
+        logger.log('Saving profiles to "{}"'.format(self.profilesPath))
         with open(self.profilesPath, 'w') as saveLocation:
             yaml.dump([profile.getProperties() for profile in self.profiles], saveLocation)
 
@@ -37,3 +38,12 @@ class SensorProfileManager(QObject):
         if filterType is None:
             return [prof.getProperty('name') for prof in self.profiles]
         return filter(lambda name: self.getProfile(name).getProperty('type') == filterType, self.getProfileNames())
+
+    def addProfile(self, profile):
+        logger.log('Adding profile of type "{}" with name "{}"'.format(
+            profile.getProperty('type'),
+            profile.getProperty('name')
+        ))
+        self.profiles.append(profile)
+        self.saveProfiles()
+        self.profilesChanged.emit()
