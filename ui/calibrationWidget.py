@@ -14,7 +14,7 @@ class CalibrationWidget(QWidget):
         self.ui = Ui_CalibrationWidget()
         self.ui.setupUi(self)
 
-        self.ui.pushButtonBack.pressed.connect(self.back.emit)
+        self.ui.pushButtonBack.pressed.connect(self.backPressed)
         self.ui.pushButtonCapture.pressed.connect(self.capturePressed)
         self.ui.pushButtonRemove.pressed.connect(self.removePressed)
         self.ui.pushButtonSave.pressed.connect(self.savePressed)
@@ -41,17 +41,7 @@ class CalibrationWidget(QWidget):
         self.calibration.newGraphPoints.connect(self.newGraphPoints)
         self.calibration.newRegression.connect(self.newRegression)
         self.calibration.newConverter.connect(self.newConverter)
-
-        if self.calibration.converter.getProperty('type') == 'Load Cell':
-            self.baseUnit = 'N'
-            field = 'Force'
-        else:
-            self.baseUnit = 'Pa'
-            field = 'Pressure'
-        self.ui.tableWidgetPoints.setHorizontalHeaderLabels(
-            ['Raw', '{} ({})'.format(field, self.app.getUserUnit(self.baseUnit))]
-        )
-        self.ui.widgetGraph.setUnit(field, self.baseUnit)
+        self.calibration.newInfo.connect(self.newInfo)
 
     def newRawReading(self, value):
         self.ui.lineEditCurrentRaw.setText(str(value))
@@ -109,3 +99,20 @@ class CalibrationWidget(QWidget):
         self.app.sensorProfileManager.addProfile(self.converter)
         self.calibration.exit()
         self.back.emit()
+
+    def backPressed(self):
+        self.calibration.exit()
+        self.back.emit()
+
+    def newInfo(self, properties):
+        if properties['type'] == 'Load Cell':
+            self.baseUnit = 'N'
+            field = 'Force'
+        else:
+            self.baseUnit = 'Pa'
+            field = 'Pressure'
+        logger.log('Set base unit to "{}"'.format(self.baseUnit))
+        self.ui.tableWidgetPoints.setHorizontalHeaderLabels(
+            ['Raw', '{} ({})'.format(field, self.app.getUserUnit(self.baseUnit))]
+        )
+        self.ui.widgetGraph.setUnit(field, self.baseUnit)

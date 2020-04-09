@@ -20,6 +20,7 @@ class Calibration(QObject):
 
     resetDataAge = pyqtSignal()
 
+    newInfo = pyqtSignal(object)
     newReading = pyqtSignal(int)
     newPoints = pyqtSignal(list)
     newGraphPoints = pyqtSignal(object)
@@ -43,6 +44,7 @@ class Calibration(QObject):
 
     def updateInfo(self, properties):
         self.converter.setProperties(properties)
+        self.newInfo.emit(properties)
 
     def newPacket(self, packet):
         self.resetDataAge.emit()
