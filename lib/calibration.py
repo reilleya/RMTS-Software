@@ -64,29 +64,31 @@ class Calibration(QObject):
             point = CalibrationPoint(last, None)
             self.points.append(point)
             self.newPoints.emit(self.points)
+            logger.log('Captured a point at {}'.format(last))
 
     def setReal(self, point, value):
         self.points[point].converted = value
-        self.emitGraphPoints()
+        logger.log('Set the real value of {} to {}'.format(self.points[point].raw, value))
+        self.updateRegression()
 
     def delete(self, point):
         del self.points[point]
         self.newPoints.emit(self.points)
-        self.emitGraphPoints()
+        self.updateRegression()
 
-    def emitGraphPoints(self):
+    def updateRegression(self):
         graphPoints = [[], []]
         for point in self.points:
             if point.valid():
                 graphPoints[0].append(point.raw)
                 graphPoints[1].append(point.converted)
+
         if len(graphPoints[0]) > 0:
             self.newGraphPoints.emit(graphPoints)
 
         if len(graphPoints[0]) > 2:
             slope, intercept, rVal, p_value, std_err = stats.linregress(graphPoints[0], graphPoints[1])
-            logger.log(slope)
-            logger.log(intercept)
+            logger.log('Calculated slope {:.6f} and int. {:.6f}, r**2 = {:.6f}'.format(slope, intercept, rVal**2))
             self.newRegression.emit([graphPoints[0], [intercept + p * slope for p in graphPoints[0]], rVal])
             self.converter.setProperty('ratio', slope)
             self.converter.setProperty('offset', intercept)

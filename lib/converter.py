@@ -28,3 +28,6 @@ class Converter(BaseConverter):
 
     def convertMultiple(self, readings):
         return [self.convert(r) for r in readings]
+
+    def getMax(self):
+        return self.convert(0x7FFFFF)

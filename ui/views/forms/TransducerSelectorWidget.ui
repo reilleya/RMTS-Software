@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
+    <width>400</width>
     <height>131</height>
    </rect>
   </property>
@@ -26,6 +26,13 @@
      <item>
       <widget class="QComboBox" name="comboBoxLoadCell"/>
      </item>
+     <item>
+      <widget class="QLabel" name="labelMaxForce">
+       <property name="text">
+        <string>Max: 0 N</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -39,6 +46,13 @@
      </item>
      <item>
       <widget class="QComboBox" name="comboBoxPressureTransducer"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelMaxPressure">
+       <property name="text">
+        <string>Max: 0 Pa</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
