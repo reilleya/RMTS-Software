@@ -544,16 +544,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonResults">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>View Results</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>

@@ -55,6 +55,7 @@ class ResultsWidget(QWidget):
         self.ui.widgetDataAge.reset(False)
 
     def setupLive(self, firingLength):
+        logger.log('Set up results view for live receiving. Max size: {}'.format(firingLength))
         self.liveMode = True
         self.ui.groupBoxRecvResults.setVisible(True)
         self.ui.progressBarReceived.setMaximum(firingLength)

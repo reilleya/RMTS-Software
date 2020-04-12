@@ -38,7 +38,6 @@ class FireWidget(QWidget):
         self.ui.firingConfig.setPreferences(QApplication.instance().getPreferences())
 
         self.ui.pushButtonBack.pressed.connect(self.backPressed)
-        self.ui.pushButtonResults.pressed.connect(self.results.emit)
 
         self.reset()
 
@@ -66,10 +65,8 @@ class FireWidget(QWidget):
         self.toggleFiringFields(False)
         self.ui.pushButtonStop.setEnabled(False)
         self.ui.pushButtonFire.setEnabled(False)
-        self.ui.pushButtonResults.setEnabled(True)
         self.ui.widgetDataAge.reset(False)
 
-        self.ui.pushButtonResults.setEnabled(False)
 
     def toggleSetupFields(self, enabled):
         for field in self.setupFields:
@@ -92,10 +89,9 @@ class FireWidget(QWidget):
         self.firing = Firing(self.forceConv, self.pressConv, fireData, port)
         self.firing.newSetupPacket.connect(self.newPacket)
         self.firing.newErrorPacket.connect(self.recordError)
-        self.firing.fullSizeKnown.connect(QApplication.instance().configureLiveResults)
+        self.firing.fullSizeKnown.connect(self.gotoResults)
         self.firing.newResultsPacket.connect(QApplication.instance().newResultsPacket)
         self.firing.newGraph.connect(QApplication.instance().newResult)
-        self.firing.stopped.connect(self.enableResults)
 
         self.ui.widgetDataAge.start()
         self.firing.newSetupPacket.connect(self.ui.widgetDataAge.reset)
@@ -141,8 +137,9 @@ class FireWidget(QWidget):
         logger.log('Stop button pressed')
         self.firing.stop()
 
-    def enableResults(self):
-        self.ui.pushButtonResults.setEnabled(True)
+    def gotoResults(self, resultsSize):
+        self.results.emit()
+        QApplication.instance().configureLiveResults(resultsSize)
 
     def recordError(self, packet):
         newError = False
