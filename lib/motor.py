@@ -1,6 +1,7 @@
 import math
 
 from pyFormGen.properties import PropertyCollection, FloatProperty, EnumProperty
+from .logger import logger
 
 class MotorConfig(PropertyCollection):
     def __init__(self):
@@ -162,6 +163,13 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     t = t[NUM_CAL_FRAMES:]
     f = f[NUM_CAL_FRAMES:]
     p = p[NUM_CAL_FRAMES:]
+
+    timesteps = [t[i] - t[i-1] for i in range(1, len(t))]
+    logger.log('Timesteps: min={}, max={}, mean={:.4f}'.format(
+        min(timesteps),
+        max(timesteps),
+        sum(timesteps) / len(timesteps))
+    )
 
     # Convert to proper units
     t = [d / 1000 for d in t]
