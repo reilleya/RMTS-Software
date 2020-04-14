@@ -203,7 +203,7 @@ class RadioManager(QObject):
                         if self.checkPacket(packetBuff):
                             self.buildPacket(packetBuff)
                             inPacket = False
-                    escape = b == RadioManager.ESCAPE
+                    escape = b == RadioManager.ESCAPE and not escape
 
                 if len(self.toSend) > 0:
                     packet = self.toSend.pop(0)
