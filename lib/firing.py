@@ -37,6 +37,8 @@ class Firing(QObject):
         self.rawData = {}
         self.startIndex = None
         self.lastSend = 0
+        self.lastSequenceMod = None
+        self.fullSize = None
 
         self.forceConverter = forceConverter
         self.pressureConverter = pressureConverter
@@ -46,7 +48,8 @@ class Firing(QObject):
         self.radioManager.newPacket.connect(self.newPacket)
         self.radioManager.run(port)
 
-    def processRawData(self):
+    def processAndSend(self):
+        logger.log('Processing more data ({}->{})'.format(self.lastSend, len(self.rawData)))
         raw = {'time': [], 'force': [], 'pressure': []}
 
         recv = list(self.rawData.keys())
@@ -55,8 +58,10 @@ class Firing(QObject):
             raw['time'].append(self.rawData[i].time)
             raw['force'].append(self.rawData[i].force)
             raw['pressure'].append(self.rawData[i].pressure)
+        self.lastSend = len(self.rawData)
 
-        return processRawData(raw, self.forceConverter, self.pressureConverter, self.motorInfo)
+        self.newGraph.emit(processRawData(raw, self.forceConverter, self.pressureConverter, self.motorInfo))
+
 
     def newPacket(self, packet):
         if type(packet) is VersionPacket and self.versionChecked == VERSION_CHECK_STATE.UNCHECKED:
@@ -80,19 +85,21 @@ class Firing(QObject):
             if len(self.rawData) == 1:
                 logger.log('Got first result packet, setting start index to {}'.format(packet.seqNum))
                 self.startIndex = packet.seqNum
-            elif abs(packet.seqNum - self.startIndex) < PACKET_STRIDE:
-                logger.log('Latest seq num ({}) close to start index ({})'.format(packet.seqNum, self.startIndex))
-                if self.lastSend == 0:
+            else:
+                if self.lastSend == 0 and abs(packet.seqNum - self.startIndex) < PACKET_STRIDE:
+                    logger.log('Latest seq num ({}) close to start index ({})'.format(packet.seqNum, self.startIndex))
                     # The number of datapoints in a recording is always a multiple of 64 so we can figure out the
                     # size of the recording from the partial data assuming we got one of the last 64 datapoints.
                     # If not, it isn't a big deal because only the progress bar is impacted.
-                    fullSize = ceil(max(self.rawData.keys()) / 64) * 64
-                    self.fullSizeKnown.emit(fullSize)
-                if len(self.rawData) > self.lastSend and self.motorInfo is not None:
-                    logger.log('Processing more data ({}->{})'.format(self.lastSend, len(self.rawData)))
-                    res = self.processRawData()
-                    self.lastSend = len(self.rawData)
-                    self.newGraph.emit(res)
+                    self.fullSize = ceil(max(self.rawData.keys()) / 64) * 64
+                    self.fullSizeKnown.emit(self.fullSize)
+                    self.lastSequenceMod = packet.seqNum % PACKET_STRIDE
+                    self.processAndSend()
+
+                diffSeqMod = self.lastSequenceMod is not None and packet.seqNum % PACKET_STRIDE != self.lastSequenceMod
+                if diffSeqMod and len(self.rawData) > self.lastSend and self.motorInfo is not None:
+                    self.lastSequenceMod = packet.seqNum % PACKET_STRIDE
+                    self.processAndSend()
 
     def fire(self):
         if not self.versionChecked:
