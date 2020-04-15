@@ -63,6 +63,8 @@ class FireWidget(QWidget):
 
         # Fire
         self.toggleFiringFields(False)
+        self.ui.lineEditArm.setText('')
+        self.ui.lineEditStop.setText('')
         self.ui.pushButtonStop.setEnabled(False)
         self.ui.pushButtonFire.setEnabled(False)
         self.ui.widgetDataAge.reset(False)

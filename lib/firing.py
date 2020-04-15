@@ -100,6 +100,9 @@ class Firing(QObject):
                 if diffSeqMod and len(self.rawData) > self.lastSend and self.motorInfo is not None:
                     self.lastSequenceMod = packet.seqNum % PACKET_STRIDE
                     self.processAndSend()
+                    if self.lastSend == self.fullSize:
+                        logger.log('Done receiving data')
+                        self.radioManager.stop()
 
     def fire(self):
         if not self.versionChecked:
