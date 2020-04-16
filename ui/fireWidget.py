@@ -8,6 +8,7 @@ from lib.radio import RadioManager, SetupPacket, FirePacket, ResultPacket, StopP
 from lib.motor import FiringConfig
 from lib.firing import Firing
 from lib.logger import logger
+from .errorCollector import ErrorCollector
 from ui.views.FireWidget_ui import Ui_FireWidget
 
 class FireWidget(QWidget):
@@ -48,7 +49,8 @@ class FireWidget(QWidget):
 
         self.firing = None
 
-        self.errors = []
+        self.errorCollector = ErrorCollector()
+        self.errorCollector.hasError.connect(self.hasError)
 
         self.forceConv = None # Move to firing?
         self.pressConv = None
@@ -90,7 +92,7 @@ class FireWidget(QWidget):
         logger.log('Firing properties: {}'.format(fireData.getProperties()))
         self.firing = Firing(self.forceConv, self.pressConv, fireData, port)
         self.firing.newSetupPacket.connect(self.newPacket)
-        self.firing.newErrorPacket.connect(self.recordError)
+        self.firing.newErrorPacket.connect(self.errorCollector.recordError)
         self.firing.fullSizeKnown.connect(self.gotoResults)
         self.firing.newResultsPacket.connect(QApplication.instance().newResultsPacket)
         self.firing.newGraph.connect(QApplication.instance().newResult)
@@ -143,21 +145,6 @@ class FireWidget(QWidget):
         self.results.emit()
         QApplication.instance().configureLiveResults(resultsSize)
 
-    def recordError(self, packet):
-        newError = False
-        for error in packet.getErrors():
-            if error not in self.errors:
-                self.errors.append(error)
-                newError = True
-        if newError:
-            logger.log('Got an error packet with details ({})'.format(packet))
-            output = "The RMTS board reported the following error(s):\n\n"
-            output += "\n".join(self.errors)
-            output += "\n\n Please resolve them and restart the device before continuing."
-            QApplication.instance().outputMessage(output)
-        if len(self.errors) > 0:
-            self.toggleFiringFields(False)
-
     def exit(self): # TODO: confirm before closing if connected to radio
         if self.firing is not None:
             self.firing.exit()
@@ -166,3 +153,6 @@ class FireWidget(QWidget):
         if self.firing is not None:
             self.firing.exit()
         self.back.emit()
+
+    def hasError(self):
+        self.toggleFiringFields(False)

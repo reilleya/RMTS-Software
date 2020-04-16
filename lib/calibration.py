@@ -1,7 +1,7 @@
 from scipy import stats
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from .radio import RadioManager, SetupPacket
+from .radio import RadioManager, SetupPacket, ErrorPacket
 from .filter import LowPass
 from .converter import Converter
 from .logger import logger
@@ -15,6 +15,8 @@ class CalibrationPoint():
         return self.raw is not None and self.converted is not None
 
 class Calibration(QObject):
+    errorPacket = pyqtSignal(object)
+
     ready = pyqtSignal()
     done = pyqtSignal()
 
@@ -57,6 +59,8 @@ class Calibration(QObject):
             else:
                 value = packet.pressure
             self.newReading.emit(int(self.filter.addData(value)))
+        elif type(packet) is ErrorPacket:
+            self.errorPacket.emit(packet)
 
     def capture(self):
         last = self.filter.getValue()
