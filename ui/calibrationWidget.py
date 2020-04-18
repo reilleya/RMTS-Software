@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QApplication, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import QWidget, QApplication, QTableWidgetItem, QHeaderView, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
 from lib.logger import logger
@@ -96,11 +96,36 @@ class CalibrationWidget(QWidget):
             self.calibration.delete(selected[0].row())
 
     def savePressed(self):
-        self.app.sensorProfileManager.addProfile(self.converter)
+        self.save()
         self.calibration.exit()
         self.back.emit()
 
+    def save(self):
+        self.app.sensorProfileManager.addProfile(self.converter)
+
+    # Returns true if it is safe to exit
+    def unsavedCheck(self):
+        if self.calibration is None or len(self.calibration.points) == 0:
+            return True
+
+        msg = QMessageBox()
+        msg.setText("The calibration has not been saved. Close anyway?")
+        msg.setWindowTitle("Close without saving?")
+        msg.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+        res = msg.exec_()
+
+        if res == QMessageBox.Discard:
+            logger.log('User chose to discard results')
+            return True
+        if res == QMessageBox.Save:
+            logger.log('User chose to save first')
+            self.save()
+            return True
+        return False
+
     def backPressed(self):
+        if not self.unsavedCheck():
+            return
         self.calibration.exit()
         self.back.emit()
 
