@@ -68,6 +68,11 @@ class MainWindow(QMainWindow):
         self.ui.pageCalibrationSetup.nextPage.connect(self.gotoCalibrationPage)
 
     def closeEvent(self, event=None):
+        if not self.ui.pageResults.unsavedCheck():
+            logger.log('Canceling close event')
+            if event is not None and not isinstance(event, bool):
+                    event.ignore()
+            return
         self.closed.emit()
         self.ui.pageFire.exit()
         self.ui.pageRecvResults.exit()

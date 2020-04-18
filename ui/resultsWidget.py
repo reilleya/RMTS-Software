@@ -1,6 +1,6 @@
 import sys
 import yaml
-from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
+from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
 from ui.views.ResultsWidget_ui import Ui_ResultsWidget
@@ -20,6 +20,7 @@ class ResultsWidget(QWidget):
 
         self.motorData = None
         self.liveMode = False
+        self.saved = False
 
         self.engExporter = engExportWidget()
         self.engExporter.newData.connect(self.exportENG)
@@ -51,6 +52,7 @@ class ResultsWidget(QWidget):
         for field in self.resultsFields:
             field.setText('-')
         self.liveMode = False
+        self.saved = False
         self.ui.groupBoxRecvResults.setVisible(False)
         self.ui.widgetDataAge.reset(False)
 
@@ -110,22 +112,25 @@ class ResultsWidget(QWidget):
 
     def saveFIRE(self):
         path = QFileDialog.getSaveFileName(None, 'Save FIRE', '', 'Firing Data File (*.fire)')[0]
-        if path is not None:
-            if not path.endswith('.fire'):
-                path += '.fire'
-            logger.log('Saving firing to {}'.format(path))
-            with open(path, 'w') as outFile:
-                yaml.dump(self.motorData.toDictionary(), outFile)
+        if path is None or path == '':
+            return
+        if not path.endswith('.fire'):
+            path += '.fire'
+        logger.log('Saving firing to {}'.format(path))
+        with open(path, 'w') as outFile:
+            yaml.dump(self.motorData.toDictionary(), outFile)
+            self.saved = True
 
     def saveCSV(self):
         path = QFileDialog.getSaveFileName(None, 'Save CSV', '', 'Comma Separated Values (*.csv)')[0]
-        if path is not None:
-            if not path.endswith('.csv'):
-                path += '.csv'
-            data = self.motorData.getCSV()
-            logger.log('Saving CSV to {}'.format(path))
-            with open(path, 'w') as outFile:
-                outFile.write(data)
+        if path is None or path == '':
+            return
+        if not path.endswith('.csv'):
+            path += '.csv'
+        data = self.motorData.getCSV()
+        logger.log('Saving CSV to {}'.format(path))
+        with open(path, 'w') as outFile:
+            outFile.write(data)
 
     def saveENG(self):
         logger.log('Showing ENG exporter')
@@ -140,37 +145,58 @@ class ResultsWidget(QWidget):
         else:
             mode = 'w'
             path = QFileDialog.getSaveFileName(None, title, '', formats)[0]
-        if path is not None:
-            if not path.endswith('.eng'):
-                path += '.eng'
-            logger.log('Saving ENG to {} (Mode={})'.format(path, config['append']))
-            with open(path, mode) as outFile:
-                propMass = self.motorData.getPropMass()
-                contents = ' '.join([config['designation'],
-                                     str(round(config['diameter'] * 1000, 6)),
-                                     str(round(config['length'] * 1000, 6)),
-                                     'P',
-                                     str(round(propMass, 6)),
-                                     str(round(propMass + self.motorData.getHardwareMass(), 6)),
-                                     config['manufacturer']
-                                     ]) + '\n'
+        if path is None or path == '':
+            return
+        if not path.endswith('.eng'):
+            path += '.eng'
+        logger.log('Saving ENG to {} (Mode={})'.format(path, config['append']))
+        with open(path, mode) as outFile:
+            propMass = self.motorData.getPropMass()
+            contents = ' '.join([config['designation'],
+                                 str(round(config['diameter'] * 1000, 6)),
+                                 str(round(config['length'] * 1000, 6)),
+                                 'P',
+                                 str(round(propMass, 6)),
+                                 str(round(propMass + self.motorData.getHardwareMass(), 6)),
+                                 config['manufacturer']
+                                 ]) + '\n'
 
-                timeData = self.motorData.getTime()
-                forceData = self.motorData.getForce()
-                # Add on a 0-thrust datapoint right after the burn to satisfy RAS Aero
-                if forceData[-1] != 0:
-                    timeData.append(timeData[-1] + 0.01)
-                    forceData.append(0)
-                for time, force in zip(timeData, forceData):
-                    if time == 0 and force == 0: # Increase the first point so it isn't 0 thrust
-                        force += 0.01
-                    contents += str(round(time, 4)) + ' ' + str(round(force, 4)) + '\n'
+            timeData = self.motorData.getTime()
+            forceData = self.motorData.getForce()
+            # Add on a 0-thrust datapoint right after the burn to satisfy RAS Aero
+            if forceData[-1] != 0:
+                timeData.append(timeData[-1] + 0.01)
+                forceData.append(0)
+            for time, force in zip(timeData, forceData):
+                if time == 0 and force == 0: # Increase the first point so it isn't 0 thrust
+                    force += 0.01
+                contents += str(round(time, 4)) + ' ' + str(round(force, 4)) + '\n'
 
-                contents += ';\n;\n'
+            contents += ';\n;\n'
 
-                outFile.write(contents)
+            outFile.write(contents)
+
+    # Returns true if it is safe to exit
+    def unsavedCheck(self):
+        if not self.liveMode or self.saved:
+            return True
+        logger.log('Checking if user wants to save before exiting results widget')
+        msg = QMessageBox()
+        msg.setText("The received results have not been saved. Close anyway?")
+        msg.setWindowTitle("Close without saving?")
+        msg.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+        res = msg.exec_()
+        if res == QMessageBox.Discard:
+            logger.log('User chose to discard results')
+            return True
+        if res == QMessageBox.Save:
+            logger.log('User chose to save first')
+            self.saveFIRE()
+            return self.saved
+        return False
 
     def backPressed(self):
-        # Todo: confirm they have saved if in self.liveMode
+        if not self.unsavedCheck():
+            return
         self.reset()
         self.back.emit()
