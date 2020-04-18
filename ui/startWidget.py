@@ -3,8 +3,9 @@ import yaml
 import binascii
 
 from serial.tools.list_ports import comports
-from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
+from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QVBoxLayout
 from PyQt5.QtCore import pyqtSignal
+from PyQt5 import QtSvg
 
 from lib.converter import Converter
 from lib.motor import processRawData, FiringConfig
@@ -39,6 +40,11 @@ class StartWidget(QWidget):
         self.ui.pushButtonPreferences.pressed.connect(self.editPreferences.emit)
         self.ui.pushButtonEditTransducer.pressed.connect(self.editTransducer.emit)
         #self.ui.pushButtonAbout.pressed.connect()
+
+        logo = QtSvg.QSvgWidget()
+        self.ui.groupBoxLogo.setLayout(QVBoxLayout())
+        self.ui.groupBoxLogo.layout().addWidget(logo)
+        logo.load('resources/logo_large.svg')
 
     def showSavedResultsPressed(self):
         path = QFileDialog.getOpenFileName(None, 'Load FIRE', '', 'Firing Data File (*.fire)')[0]

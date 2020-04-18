@@ -28,18 +28,18 @@
     </spacer>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBoxLogo">
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+    <widget class="QWidget" name="widgetLogo" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="labelLogo">
-        <property name="text">
-         <string>Logo or something</string>
+       <widget class="QGroupBox" name="groupBoxLogo">
+        <property name="maximumSize">
+         <size>
+          <width>1022</width>
+          <height>16777215</height>
+         </size>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="title">
+         <string/>
         </property>
        </widget>
       </item>

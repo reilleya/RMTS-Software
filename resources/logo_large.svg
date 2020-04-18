@@ -1,0 +1,66 @@
+<svg width="1000" height="295" xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd">
+ <g>
+  <title>background</title>
+  <rect x="-1" y="-1" width="1002" height="297" id="canvas_background" fill="none"/>
+ </g>
+
+ <g>
+  <title>Layer 1</title>
+  <g transform="matrix(0,-1,2.2641601709223123,0,-240.34782292935222,164.51960000000003) " id="svg_17">
+   <path d="m44.378,108.3156c0,0 -38.844,6.069 -38.844,108.425c0,25.913 17.405,46.951 38.844,46.951c21.439,0 38.844,-21.038 38.844,-46.951c0,-102.356 -38.844,-108.425 -38.844,-108.425z" stroke-width="4.4px" stroke="black" fill="none" id="svg_18"/>
+  </g>
+  <path d="m828.8615,245.3086l0,33.234l-189.53,0l0,-82.125l-10.914,-3.217l0,93.51l211.126,0l0,-41.402l11.31,0l0,48.867l-231.233,0l0,-97.758" stroke-width="1.59px" stroke="black" fill="none" id="svg_2"/>
+  <g transform="matrix(1.05857,0,0,1.0384699999999998,8.304199999999998,44.55240000000002) " id="svg_3">
+   <path d="m889.62057,72.789c0,-27.415 -22.224,-49.64 -49.64,-49.64l0,7.667c23.182,0 41.974,18.792 41.974,41.973l7.666,0z" stroke-width="3.85px" stroke="black" fill="black" id="svg_4"/>
+  </g>
+  <g transform="matrix(1.55195,0,0,1.52248,-299.3905,9.321799999999996) " id="svg_5">
+   <path d="m820.8473,72.789c0,-27.415 -22.224,-49.64 -49.64,-49.64l0,5.394c24.437,0 44.246,19.81 44.246,44.246l5.394,0z" stroke-width="2.63px" stroke="black" fill="black" id="svg_6"/>
+  </g>
+  <g transform="matrix(2.01578,0,0,1.97751,-588.6625,-23.7993) " id="svg_7">
+   <path d="m786.89467,72.789c0,-27.415 -22.224,-49.64 -49.64,-49.64l0,4.129c25.136,0 45.512,20.376 45.512,45.511l4.128,0z" stroke-width="2.02px" stroke="black" fill="black" id="svg_8"/>
+  </g>
+  <g transform="matrix(1,0,0,1,120.78719999999998,-33.6873) " id="svg_9">
+   <text x="335.669" y="101.377" fill="black" font-size="89.475px" font-weight="700" font-family="'Arial-BoldMT', 'Arial', sans-serif" id="svg_10">RMTS</text>
+  </g>
+  <g transform="matrix(0,-1,3.132319416789585,0,-1135.4707541812688,174.0376) " id="svg_11">
+   <path d="m53.895,391.39374c0,0 -15.672,21.98 -17.937,59.988c-0.589,9.882 8.037,23.084 17.937,23.084c9.9,0 18.637,-13.209 17.937,-23.084c-2.676,-37.802 -17.937,-59.988 -17.937,-59.988z" stroke-width="4.04px" stroke="black" fill="black" id="svg_12"/>
+  </g>
+  <rect x="368.447" y="206.057" width="72.386" height="21.314" fill="black" id="svg_13" transform="matrix(1,0,0,1,35.3315,-50.0244) "/>
+  <g transform="matrix(1,0,0,1.2439,35.3315,-100.28210000000001) " id="svg_14">
+   <rect x="394.184" y="140.105" width="23.324" height="65.952" fill="black" id="svg_15"/>
+  </g>
+  <path d="m776.7925,84.2516l-417.225,0l0,71.781l296.271,0l0,-55.999l120.954,0l0,-15.782z" stroke-width="4.04px" stroke="black" fill="none" id="svg_16"/>
+  <rect x="312.222" y="227.125" width="308.285" height="20.618" fill="black" id="svg_19" transform="matrix(1,0,0,1,35.3315,-50.0244) "/>
+  <g transform="matrix(0.5125629999999999,-0.5125629999999999,0.707107,0.707107,186.06650000000002,59.155600000000014) " id="svg_20">
+   <path d="m379.79718,389.05241l-73.188,0l0,20.618l44.745,0l28.443,-20.618z" fill="black" id="svg_21"/>
+  </g>
+  <g transform="matrix(0.5125629999999999,-0.5125629999999999,0.707107,0.707107,186.06650000000002,59.155600000000014) " id="svg_22">
+   <path d="m614.89418,389.05241l-157.928,0l28.443,20.618l129.485,0l0,-20.618z" fill="black" id="svg_23"/>
+  </g>
+  <g transform="matrix(0.857143,0,0,1,108.47559999999999,-50.0244) " id="svg_24">
+   <rect x="779.17563" y="50.024" width="24.631" height="100.033" fill="black" id="svg_25"/>
+  </g>
+  <rect x="620.507" y="150.058" width="261.755" height="145.275" stroke-width="4.04px" stroke="black" fill="none" id="svg_26" transform="matrix(1,0,0,1,35.3315,-50.0244) "/>
+  <g transform="matrix(1,0,0,1.19367,35.3315,-79.49860000000001) " id="svg_27">
+   <path d="m882.255,152.19l-89.477,0l0,46.5l69.376,0l20.101,-16.919l0,-29.581z" stroke-width="1.44px" stroke="black" fill="none" id="svg_28"/>
+  </g>
+  <g transform="matrix(0.37123599999999995,0,0,0.714352,330.70649999999995,54.482600000000005) " id="svg_29">
+   <rect x="1180.6363" y="152.19" width="89.477" height="46.5" stroke-width="2.79px" stroke="black" fill="none" id="svg_30"/>
+  </g>
+  <g transform="matrix(0.510787,0,0,0.404996,346.8695,165.03359999999998) " id="svg_31">
+   <rect x="1012.10577" y="152.19" width="89.477" height="46.5" stroke-width="3.45px" stroke="black" fill="none" id="svg_32"/>
+  </g>
+  <g transform="matrix(0.359775,0,0,0.404996,392.1135,165.03359999999998) " id="svg_33">
+   <rect x="1200.28694" y="152.19" width="89.477" height="46.5" stroke-width="4.15px" stroke="black" fill="none" id="svg_34"/>
+  </g>
+  <g transform="matrix(0.327416,0,0,0.49310999999999994,242.2485,54.87160000000001) " id="svg_35">
+   <rect x="1263.19404" y="152.19" width="89.477" height="46.5" stroke-width="3.79px" stroke="black" fill="none" id="svg_36"/>
+  </g>
+  <g transform="matrix(0.254382,0,0,0.404996,283.4235,111.0346) " id="svg_37">
+   <rect x="1463.99895" y="152.19" width="89.477" height="46.5" stroke-width="4.7px" stroke="black" fill="none" id="svg_38"/>
+  </g>
+  <g transform="matrix(0.254382,0,0,0.404996,283.4235,141.71359999999999) " id="svg_39">
+   <rect x="1463.99895" y="152.19" width="89.477" height="46.5" stroke-width="4.7px" stroke="black" fill="none" id="svg_40"/>
+  </g>
+ </g>
+</svg>
