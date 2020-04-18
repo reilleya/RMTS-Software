@@ -31,7 +31,12 @@ class CalibrationSetupWidget(QWidget):
         self.ui.widgetBasicInfo.loadProperties(BaseConverter())
         self.ui.pushButtonNext.setEnabled(False)
         self.ui.widgetDataAge.reset(False)
+        self.toggleConnectFields(True)
         self.calibration = None
+
+    def toggleConnectFields(self, enabled):
+        self.ui.pushButtonConnect.setEnabled(enabled)
+        self.ui.widgetPortSelector.setEnabled(enabled)
 
     def connect(self):
         port = self.ui.widgetPortSelector.getPort()
@@ -44,6 +49,7 @@ class CalibrationSetupWidget(QWidget):
         QApplication.instance().newCalibration(self.calibration)
         self.ui.widgetDataAge.start()
         self.calibration.connect()
+        self.toggleConnectFields(False)
 
     def backPressed(self):
         self.exit()
@@ -57,4 +63,3 @@ class CalibrationSetupWidget(QWidget):
     def exit(self):
         if self.calibration is not None:
             self.calibration.exit()
-        self.reset()

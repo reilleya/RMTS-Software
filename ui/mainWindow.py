@@ -101,6 +101,7 @@ class MainWindow(QMainWindow):
         self.gotoPage(MainWindowPages.RESULTS)
 
     def gotoCalibrationSetupPage(self):
+        self.ui.pageCalibrationSetup.reset()
         self.gotoPage(MainWindowPages.CALIBRATION_SETUP)
 
     def gotoCalibrationPage(self):
