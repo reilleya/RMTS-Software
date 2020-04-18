@@ -28,6 +28,9 @@ class FireWidget(QWidget):
         self.firingFields = [
                                 self.ui.lineEditArm, self.ui.lineEditStop
                             ]
+        self.resultsFields = [
+                                self.ui.lineEditInitialResults
+                             ]
 
         self.ui.pushButtonConnect.pressed.connect(self.connect)
 
@@ -59,25 +62,25 @@ class FireWidget(QWidget):
         self.pressureBuff = LowPass(5)
 
         # Setup
-        self.toggleSetupFields(True)
+        self.toggleFields(self.setupFields, True)
         self.ui.widgetTransducerSelector.reset()
         self.ui.firingConfig.loadProperties(FiringConfig())
 
         # Fire
-        self.toggleFiringFields(False)
+        self.toggleFields(self.firingFields, False)
         self.ui.lineEditArm.setText('')
         self.ui.lineEditStop.setText('')
         self.ui.pushButtonStop.setEnabled(False)
         self.ui.pushButtonFire.setEnabled(False)
         self.ui.widgetDataAge.reset(False)
 
+        # Results
+        self.toggleFields(self.resultsFields, False)
+        self.ui.lineEditInitialResults.setText('0 s')
 
-    def toggleSetupFields(self, enabled):
-        for field in self.setupFields:
-            field.setEnabled(enabled)
 
-    def toggleFiringFields(self, enabled):
-        for field in self.firingFields:
+    def toggleFields(self, fields, enabled):
+        for field in fields:
             field.setEnabled(enabled)
 
     def connect(self):
@@ -96,12 +99,14 @@ class FireWidget(QWidget):
         self.firing.fullSizeKnown.connect(self.gotoResults)
         self.firing.newResultsPacket.connect(QApplication.instance().newResultsPacket)
         self.firing.newGraph.connect(QApplication.instance().newResult)
+        self.firing.stopped.connect(lambda: self.toggleFields(self.resultsFields, True))
+        self.firing.initialResultsTime.connect(self.initialResultsTime)
 
         self.ui.widgetDataAge.start()
         self.firing.newSetupPacket.connect(self.ui.widgetDataAge.reset)
         self.firing.newErrorPacket.connect(self.ui.widgetDataAge.reset)
-        self.toggleSetupFields(False)
-        self.toggleFiringFields(True)
+        self.toggleFields(self.setupFields, False)
+        self.toggleFields(self.firingFields, True)
 
     def newPacket(self, packet):
         if self.tared:
@@ -117,6 +122,9 @@ class FireWidget(QWidget):
         realPressure = self.pressConv.convert(self.pressureBuff.addData(packet.pressure))
         self.ui.lineEditPressure.setText(QApplication.instance().convertToUserAndFormat(realPressure, 'Pa', 1))
         self.ui.lineEditContinuity.setText("Yes" if packet.continuity else "No")
+
+    def initialResultsTime(self, time):
+        self.ui.lineEditInitialResults.setText('{:.2f} s'.format(time))
 
     def armBoxTextChanged(self):
         enabled = self.ui.lineEditArm.text() == "ARM"
@@ -155,4 +163,4 @@ class FireWidget(QWidget):
         self.back.emit()
 
     def hasError(self):
-        self.toggleFiringFields(False)
+        self.toggleFields(self.firingFields, False)

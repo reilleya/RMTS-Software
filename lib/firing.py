@@ -25,6 +25,7 @@ class Firing(QObject):
 
     fullSizeKnown = pyqtSignal(int)
     newResultsPacket = pyqtSignal()
+    initialResultsTime = pyqtSignal(float)
 
     fired = pyqtSignal()
     stopped = pyqtSignal()
@@ -62,7 +63,6 @@ class Firing(QObject):
 
         self.newGraph.emit(processRawData(raw, self.forceConverter, self.pressureConverter, self.motorInfo))
 
-
     def newPacket(self, packet):
         if type(packet) is VersionPacket and self.versionChecked == VERSION_CHECK_STATE.UNCHECKED:
             if checkVersionPacket(packet):
@@ -86,15 +86,17 @@ class Firing(QObject):
                 logger.log('Got first result packet, setting start index to {}'.format(packet.seqNum))
                 self.startIndex = packet.seqNum
             else:
-                if self.lastSend == 0 and abs(packet.seqNum - self.startIndex) < PACKET_STRIDE:
-                    logger.log('Latest seq num ({}) close to start index ({})'.format(packet.seqNum, self.startIndex))
-                    # The number of datapoints in a recording is always a multiple of 64 so we can figure out the
-                    # size of the recording from the partial data assuming we got one of the last 64 datapoints.
-                    # If not, it isn't a big deal because only the progress bar is impacted.
-                    self.fullSize = ceil(max(self.rawData.keys()) / 64) * 64
-                    self.fullSizeKnown.emit(self.fullSize)
-                    self.lastSequenceMod = packet.seqNum % PACKET_STRIDE
-                    self.processAndSend()
+                if self.lastSend == 0:
+                    self.initialResultsTime.emit(len(self.rawData) / 15)
+                    if abs(packet.seqNum - self.startIndex) < PACKET_STRIDE:
+                        logger.log('Latest seq num ({}) close to start index ({})'.format(packet.seqNum, self.startIndex))
+                        # The number of datapoints in a recording is always a multiple of 64 so we can figure out the
+                        # size of the recording from the partial data assuming we got one of the last 64 datapoints.
+                        # If not, it isn't a big deal because only the progress bar is impacted.
+                        self.fullSize = ceil(max(self.rawData.keys()) / 64) * 64
+                        self.fullSizeKnown.emit(self.fullSize)
+                        self.lastSequenceMod = packet.seqNum % PACKET_STRIDE
+                        self.processAndSend()
 
                 diffSeqMod = self.lastSequenceMod is not None and packet.seqNum % PACKET_STRIDE != self.lastSequenceMod
                 if diffSeqMod and len(self.rawData) > self.lastSend and self.motorInfo is not None:

@@ -544,6 +544,34 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QLabel" name="labelInitialResults">
+       <property name="text">
+        <string>Initial results:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditInitialResults">
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans Mono</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>0 s</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -562,15 +590,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>DataAgeWidget</class>
+   <extends>QLineEdit</extends>
+   <header location="global">ui.dataAgeWidget</header>
+  </customwidget>
+  <customwidget>
    <class>TransducerSelectorWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.transducerSelectorWidget</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>DataAgeWidget</class>
-   <extends>QLineEdit</extends>
-   <header location="global">ui.dataAgeWidget</header>
   </customwidget>
  </customwidgets>
  <resources/>
