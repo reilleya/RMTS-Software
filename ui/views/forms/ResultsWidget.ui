@@ -55,6 +55,14 @@
            </item>
            <item>
             <widget class="DataAgeWidget" name="widgetDataAge">
+             <property name="font">
+              <font>
+               <family>DejaVu Sans Mono</family>
+              </font>
+             </property>
+             <property name="text">
+              <string>0.0 s</string>
+             </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
