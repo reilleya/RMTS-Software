@@ -15,20 +15,27 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QWidget" name="widgetLogo" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>1022</width>
-       <height>295</height>
-      </size>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="topMargin">
+      <number>0</number>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>1022</width>
-       <height>16777215</height>
-      </size>
-     </property>
-    </widget>
+     <item>
+      <widget class="QWidget" name="widgetLogo" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>1022</width>
+         <height>295</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>1022</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QLabel" name="labelSoftwareVersion">
@@ -39,6 +46,16 @@
      </property>
      <property name="text">
       <string>Rocket Motor Test System - V###</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelCredits">
+     <property name="text">
+      <string>Created by Andrew Reilley. Special thanks to Shreeyam Kacker and Peter Emidy.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
