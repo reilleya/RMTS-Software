@@ -24,6 +24,8 @@ class StartWidget(QWidget):
     editPreferences = pyqtSignal()
     editTransducer = pyqtSignal()
 
+    showAbout = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.ui = Ui_StartWidget()
@@ -39,7 +41,7 @@ class StartWidget(QWidget):
 
         self.ui.pushButtonPreferences.pressed.connect(self.editPreferences.emit)
         self.ui.pushButtonEditTransducer.pressed.connect(self.editTransducer.emit)
-        #self.ui.pushButtonAbout.pressed.connect()
+        self.ui.pushButtonAbout.pressed.connect(self.showAbout.emit)
 
         logo = QtSvg.QSvgWidget()
         self.ui.groupBoxLogo.setLayout(QVBoxLayout())

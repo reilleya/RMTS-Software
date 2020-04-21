@@ -16,6 +16,7 @@ class MainWindowPages(IntEnum):
     EDIT_TRANSDUCER = 6
     RECV_RESULTS = 7
     CALIBRATION_SETUP = 8
+    ABOUT = 9
 
 PAGE_NAMES = {
     0: 'Start',
@@ -26,7 +27,8 @@ PAGE_NAMES = {
     5: 'Calibration',
     6: 'Transducer editor',
     7: 'Receive results',
-    8: 'Calibration setup'
+    8: 'Calibration setup',
+    9: 'About'
 }
 
 class MainWindow(QMainWindow):
@@ -46,6 +48,7 @@ class MainWindow(QMainWindow):
         self.ui.pageStart.editTransducer.connect(self.gotoEditTransducerPage)
         self.ui.pageStart.showResultsPage.connect(lambda: self.gotoResultsPage(False))
         self.ui.pageStart.showRawData.connect(self.gotoRawDataMotorInfoPage)
+        self.ui.pageStart.showAbout.connect(self.gotoAboutPage)
 
         self.ui.pageRawDataMotorInfo.back.connect(self.gotoStartPage)
         self.ui.pageRawDataMotorInfo.nextPage.connect(lambda: self.gotoResultsPage(False))
@@ -67,6 +70,8 @@ class MainWindow(QMainWindow):
         self.ui.pageCalibrationSetup.back.connect(self.gotoStartPage)
         self.ui.pageCalibrationSetup.nextPage.connect(self.gotoCalibrationPage)
 
+        self.ui.pageAbout.back.connect(self.gotoStartPage)
+
     def closeEvent(self, event=None):
         if not self.ui.pageResults.unsavedCheck() or not self.ui.pageCalibration.unsavedCheck():
             logger.log('Canceling close event')
@@ -77,6 +82,7 @@ class MainWindow(QMainWindow):
         self.ui.pageFire.exit()
         self.ui.pageRecvResults.exit()
         self.ui.pageCalibrationSetup.exit()
+        self.ui.pageAbout.exit()
         logger.log('Application exited')
         sys.exit()
 
@@ -123,3 +129,6 @@ class MainWindow(QMainWindow):
         self.ui.pageRecvResults.exit()
         self.ui.pageFire.exit()
         self.gotoStartPage()
+
+    def gotoAboutPage(self):
+        self.gotoPage(MainWindowPages.ABOUT)

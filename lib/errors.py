@@ -17,9 +17,14 @@ ERRORS = {
     }
 }
 
-def formatErrorMessage(device, code):
+def getErrorString(device, code):
     if device in ERRORS and code in ERRORS[code]:
-        message = ERRORS[device][code]
-    else:
-        message = "Unknown error."
+        return ERRORS[device][code]
+    return 'Unknown error.'
+
+def getNominalString(device):
+    return getErrorString(device, 0)
+
+def formatErrorMessage(device, code):
+    message = getErrorString(device, code)
     return "{}.{}: {}".format(device, code, message)

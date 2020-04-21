@@ -74,11 +74,15 @@ class ErrorPacket(RadioRecvPacket):
         out = "Storage: {}, ADC: {}".format(self.storageError, self.adcError)
         return out
 
+    # Returns a list of error strings for all devices that are not nominal (err = 0)
     def getErrors(self):
         errors = [self.storageError, self.adcError]
         strErrors = [formatErrorMessage(device, code) for device, code in enumerate(errors)]
         return [error for index, error in enumerate(strErrors) if errors[index] != 0]
 
+    # Returns an ordered list of device error codes
+    def getErrorList(self):
+        return [self.storageError, self.adcError, 0] # Radio errors are currently not sent
 
 class ResultPacket(RadioRecvPacket):
     def __init__(self, data):
