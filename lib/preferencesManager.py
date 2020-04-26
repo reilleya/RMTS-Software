@@ -1,14 +1,15 @@
 from PyQt5.QtCore import QObject, pyqtSignal
-import yaml
 
+from pyFileIO import fileIO
 from pyFormGen.unitPreferences import UnitPreferences
 from pyFormGen.collectionEditor import CollectionEditor
+from .fileTypes import FILE_TYPES
 from .logger import logger
 
 class PreferencesManager(QObject):
 
     preferencesChanged = pyqtSignal()
-    preferencesPath = 'preferences.yaml'
+    PREFERENCES_PATH = 'preferences.yaml'
 
     def __init__(self):
         super().__init__()
@@ -16,19 +17,19 @@ class PreferencesManager(QObject):
 
     def loadPreferences(self):
         try:
-            with open(self.preferencesPath, 'r') as readLocation:
-                fileData = yaml.full_load(readLocation)
-                self.preferences.setProperties(fileData)
-                self.preferencesChanged.emit()
+            self.preferences.setProperties(fileIO.loadFromDataDirectory(FILE_TYPES.PREFERENCES, self.PREFERENCES_PATH))
+            self.preferencesChanged.emit()
         except Exception as err:
-            logger.error('Could not read preferences, using default. Error: ' + str(err))
+            logger.error('Could not read preferences, using default. Error: {}'.format(repr(err)))
             self.loadDefault()
             self.savePreferences()
 
     def savePreferences(self):
         logger.log('Saving preferences...')
-        with open(self.preferencesPath, 'w') as saveLocation:
-            yaml.dump(self.preferences.getProperties(), saveLocation)
+        try:
+            fileIO.saveToDataDirectory(FILE_TYPES.PREFERENCES, self.preferences.getProperties(), self.PREFERENCES_PATH)
+        except Exception as err:
+            logger.error('Could not save preferences. Error: {}'.format(repr(err)))
 
     def setPreferences(self, pref):
         self.preferences = pref

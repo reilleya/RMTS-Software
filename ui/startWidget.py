@@ -6,9 +6,12 @@ from serial.tools.list_ports import comports
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QVBoxLayout
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import QtSvg
+from pyFileIO import fileIO
 
 from lib.converter import Converter
+from lib.logger import logger
 from lib.motor import processRawData, FiringConfig
+from lib.fileTypes import FILE_TYPES
 
 from ui.views.StartWidget_ui import Ui_StartWidget
 
@@ -51,15 +54,22 @@ class StartWidget(QWidget):
     def showSavedResultsPressed(self):
         path = QFileDialog.getOpenFileName(None, 'Load FIRE', '', 'Firing Data File (*.fire)')[0]
         if path != '':
-            with open(path, 'r') as fileData:
-                data = yaml.load(fileData)
+            try:
+                data = fileIO.load(FILE_TYPES.FIRING, path)
+            except Exception as err:
+                logger.log('Failed to load firing, err: {}'.format(repr(err)))
+                return
+            try:
                 motor = processRawData(data['rawData'],
-                    Converter(data['forceConv']),
-                    Converter(data['pressureConv']),
-                    FiringConfig(data['motorInfo'])
-                )
-                QApplication.instance().newResult(motor)
-                self.showResultsPage.emit()
+                        Converter(data['forceConv']),
+                        Converter(data['pressureConv']),
+                        FiringConfig(data['motorInfo'])
+                    )
+            except Exception as err:
+                logger.log('Failed to process firing, err: {}'.format(repr(err)))
+                return
+            QApplication.instance().newResult(motor)
+            self.showResultsPage.emit()
 
     def processRawData(self):
         path = QFileDialog.getOpenFileName(None, 'Load Raw Data', '', 'Raw Firing Data File (*.LOG)')[0]

@@ -1,13 +1,14 @@
 import sys
-import yaml
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
+from pyFileIO import fileIO
 from ui.views.ResultsWidget_ui import Ui_ResultsWidget
 from .engExporterWidget import engExportWidget
 
 from lib.firing import Firing
 from lib.logger import logger
+from lib.fileTypes import FILE_TYPES
 
 class ResultsWidget(QWidget):
 
@@ -117,9 +118,11 @@ class ResultsWidget(QWidget):
         if not path.endswith('.fire'):
             path += '.fire'
         logger.log('Saving firing to {}'.format(path))
-        with open(path, 'w') as outFile:
-            yaml.dump(self.motorData.toDictionary(), outFile)
+        try:
+            fileIO.save(FILE_TYPES.FIRING, self.motorData.toDictionary(), path)
             self.saved = True
+        except Exception as err:
+            logger.log('Failed to save firing data, err: {}'.format(repr(err)))
 
     def saveCSV(self):
         path = QFileDialog.getSaveFileName(None, 'Save CSV', '', 'Comma Separated Values (*.csv)')[0]

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import QtSvg
 
@@ -30,6 +30,9 @@ class AboutWidget(QWidget):
         self.toggleConnectionButtons(False)
         self.boardInfoCollector = None
         self.ui.widgetDataAge.reset(False)
+
+        versionString = '.'.join(str(num) for num in QApplication.instance().VERSION)
+        self.ui.labelSoftwareVersion.setText('Rocket Motor Test System - {}'.format(versionString))
 
     def connect(self):
         self.boardInfoCollector = BoardInfoCollector(self.ui.widgetPortSelector.getPort())

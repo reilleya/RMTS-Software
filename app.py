@@ -4,19 +4,25 @@ from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
 from pyFormGen.units import convert
+from pyFileIO import fileIO
 
 from lib.sensorProfileManager import SensorProfileManager
 from lib.preferencesManager import PreferencesManager
 from lib.logger import logger
+from lib.fileTypes import FILE_TYPES
 from ui.mainWindow import MainWindow
 
 class App(QApplication):
+
+    NAME = 'RMTS'
+    VERSION = (0, 1, 0)
 
     newConverter = pyqtSignal(object)
     newFiringConfig = pyqtSignal(object)
 
     def __init__(self, args):
         super().__init__(args)
+        self.setupFileIO()
         self.sensorProfileManager = SensorProfileManager()
         self.sensorProfileManager.loadProfiles()
         self.preferencesManager = PreferencesManager()
@@ -70,3 +76,9 @@ class App(QApplication):
 
     def newCalibration(self, calibration):
         self.window.ui.pageCalibration.newCalibration(calibration)
+
+    def setupFileIO(self):
+        fileIO.setAppInfo(self.NAME, self.VERSION)
+        fileIO.registerFileType(FILE_TYPES.PREFERENCES)
+        fileIO.registerFileType(FILE_TYPES.TRANSDUCERS)
+        fileIO.registerFileType(FILE_TYPES.FIRING)

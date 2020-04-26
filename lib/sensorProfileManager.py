@@ -1,13 +1,14 @@
 from PyQt5.QtCore import QObject, pyqtSignal
-import yaml
 
+from pyFileIO import fileIO
 from lib.converter import ConverterType, Converter
 from .logger import logger
+from .fileTypes import FILE_TYPES
 
 class SensorProfileManager(QObject):
 
     profilesChanged = pyqtSignal()
-    profilesPath = 'transducers.yaml'
+    TRANSDUCERS_PATH = 'transducers.yaml'
 
     def __init__(self):
         super().__init__()
@@ -15,19 +16,21 @@ class SensorProfileManager(QObject):
 
     def loadProfiles(self):
         try:
-            with open(self.profilesPath, 'r') as readLocation:
-                self.profiles = [Converter(properties) for properties in yaml.full_load(readLocation)]
-                self.profilesChanged.emit()
+            transducerData = fileIO.loadFromDataDirectory(FILE_TYPES.TRANSDUCERS, self.TRANSDUCERS_PATH)
+            self.profiles = [Converter(properties) for properties in transducerData]
         except Exception as err:
-            logger.error('Could not read sensor profiles, using default. Error: ' + str(err))
+            logger.error('Could not read transducer data, saving empty. Error: {}'.format(repr(err)))
             self.saveProfiles()
 
         self.profilesChanged.emit()
 
     def saveProfiles(self):
-        logger.log('Saving profiles to "{}"'.format(self.profilesPath))
-        with open(self.profilesPath, 'w') as saveLocation:
-            yaml.dump([profile.getProperties() for profile in self.profiles], saveLocation)
+        logger.log('Saving transducer profiles...')
+        try:
+            transducerData = [profile.getProperties() for profile in self.profiles]
+            fileIO.saveToDataDirectory(FILE_TYPES.TRANSDUCERS, transducerData, self.TRANSDUCERS_PATH)
+        except Exception as err:
+            logger.error('Could not save transducer data. Error: {}'.format(repr(err)))
 
     def getProfile(self, name):
         for profile in self.profiles:
