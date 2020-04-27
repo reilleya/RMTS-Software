@@ -1,5 +1,7 @@
 from enum import Enum
 from math import ceil
+from threading import Thread
+from time import sleep
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -8,7 +10,6 @@ from .radio import RadioManager, SetupPacket, FirePacket, ResultPacket, ErrorPac
 from .motor import processRawData
 from .firmwareVersions import checkVersionPacket
 from .logger import logger
-
 
 PACKET_STRIDE = 10
 
@@ -34,6 +35,7 @@ class Firing(QObject):
     def __init__(self, forceConverter, pressureConverter, motorInfo, port):
         super().__init__()
         self.versionChecked = VERSION_CHECK_STATE.UNCHECKED
+        self._exiting = False
 
         self.rawData = {}
         self.startIndex = None
@@ -117,9 +119,15 @@ class Firing(QObject):
         self.fired.emit()
 
     def stop(self):
+        Thread(target=self._stopThread).start()
+
+    def _stopThread(self):
         stopPack = StopPacket()
-        self.radioManager.sendPacket(stopPack)
+        while self.startIndex is None and not self._exiting:
+            self.radioManager.sendPacket(stopPack, 5)
+            sleep(0.1)
         self.stopped.emit()
 
     def exit(self):
+        self._exiting = True
         self.radioManager.stop()

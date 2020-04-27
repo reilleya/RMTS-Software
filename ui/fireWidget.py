@@ -68,8 +68,8 @@ class FireWidget(QWidget):
 
         # Fire
         self.toggleFields(self.firingFields, False)
-        self.ui.lineEditArm.setText('')
-        self.ui.lineEditStop.setText('')
+        self.emptyFiringControls()
+
         self.ui.pushButtonStop.setEnabled(False)
         self.ui.pushButtonFire.setEnabled(False)
         self.ui.widgetDataAge.reset(False)
@@ -78,6 +78,9 @@ class FireWidget(QWidget):
         self.toggleFields(self.resultsFields, False)
         self.ui.lineEditInitialResults.setText('0 s')
 
+    def emptyFiringControls(self):
+        self.ui.lineEditArm.setText('')
+        self.ui.lineEditStop.setText('')
 
     def toggleFields(self, fields, enabled):
         for field in fields:
@@ -147,6 +150,8 @@ class FireWidget(QWidget):
             logger.error("Tried to stop without a firing!")
             return
         logger.log('Stop button pressed')
+        self.toggleFields(self.firingFields, False)
+        self.emptyFiringControls()
         self.firing.stop()
 
     def gotoResults(self, resultsSize):
