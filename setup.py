@@ -10,10 +10,10 @@ except ImportError:
 
 setup(
     name='RMTSI',
-    version='0.0.0',
+    version='0.1.0',
     license='GPLv3',
     packages=find_packages(),
-    url='https://github.com/reilleya/RMTSI',
-    description='Software to interface with the RMTSI board over radio link',
+    url='https://github.com/reilleya/RMTS-Software',
+    description='Software to interface with the RMTS board over radio link',
     cmdclass=cmdclass
 )

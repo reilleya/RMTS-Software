@@ -83,6 +83,9 @@ class Firing(QObject):
             self.newErrorPacket.emit(packet)
         elif type(packet) is ResultPacket:
             self.newResultsPacket.emit()
+            if not packet.validate():
+                logger.warn('Invalid results packet, {}'.format(packet))
+                return
             self.rawData[packet.seqNum] = packet
             if len(self.rawData) == 1:
                 logger.log('Got first result packet, setting start index to {}'.format(packet.seqNum))

@@ -97,6 +97,11 @@ class ResultPacket(RadioRecvPacket):
         out = "#: {}, Time: {}, Force: {}, Pressure: {}".format(self.seqNum, self.time, self.force, self.pressure)
         return out
 
+    def validate(self):
+        lowerBound = 5 + (6 * self.seqNum)
+        upperBound = 15 + (7 * self.seqNum)
+        return lowerBound < self.time < upperBound
+
 
 class FirePacket(RadioSendPacket):
     def __init__(self, fireDuration):
