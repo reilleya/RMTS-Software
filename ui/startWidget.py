@@ -47,8 +47,8 @@ class StartWidget(QWidget):
         self.ui.pushButtonAbout.pressed.connect(self.showAbout.emit)
 
         logo = QtSvg.QSvgWidget()
-        self.ui.groupBoxLogo.setLayout(QVBoxLayout())
-        self.ui.groupBoxLogo.layout().addWidget(logo)
+        self.ui.widgetLogo.setLayout(QVBoxLayout())
+        self.ui.widgetLogo.layout().addWidget(logo)
         logo.load('resources/logo_large.svg')
 
     def showSavedResultsPressed(self):
