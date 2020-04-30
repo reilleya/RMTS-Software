@@ -50,6 +50,36 @@
         </item>
        </layout>
       </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonConnect">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Connect</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
@@ -92,12 +122,39 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonConnect">
-       <property name="enabled">
-        <bool>true</bool>
+      <widget class="QLabel" name="labelInitialResults">
+       <property name="text">
+        <string>Initial Results:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditInitialResults">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans Mono</family>
+        </font>
        </property>
        <property name="text">
-        <string>Connect</string>
+        <string>0 s</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -107,15 +164,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CollectionEditor</class>
-   <extends>QWidget</extends>
-   <header location="global">pyFormGen.collectionEditor</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>PortSelectorWidget</class>
    <extends>QWidget</extends>
    <header location="global">ui.portSelectorWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CollectionEditor</class>
+   <extends>QWidget</extends>
+   <header location="global">pyFormGen.collectionEditor</header>
    <container>1</container>
   </customwidget>
   <customwidget>

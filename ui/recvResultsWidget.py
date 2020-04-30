@@ -25,14 +25,17 @@ class RecvResultsWidget(QWidget):
 
         self.ui.pushButtonBack.pressed.connect(self.back.emit)
 
-        self.setup()
+        self.reset()
 
-    def setup(self):
+    def reset(self):
         self.ui.widgetMotorConfig.loadProperties(MotorConfig())
         self.ui.widgetTransducerSelector.reset()
+        self.ui.lineEditInitialResults.setText('0 s')
+        self.ui.pushButtonConnect.setEnabled(True)
         self.firing = None
 
     def connect(self):
+        self.ui.pushButtonConnect.setEnabled(False)
         port = self.ui.widgetPortSelector.getPort()
         self.forceConv, self.pressConv = self.ui.widgetTransducerSelector.getConverters()
 
@@ -40,10 +43,16 @@ class RecvResultsWidget(QWidget):
         motorConfig.setProperties(self.ui.widgetMotorConfig.getProperties())
         self.firing = Firing(self.forceConv, self.pressConv, motorConfig, port)
         self.firing.newGraph.connect(QApplication.instance().newResult)
-        self.firing.fullSizeKnown.connect(QApplication.instance().configureLiveResults)
+        self.firing.fullSizeKnown.connect(self.gotoResults)
         self.firing.newResultsPacket.connect(QApplication.instance().newResultsPacket)
+        self.firing.initialResultsTime.connect(self.initialResultsTime)
 
+    def initialResultsTime(self, time):
+        self.ui.lineEditInitialResults.setText('{:.2f} s'.format(time))
+
+    def gotoResults(self, resultsSize):
         self.results.emit()
+        QApplication.instance().configureLiveResults(resultsSize)
 
     def exit(self): # TODO: confirm before closing if connected to radio
         if self.firing is not None:

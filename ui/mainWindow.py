@@ -122,7 +122,7 @@ class MainWindow(QMainWindow):
         self.gotoPage(MainWindowPages.EDIT_TRANSDUCER)
 
     def gotoRecvResultsPage(self):
-        self.ui.pageRecvResults.setup()
+        self.ui.pageRecvResults.reset()
         self.gotoPage(MainWindowPages.RECV_RESULTS)
 
     def exitResults(self):
