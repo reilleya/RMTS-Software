@@ -27,6 +27,7 @@ class AboutWidget(QWidget):
         self.reset()
 
     def reset(self):
+        self.ui.widgetPortSelector.refreshPorts()
         self.toggleConnectionButtons(False)
         self.boardInfoCollector = None
         self.ui.widgetDataAge.reset(False)

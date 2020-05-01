@@ -26,6 +26,7 @@ class CalibrationSetupWidget(QWidget):
         self.reset()
 
     def reset(self):
+        self.ui.widgetPortSelector.refreshPorts()
         self.errorCollector = ErrorCollector()
         self.errorCollector.newError.connect(lambda: self.ui.pushButtonNext.setEnabled(False))
         self.ui.widgetBasicInfo.loadProperties(BaseConverter())

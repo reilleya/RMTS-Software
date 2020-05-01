@@ -28,6 +28,7 @@ class RecvResultsWidget(QWidget):
         self.reset()
 
     def reset(self):
+        self.ui.widgetPortSelector.refreshPorts()
         self.ui.widgetMotorConfig.loadProperties(MotorConfig())
         self.ui.widgetTransducerSelector.reset()
         self.ui.lineEditInitialResults.setText('0 s')

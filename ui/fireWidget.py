@@ -62,6 +62,7 @@ class FireWidget(QWidget):
         self.pressureBuff = LowPass(5)
 
         # Setup
+        self.ui.widgetPortSelector.refreshPorts()
         self.toggleFields(self.setupFields, True)
         self.ui.widgetTransducerSelector.reset()
         self.ui.firingConfig.loadProperties(FiringConfig())

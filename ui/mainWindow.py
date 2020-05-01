@@ -131,4 +131,5 @@ class MainWindow(QMainWindow):
         self.gotoStartPage()
 
     def gotoAboutPage(self):
+        self.ui.pageAbout.reset()
         self.gotoPage(MainWindowPages.ABOUT)
