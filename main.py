@@ -1,6 +1,3 @@
-import time
-from lib.radio import RadioManager
-
 import sys
 from app import App
 from PyQt5.QtCore import Qt

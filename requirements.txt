@@ -1,8 +1,9 @@
+appdirs==1.4.3
 decorator==4.4.0
-matplotlib==3.0.3
+matplotlib==3.2.1
 pyqt-distutils==0.7.3
-PyQt5==5.12.1
-PyQt5-sip==4.19.15
+PyQt5==5.14.2
+PyQt5-sip==12.7.2
 PyYAML==5.1
 pySerial==3.4
 git+https://github.com/reilleya/pyFormGen.git
