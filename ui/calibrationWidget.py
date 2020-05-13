@@ -24,13 +24,15 @@ class CalibrationWidget(QWidget):
 
         self.app = QApplication.instance()
 
-        self.setup()
+        self.reset()
 
-    def setup(self):
+    def reset(self):
         self.calibration = None
         self.clearing = False
         self.baseUnit = ""
         self.converter = None
+        self.ui.tableWidgetPoints.setRowCount(0)
+        self.ui.widgetGraph.clear()
 
     def newCalibration(self, calibration):
         self.ui.pushButtonSave.setEnabled(False)
