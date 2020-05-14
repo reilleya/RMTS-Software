@@ -88,9 +88,17 @@ class MotorResults():
     def getAveragePressure(self):
         return self.getIntegratedPressure() / self.getBurnTime()
 
+    def getThroatArea(self):
+        return 3.14159 * (self.nozzleThroat / 2)**2
+
     def getCStar(self):
-        throatArea = 3.14159 * (self.nozzleThroat / 2)**2
-        return throatArea * self.getIntegratedPressure() / (self.propMass)
+        return self.getThroatArea() * self.getIntegratedPressure() / self.propMass
+
+    def getThrustCoefficient(self):
+        throatArea = self.getThroatArea()
+        cf = [thrust / (throatArea * pressure) for thrust, pressure in zip(self.getForce(), self.getPressure())]
+        cf.sort()
+        return cf[int(len(cf) / 2)]
 
     def getMotorDesignation(self):
         imp = self.getImpulse()

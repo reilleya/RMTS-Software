@@ -41,7 +41,7 @@ class ResultsWidget(QWidget):
         self.resultsFields = [
             self.ui.labelMotorDesignation, self.ui.labelBurnTime, self.ui.labelStartupTime,
             self.ui.labelImpulse, self.ui.labelPropellantMass, self.ui.labelISP,
-            self.ui.labelPeakThrust, self.ui.labelAverageThrust, self.ui.labelDatapoints,
+            self.ui.labelPeakThrust, self.ui.labelAverageThrust, self.ui.labelThrustCoefficient,
             self.ui.labelPeakPressure, self.ui.labelAveragePressure, self.ui.labelCStar
         ]
 
@@ -96,7 +96,7 @@ class ResultsWidget(QWidget):
 
         self.ui.labelPeakThrust.setText(app.convertToUserAndFormat(motorData.getPeakThrust(), 'N', 1))
         self.ui.labelAverageThrust.setText(app.convertToUserAndFormat(motorData.getAverageThrust(), 'N', 1))
-        self.ui.labelDatapoints.setText(str(motorData.getNumDataPoints()))
+        self.ui.labelThrustCoefficient.setText(str(round(motorData.getThrustCoefficient(), 3)))
 
         self.ui.labelPeakPressure.setText(app.convertToUserAndFormat(motorData.getPeakPressure(), 'Pa', 3))
         self.ui.labelAveragePressure.setText(app.convertToUserAndFormat(motorData.getAveragePressure(), 'Pa', 3))
