@@ -35,6 +35,7 @@ class ResultsWidget(QWidget):
         self.ui.pushButtonFIRE.pressed.connect(self.saveFIRE)
         self.ui.pushButtonENG.pressed.connect(self.saveENG)
         self.ui.pushButtonCSV.pressed.connect(self.saveCSV)
+        self.ui.pushButtonRawCSV.pressed.connect(self.saveRawCSV)
 
         self.ui.pushButtonBack.pressed.connect(self.backPressed)
 
@@ -132,6 +133,17 @@ class ResultsWidget(QWidget):
             path += '.csv'
         data = self.motorData.getCSV()
         logger.log('Saving CSV to {}'.format(path))
+        with open(path, 'w') as outFile:
+            outFile.write(data)
+
+    def saveRawCSV(self):
+        path = QFileDialog.getSaveFileName(None, 'Save Raw CSV', '', 'Comma Separated Values (*.csv)')[0]
+        if path is None or path == '':
+            return
+        if not path.endswith('.csv'):
+            path += '.csv'
+        data = self.motorData.getRawCSV()
+        logger.log('Saving raw CSV to {}'.format(path))
         with open(path, 'w') as outFile:
             outFile.write(data)
 

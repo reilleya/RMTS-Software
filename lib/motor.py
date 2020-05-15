@@ -129,6 +129,12 @@ class MotorResults():
             out+= "\n{},{},{}".format(convTime, convForce, convPressure)
         return out
 
+    def getRawCSV(self):
+        out = 'time(ms),force(counts),pressure(counts)'
+        for i in range(0, len(self.raw['time'])):
+            out += "\n{},{},{}".format(self.raw['time'][i], self.raw['force'][i], self.raw['pressure'][i])
+        return out
+
     def toDictionary(self):
         out = {
             'rawData': self.raw,
