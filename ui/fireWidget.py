@@ -37,6 +37,7 @@ class FireWidget(QWidget):
         self.ui.lineEditArm.textChanged.connect(self.armBoxTextChanged)
         self.ui.lineEditStop.textChanged.connect(self.stopBoxTextChanged)
         self.ui.pushButtonFire.pressed.connect(self.fireButtonPressed)
+        self.ui.pushButtonFire.released.connect(self.fireButtonReleased)
         self.ui.pushButtonStop.pressed.connect(self.stopButtonPressed)
 
         self.ui.firingConfig.setPreferences(QApplication.instance().getPreferences())
@@ -145,6 +146,12 @@ class FireWidget(QWidget):
             return
         logger.log('Fire button pressed')
         self.firing.fire()
+
+    def fireButtonReleased(self):
+        if self.firing is None:
+            return
+        logger.log('Fire button released')
+        self.firing.stopFiring()
 
     def stopButtonPressed(self):
         if self.firing is None:

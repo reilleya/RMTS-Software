@@ -42,6 +42,7 @@ class Firing(QObject):
         self.lastSend = 0
         self.lastSequenceMod = None
         self.fullSize = None
+        self.firing = False
 
         self.forceConverter = forceConverter
         self.pressureConverter = pressureConverter
@@ -118,8 +119,21 @@ class Firing(QObject):
             return
         firingDur = int(self.motorInfo.getProperty('firingDuration') * 1000)
         firePack = FirePacket(firingDur)
-        self.radioManager.sendPacket(firePack)
+        self.radioManager.sendPacket(firePack, 50)
         self.fired.emit()
+        self.firing = True
+        Thread(target=self._fireThread).start()
+
+    def stopFiring(self):
+        self.firing = False
+        self.radioManager.clearSendBuffer()
+
+    def _fireThread(self):
+        firingDur = int(self.motorInfo.getProperty('firingDuration') * 1000)
+        firePack = FirePacket(firingDur)
+        while self.firing and not self._exiting:
+            self.radioManager.sendPacket(firePack, 5)
+            sleep(0.05)
 
     def stop(self):
         Thread(target=self._stopThread).start()
@@ -129,6 +143,7 @@ class Firing(QObject):
         while self.startIndex is None and not self._exiting:
             self.radioManager.sendPacket(stopPack, 5)
             sleep(0.1)
+        self.radioManager.clearSendBuffer()
         self.stopped.emit()
 
     def exit(self):

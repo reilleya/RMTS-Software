@@ -114,7 +114,7 @@ class FirePacket(RadioSendPacket):
         return self.padPayload(payload)
 
     def __str__(self):
-        return 'Fire packet, duration = {} s'.format(self.fireDuration)
+        return 'Fire packet, duration = {} ms'.format(self.fireDuration)
 
 class StopPacket(RadioSendPacket):
     def __init__(self):
@@ -158,6 +158,7 @@ class RadioManager(QObject):
     def __init__(self):
         super().__init__()
         self.toSend = []
+        self.clearOutputBuffer = False
         self.port = None
         self._lastPacketRecv = 0
         self.setupSerialThread()
@@ -176,6 +177,9 @@ class RadioManager(QObject):
         pack[1] = (256 - sum(pack)) % 256
         for i in range(0, resendCount):
             self.toSend.append(bytearray(RadioManager.PREAMBLE + pack))
+
+    def clearSendBuffer(self):
+        self.clearOutputBuffer = True
 
     def buildPacket(self, packetData):
         if packetData[0] not in RadioManager.PACKET_TYPE_MAP.keys():
@@ -217,6 +221,11 @@ class RadioManager(QObject):
                 if len(self.toSend) > 0:
                     packet = self.toSend.pop(0)
                     serport.write(packet)
+
+                if self.clearOutputBuffer:
+                    self.toSend = []
+                    self.clearOutputBuffer = False
+
         self.closed = True
         logger.log('Serial thread exited')
 
