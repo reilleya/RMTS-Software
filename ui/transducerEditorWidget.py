@@ -26,6 +26,7 @@ class TransducerEditorWidget(QWidget):
         self.ui.widgetProfileEditor.closed.connect(self.editorClosed)
 
         self.ui.listWidgetProfiles.currentItemChanged.connect(lambda: self.toggleSelectedButtons(True))
+        self.ui.listWidgetProfiles.itemDoubleClicked.connect(self.editProfile)
 
         self.ui.pushButtonAdd.pressed.connect(self.addNewProfile)
         self.ui.pushButtonRemove.pressed.connect(self.removeProfile)
