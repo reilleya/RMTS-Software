@@ -48,8 +48,10 @@ class FireWidget(QWidget):
 
     def reset(self):
         self.tared = False
-        self.tareData = []
-        self.tareOffset = 0
+        self.tareDataForce = []
+        self.tareOffsetForce = 0
+        self.tareDataPressure = []
+        self.tareOffsetPressure = 0
 
         self.firing = None
 
@@ -115,17 +117,24 @@ class FireWidget(QWidget):
 
     def newPacket(self, packet):
         if self.tared:
-            realForce = self.forceConv.convert(self.forceBuff.addData(packet.force)) - self.tareOffset
+            realForce = self.forceConv.convert(self.forceBuff.addData(packet.force)) - self.tareOffsetForce
             self.ui.lineEditForce.setText(QApplication.instance().convertToUserAndFormat(realForce, 'N', 1))
+            realPressure = self.pressConv.convert(self.pressureBuff.addData(packet.pressure)) - self.tareOffsetPressure
+            self.ui.lineEditPressure.setText(QApplication.instance().convertToUserAndFormat(realPressure, 'Pa', 1))
         else:
-            self.tareData.append(packet.force)
-            if len(self.tareData) == 10:
-                tareAvg = sum(self.tareData) / len(self.tareData)
-                self.tareOffset = self.forceConv.convert(tareAvg)
+            self.tareDataForce.append(packet.force)
+            self.tareDataPressure.append(packet.pressure)
+            if len(self.tareDataForce) == 10:
+                tareAvgForce = sum(self.tareDataForce) / len(self.tareDataForce)
+                self.tareOffsetForce = self.forceConv.convert(tareAvgForce)
+                tareAvgPressure = sum(self.tareDataPressure) / len(self.tareDataPressure)
+                self.tareOffsetPressure = self.pressConv.convert(tareAvgPressure)
                 self.tared = True
-                logger.log('Tare complete, offset = ({:.4f} conv, {:.4f} raw)'.format(self.tareOffset, tareAvg))
-        realPressure = self.pressConv.convert(self.pressureBuff.addData(packet.pressure))
-        self.ui.lineEditPressure.setText(QApplication.instance().convertToUserAndFormat(realPressure, 'Pa', 1))
+                logger.log('Tare complete')
+                logger.log('\tForce offset = ({:.4f} conv, {:.4f} raw)'.format(self.tareOffsetForce, tareAvgForce))
+                logger.log('\tPressure offset = ({:.4f} conv, {:.4f} raw)'.format(self.tareOffsetPressure,
+                    tareAvgPressure))
+
         self.ui.lineEditContinuity.setText("Yes" if packet.continuity else "No")
 
     def initialResultsTime(self, time):

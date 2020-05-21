@@ -7,7 +7,6 @@ class MotorConfig(PropertyCollection):
     def __init__(self):
         super().__init__()
         self.props['motorOrientation'] = EnumProperty('Motor Orientation', ['Vertical', 'Horizontal'])
-        self.props['hardwareMass'] = FloatProperty('Motor Dry Mass', 'kg', 0.01, 100)
         self.props['propellantMass'] = FloatProperty('Propellant Mass', 'kg', 0.01, 100)
         self.props['throatDiameter'] = FloatProperty('Throat Diameter', 'm', 0.0001, 1)
 
@@ -36,7 +35,6 @@ class MotorResults():
         self.forceConv = forceConv
         self.presConv = presConv
         self.propMass = self.motorInfo.getProperty('propellantMass')
-        self.hardwareMass = self.motorInfo.getProperty('hardwareMass')
         self.nozzleThroat = self.motorInfo.getProperty('throatDiameter')
         self.raw = rawData
 
@@ -164,15 +162,19 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
 
     # Remove amplifier offset
     # Assumes that there are 10+ points before thrust begins. The firmware waits 10 before firing to make sure.
-    start = f[:NUM_CAL_FRAMES]
-    start.sort()
-    startAverage = start[5]
-    if motorInfo.getProperty('motorOrientation') == 'Vertical':
-        zero = (motorInfo.getProperty('hardwareMass') + motorInfo.getProperty('hardwareMass')) * 9.81
-    else:
-        zero = 0
-    offset = startAverage - forceConv.toRaw(zero)
-    f = [d - offset for d in f]
+    startupForces = f[:NUM_CAL_FRAMES]
+    startupForces.sort()
+    startupForcesAverage = startupForces[5]
+    logger.log('Startup pressure median: {}, conv: {}'.format(startupPressuresAverage, presConv.convert(startupPressuresAverage)))
+
+    startupPressures = p[:NUM_CAL_FRAMES]
+    startupPressures.sort()
+    startupPressuresAverage = startupPressures[5]
+    basePressure = presConv.toRaw(0)
+    logger.log('Startup pressure median: {}, conv: {}'.format(startupPressuresAverage, presConv.convert(startupPressuresAverage)))
+
+    f = [d - startupForcesAverage for d in f]
+    p = [d - startupPressuresAverage + basePressure for d in p]
 
     t = t[NUM_CAL_FRAMES:]
     f = f[NUM_CAL_FRAMES:]
@@ -188,10 +190,6 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     # Convert to proper units
     t = [d / 1000 for d in t]
     f = forceConv.convertMultiple(f)
-    if motorInfo.getProperty('motorOrientation') == 'Vertical':
-        for i in range(0, len(t)):
-            f[i] -= motorInfo.getProperty('hardwareMass') * 9.81
-            f[i] -= motorInfo.getProperty('propellantMass') * 9.81
     p = presConv.convertMultiple(p)
 
     # Trim data from the end
