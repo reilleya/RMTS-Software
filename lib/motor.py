@@ -165,7 +165,8 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     startupForces = f[:NUM_CAL_FRAMES]
     startupForces.sort()
     startupForcesAverage = startupForces[5]
-    logger.log('Startup pressure median: {}, conv: {}'.format(startupPressuresAverage, presConv.convert(startupPressuresAverage)))
+    baseForce = forceConv.toRaw(0)
+    logger.log('Startup force median: {}, conv: {}'.format(startupForcesAverage, forceConv.convert(startupForcesAverage)))
 
     startupPressures = p[:NUM_CAL_FRAMES]
     startupPressures.sort()
@@ -173,7 +174,7 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     basePressure = presConv.toRaw(0)
     logger.log('Startup pressure median: {}, conv: {}'.format(startupPressuresAverage, presConv.convert(startupPressuresAverage)))
 
-    f = [d - startupForcesAverage for d in f]
+    f = [d - startupForcesAverage + baseForce for d in f]
     p = [d - startupPressuresAverage + basePressure for d in p]
 
     t = t[NUM_CAL_FRAMES:]
