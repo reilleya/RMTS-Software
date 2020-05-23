@@ -9,6 +9,7 @@ class MotorConfig(PropertyCollection):
         self.props['motorOrientation'] = EnumProperty('Motor Orientation', ['Vertical', 'Horizontal'])
         self.props['propellantMass'] = FloatProperty('Propellant Mass', 'kg', 0.01, 100)
         self.props['throatDiameter'] = FloatProperty('Throat Diameter', 'm', 0.0001, 1)
+        self.props['cutoffThreshold'] = FloatProperty('Cutoff', '%', 0.1, 99.9)
 
 class FiringConfig(MotorConfig):
     def __init__(self, propDict=None):
@@ -160,6 +161,8 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     f = rejectOutliers(f)
     p = rejectOutliers(p)
 
+    cutoff = motorInfo.getProperty('cutoffThreshold') / 100
+
     # Remove amplifier offset
     # Assumes that there are 10+ points before thrust begins. The firmware waits 10 before firing to make sure.
     startupForces = f[:NUM_CAL_FRAMES]
@@ -196,14 +199,14 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     # Trim data from the end
     maxForce = max(f)
     endCutoff = f.index(maxForce)
-    while f[endCutoff] > 0.05 * maxForce and endCutoff < len(f) - 1:
+    while f[endCutoff] > cutoff * maxForce and endCutoff < len(f) - 1:
         endCutoff += 1
     endCutoff = min(endCutoff + 10, len(f))
     t, f, p = t[:endCutoff], f[:endCutoff], p[:endCutoff]
 
     # Trim data from the start
     startCutoff = f.index(maxForce)
-    while f[startCutoff] > 0.05 * maxForce and startCutoff > 0:
+    while f[startCutoff] > cutoff * maxForce and startCutoff > 0:
         startCutoff -= 1
     endCutoff = max(startCutoff - 15, 0)
     t, f, p = t[startCutoff:], f[startCutoff:], p[startCutoff:]

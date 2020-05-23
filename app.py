@@ -10,12 +10,14 @@ from lib.sensorProfileManager import SensorProfileManager
 from lib.preferencesManager import PreferencesManager
 from lib.logger import logger
 from lib.fileTypes import FILE_TYPES
+from lib.migrations import *
+
 from ui.mainWindow import MainWindow
 
 class App(QApplication):
 
     NAME = 'RMTS'
-    VERSION = (0, 1, 0)
+    VERSION = (0, 2, 0)
 
     newConverter = pyqtSignal(object)
     newFiringConfig = pyqtSignal(object)
@@ -82,3 +84,7 @@ class App(QApplication):
         fileIO.registerFileType(FILE_TYPES.PREFERENCES)
         fileIO.registerFileType(FILE_TYPES.TRANSDUCERS)
         fileIO.registerFileType(FILE_TYPES.FIRING)
+
+        fileIO.registerMigration(FILE_TYPES.PREFERENCES, (0, 1, 0), (0, 2, 0), lambda data: data)
+        fileIO.registerMigration(FILE_TYPES.TRANSDUCERS, (0, 1, 0), (0, 2, 0), lambda data: data)
+        fileIO.registerMigration(FILE_TYPES.FIRING, (0, 1, 0), (0, 2, 0), migrateFiring_0_1_0_to_0_2_0)

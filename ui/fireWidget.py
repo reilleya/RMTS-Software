@@ -68,7 +68,7 @@ class FireWidget(QWidget):
         self.ui.widgetPortSelector.refreshPorts()
         self.toggleFields(self.setupFields, True)
         self.ui.widgetTransducerSelector.reset()
-        self.ui.firingConfig.loadProperties(FiringConfig())
+        self.ui.firingConfig.loadProperties(FiringConfig({'cutoffThreshold': 5}))
 
         # Fire
         self.toggleFields(self.firingFields, False)
