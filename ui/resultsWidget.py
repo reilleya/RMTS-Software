@@ -9,6 +9,7 @@ from .engExporterWidget import engExportWidget
 from lib.firing import Firing
 from lib.logger import logger
 from lib.fileTypes import FILE_TYPES
+from lib.datasheet import saveDatasheet
 
 class ResultsWidget(QWidget):
 
@@ -36,6 +37,7 @@ class ResultsWidget(QWidget):
         self.ui.pushButtonENG.pressed.connect(self.saveENG)
         self.ui.pushButtonCSV.pressed.connect(self.saveCSV)
         self.ui.pushButtonRawCSV.pressed.connect(self.saveRawCSV)
+        self.ui.pushButtonDatasheet.pressed.connect(self.saveDatasheet)
 
         self.ui.pushButtonBack.pressed.connect(self.backPressed)
 
@@ -190,6 +192,17 @@ class ResultsWidget(QWidget):
             contents += ';\n;\n'
 
             outFile.write(contents)
+
+    def saveDatasheet(self):
+        path = QFileDialog.getSaveFileName(None, 'Save Motor Datasheet', '',
+            'Portable Network Graphic Files (*.png);;Portable Document Format Files (*.pdf)')[0]
+        if path is None or path == '':
+            return
+        if not path.endswith('.png') and not path.endswith('.pdf'):
+            path += '.png'
+        logger.log('Saving datasheet to "{}"'.format(path))
+        app = QApplication.instance()
+        saveDatasheet(self.motorData, path, app.convertToUserAndFormat, app.convertAllToUserUnits, app.getUserUnit)
 
     # Returns true if it is safe to exit
     def unsavedCheck(self):

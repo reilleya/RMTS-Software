@@ -68,6 +68,7 @@ class StartWidget(QWidget):
             except Exception as err:
                 logger.log('Failed to process firing, err: {}'.format(repr(err)))
                 return
+            logger.log('Loaded saved firing data from "{}"'.format(path))
             QApplication.instance().newResult(motor)
             self.showResultsPage.emit()
 

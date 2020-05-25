@@ -153,6 +153,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="pushButtonDatasheet">
+           <property name="text">
+            <string>Datasheet</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="pushButtonENG">
            <property name="text">
             <string>RASP ENG</string>
