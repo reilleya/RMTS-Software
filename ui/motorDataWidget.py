@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal
 
 from ui.views.MotorDataWidget_ui import Ui_MotorDataWidget
 from lib.motor import MotorConfig, processRawData
+from lib.logger import logger
 
 class MotorDataWidget(QWidget):
 
@@ -25,7 +26,8 @@ class MotorDataWidget(QWidget):
 
         # Cut the data up into frames of the correct size
         for start in range(0, len(data), 16):
-            rawFrames.append(data[start:start+16])
+            rawFrames.append(data[start:start + 16])
+        logger.log('Frames: {}'.format(len(rawFrames)))
         # Separate the frames into time, force, and pressure
         for frame in rawFrames:
             # Account for (16 bit) time looping around
@@ -39,7 +41,7 @@ class MotorDataWidget(QWidget):
 
         self.ui.widgetTransducerSelector.reset()
         self.ui.motorData.setPreferences(QApplication.instance().getPreferences())
-        self.ui.motorData.loadProperties(MotorConfig())
+        self.ui.motorData.loadProperties(MotorConfig({'cutoffThreshold': 5}))
 
     def nextPressed(self):
         # Validate motor data object

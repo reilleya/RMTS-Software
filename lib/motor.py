@@ -4,12 +4,15 @@ from pyFormGen.properties import PropertyCollection, FloatProperty, EnumProperty
 from .logger import logger
 
 class MotorConfig(PropertyCollection):
-    def __init__(self):
+    def __init__(self, propDict=None):
         super().__init__()
         self.props['motorOrientation'] = EnumProperty('Motor Orientation', ['Vertical', 'Horizontal'])
         self.props['propellantMass'] = FloatProperty('Propellant Mass', 'kg', 0.01, 100)
         self.props['throatDiameter'] = FloatProperty('Throat Diameter', 'm', 0.0001, 1)
         self.props['cutoffThreshold'] = FloatProperty('Cutoff', '%', 0.1, 99.9)
+
+        if propDict is not None:
+            self.setProperties(propDict)
 
 class FiringConfig(MotorConfig):
     def __init__(self, propDict=None):
@@ -73,6 +76,8 @@ class MotorResults():
         return max(self.force)
 
     def getAverageThrust(self):
+        if self.getBurnTime() == 0:
+            return 0
         return self.getImpulse() / self.getBurnTime()
 
     def getPeakPressure(self):
@@ -85,6 +90,8 @@ class MotorResults():
         return totalPressure
 
     def getAveragePressure(self):
+        if self.getBurnTime() == 0:
+            return 0
         return self.getIntegratedPressure() / self.getBurnTime()
 
     def getThroatArea(self):
@@ -95,6 +102,7 @@ class MotorResults():
 
     def getThrustCoefficient(self):
         throatArea = self.getThroatArea()
+        modPressure = [pressure if pressure != 0 else 1E-6 for pressure in self.getPressure()]
         cf = [thrust / (throatArea * pressure) for thrust, pressure in zip(self.getForce(), self.getPressure())]
         cf.sort()
         return cf[int(len(cf) / 2)]
@@ -216,6 +224,8 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
     startupTransient = t[0] - (rawData['time'][NUM_CAL_FRAMES - 1] / 1000)
     t = [d - t[0] for d in t]
     if motorInfo.getProperty('motorOrientation') == 'Vertical':
+        if burnTime == 0:
+            burnTime = 0.01
         for i, time in enumerate(t):
             f[i] += (time / burnTime) * motorInfo.getProperty('propellantMass') * 9.81
 

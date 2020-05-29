@@ -75,5 +75,6 @@ class StartWidget(QWidget):
     def processRawData(self):
         path = QFileDialog.getOpenFileName(None, 'Load Raw Data', '', 'Raw Firing Data File (*.LOG)')[0]
         if path != '':
+            logger.log('Loading raw data from "{}"'.format(path))
             with open(path, 'rb') as fileData:
                 self.showRawData.emit(binascii.hexlify(fileData.read()))
