@@ -30,6 +30,8 @@ class App(QApplication):
         self.preferencesManager = PreferencesManager()
         self.preferencesManager.loadPreferences()
 
+        logger.log('Application version: {}.{}.{}'.format(*self.VERSION))
+
         self.window = MainWindow(self)
         logger.log('Showing window')
         self.window.show()
