@@ -6,5 +6,5 @@ PyQt5==5.14.2
 PyQt5-sip==12.7.2
 PyYAML==5.1
 pySerial==3.4
-git+https://github.com/reilleya/pyFormGen.git
+git+https://github.com/reilleya/pyFormGen.git@c6c2c2ad57ad7243b055d46fa8d8cafc912ceec2
 git+https://github.com/reilleya/pyFileIO.git
