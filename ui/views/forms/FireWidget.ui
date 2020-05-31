@@ -87,6 +87,13 @@
            </widget>
           </item>
           <item>
+           <widget class="Line" name="lineHardwareDivider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="TransducerSelectorWidget" name="widgetTransducerSelector" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -103,6 +110,13 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="Line" name="lineSetupDivider">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="CollectionEditor" name="firingConfig" native="true">
@@ -604,6 +618,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>DataAgeWidget</class>
+   <extends>QLineEdit</extends>
+   <header location="global">ui.dataAgeWidget</header>
+  </customwidget>
+  <customwidget>
    <class>CollectionEditor</class>
    <extends>QWidget</extends>
    <header location="global">pyFormGen.collectionEditor</header>
@@ -614,11 +633,6 @@
    <extends>QWidget</extends>
    <header location="global">ui.portSelectorWidget</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>DataAgeWidget</class>
-   <extends>QLineEdit</extends>
-   <header location="global">ui.dataAgeWidget</header>
   </customwidget>
   <customwidget>
    <class>TransducerSelectorWidget</class>
