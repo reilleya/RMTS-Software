@@ -1,5 +1,7 @@
 import time
 import datetime
+import sys
+import traceback
 
 class Logger():
     def __init__(self):
@@ -31,3 +33,13 @@ class Logger():
             self._file.flush()
 
 logger = Logger()
+
+def exceptHook(exctype, value, trace):
+    tracebackFormated = traceback.format_exception(exctype, value, trace)
+    tracebackString = "".join(tracebackFormated)
+    for line in tracebackString.split('\n'):
+        logger.error(line)
+    logger.log('Application closed due to exception.')
+    sys.exit(1)
+
+sys.excepthook = exceptHook
