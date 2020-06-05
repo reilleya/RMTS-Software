@@ -5,6 +5,8 @@ from pyFormGen.unitPreferences import UnitPreferences
 from pyFormGen.collectionEditor import CollectionEditor
 from .fileTypes import FILE_TYPES
 from .logger import logger
+import os.path
+import shutil
 
 class PreferencesManager(QObject):
 
@@ -22,6 +24,10 @@ class PreferencesManager(QObject):
         except Exception as err:
             logger.error('Could not read preferences, using default. Error: {}'.format(repr(err)))
             self.loadDefault()
+            fromPath = '{}/{}'.format(fileIO.getDataDirectory(), self.PREFERENCES_PATH)
+            toPath = '{}/{}'.format(fileIO.getDataDirectory(), self.PREFERENCES_PATH + '.bak')
+            if os.path.isfile(fromPath):
+                shutil.move(fromPath, toPath)
             self.savePreferences()
 
     def savePreferences(self):

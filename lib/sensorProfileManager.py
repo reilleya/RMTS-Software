@@ -4,6 +4,8 @@ from pyFileIO import fileIO
 from lib.converter import ConverterType, Converter
 from .logger import logger
 from .fileTypes import FILE_TYPES
+import os.path
+import shutil
 
 class SensorProfileManager(QObject):
 
@@ -20,6 +22,10 @@ class SensorProfileManager(QObject):
             self.profiles = [Converter(properties) for properties in transducerData]
         except Exception as err:
             logger.error('Could not read transducer data, saving empty. Error: {}'.format(repr(err)))
+            fromPath = '{}/{}'.format(fileIO.getDataDirectory(), self.TRANSDUCERS_PATH)
+            toPath = '{}/{}'.format(fileIO.getDataDirectory(), self.TRANSDUCERS_PATH + '.bak')
+            if os.path.isfile(fromPath):
+                shutil.move(fromPath, toPath)
             self.saveProfiles()
 
         self.profilesChanged.emit()
