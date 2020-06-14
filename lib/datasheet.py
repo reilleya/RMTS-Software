@@ -45,3 +45,4 @@ def saveDatasheet(motorData, path, convertToUserAndFormat, convertAllToUserUnits
     fig.set_size_inches(8.5, 11)
 
     plt.savefig(path)
+    plt.close()

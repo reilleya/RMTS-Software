@@ -132,14 +132,17 @@ class MotorResults():
         return self.raw['pressure']
 
     def getCSV(self):
-        forceUnit = 'N'
-        pressureUnit = 'Pa'
-        out = 'time(s),force({}),pressure({})'.format(forceUnit, pressureUnit)
+        out = 'time(s)'
+        if self.hasForceConverter():
+            out += ',force({})'.format('N')
+        if self.hasPressureConverter():
+            out += ',pressure({})'.format('Pa')
         for i in range(0, self.numDataPoints):
-            convTime = round(self.time[i], 4)
-            convForce = round(self.force[i], 4)
-            convPressure = round(self.pressure[i], 4)
-            out+= "\n{},{},{}".format(convTime, convForce, convPressure)
+            out += '\n{:.4f}'.format(self.time[i])
+            if self.hasForceConverter():
+                out += ',{:.4f}'.format(self.force[i])
+            if self.hasPressureConverter():
+                out += ',{:.4f}'.format(self.pressure[i])
         return out
 
     def getRawCSV(self):
