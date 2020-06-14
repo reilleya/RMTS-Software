@@ -36,13 +36,13 @@ class App(QApplication):
         logger.log('Showing window')
         self.window.show()
 
-    def outputMessage(self, content, title='RMTSI'):
+    def outputMessage(self, content, title='RMTS'):
         msg = QMessageBox()
         msg.setText(content)
         msg.setWindowTitle(title)
         msg.exec_()
 
-    def outputException(self, exception, text, title='RMTSI - Error'):
+    def outputException(self, exception, text, title='RMTS - Error'):
         msg = QMessageBox()
         msg.setText(text)
         msg.setInformativeText(str(exception))

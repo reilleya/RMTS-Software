@@ -94,8 +94,17 @@ class FireWidget(QWidget):
         logger.log('Connect clicked, setting up firing')
         port = self.ui.widgetPortSelector.getPort()
         self.forceConv, self.pressConv = self.ui.widgetTransducerSelector.getConverters()
-        trans = 'Using LC profile: "{}", PT: "{}"'
-        logger.log(trans.format(self.forceConv.getProperty('name'), self.pressConv.getProperty('name')))
+        if self.forceConv == None and self.pressConv == None:
+            QApplication.instance().outputMessage('At least one transducer must be used.')
+            logger.log('Both transducers set to "None", cancelling')
+            return
+        forceConvName = 'None'
+        if self.forceConv is not None:
+            forceConvName = self.forceConv.getProperty('name')
+        pressureConvName = 'None'
+        if self.pressConv is not None:
+            pressureConvName = self.pressureConv.getProperty('name')
+        logger.log('Using LC profile: "{}", PT: "{}"'.format(forceConvName, pressureConvName))
 
         fireData = FiringConfig()
         fireData.setProperties(self.ui.firingConfig.getProperties())
@@ -117,23 +126,27 @@ class FireWidget(QWidget):
 
     def newPacket(self, packet):
         if self.tared:
-            realForce = self.forceConv.convert(self.forceBuff.addData(packet.force)) - self.tareOffsetForce
-            self.ui.lineEditForce.setText(QApplication.instance().convertToUserAndFormat(realForce, 'N', 1))
-            realPressure = self.pressConv.convert(self.pressureBuff.addData(packet.pressure)) - self.tareOffsetPressure
-            self.ui.lineEditPressure.setText(QApplication.instance().convertToUserAndFormat(realPressure, 'Pa', 1))
+            if self.forceConv is not None:
+                realForce = self.forceConv.convert(self.forceBuff.addData(packet.force)) - self.tareOffsetForce
+                self.ui.lineEditForce.setText(QApplication.instance().convertToUserAndFormat(realForce, 'N', 1))
+            if self.pressConv is not None:
+                realPressure = self.pressConv.convert(self.pressureBuff.addData(packet.pressure)) - self.tareOffsetPressure
+                self.ui.lineEditPressure.setText(QApplication.instance().convertToUserAndFormat(realPressure, 'Pa', 1))
         else:
             self.tareDataForce.append(packet.force)
             self.tareDataPressure.append(packet.pressure)
             if len(self.tareDataForce) == 10:
-                tareAvgForce = sum(self.tareDataForce) / len(self.tareDataForce)
-                self.tareOffsetForce = self.forceConv.convert(tareAvgForce)
-                tareAvgPressure = sum(self.tareDataPressure) / len(self.tareDataPressure)
-                self.tareOffsetPressure = self.pressConv.convert(tareAvgPressure)
-                self.tared = True
                 logger.log('Tare complete')
-                logger.log('\tForce offset = ({:.4f} conv, {:.4f} raw)'.format(self.tareOffsetForce, tareAvgForce))
-                logger.log('\tPressure offset = ({:.4f} conv, {:.4f} raw)'.format(self.tareOffsetPressure,
-                    tareAvgPressure))
+                self.tared = True
+                if self.forceConv is not None:
+                    tareAvgForce = sum(self.tareDataForce) / len(self.tareDataForce)
+                    self.tareOffsetForce = self.forceConv.convert(tareAvgForce)
+                    logger.log('\tForce offset = ({:.4f} conv, {:.4f} raw)'.format(self.tareOffsetForce, tareAvgForce))
+                if self.pressConv is not None:
+                    tareAvgPressure = sum(self.tareDataPressure) / len(self.tareDataPressure)
+                    self.tareOffsetPressure = self.pressConv.convert(tareAvgPressure)
+                    logger.log('\tPressure offset = ({:.4f} conv, {:.4f} raw)'.format(self.tareOffsetPressure,
+                        tareAvgPressure))
 
         self.ui.lineEditContinuity.setText("Yes" if packet.continuity else "No")
 

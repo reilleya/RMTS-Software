@@ -42,6 +42,12 @@ class MotorResults():
         self.nozzleThroat = self.motorInfo.getProperty('throatDiameter')
         self.raw = rawData
 
+    def hasForceConverter(self):
+        return self.forceConv is not None
+
+    def hasPressureConverter(self):
+        return self.presConv is not None
+
     def getNumDataPoints(self):
         return self.numDataPoints
 
@@ -159,6 +165,20 @@ def rejectOutliers(d):
                 d[i] = (d[i - 1] + d[i + 1]) / 2
     return d
 
+def getTrimPoints(channel, threshold):
+    # Trim data from the end
+    maxValue = max(channel)
+    endCutoff = channel.index(maxValue)
+    while channel[endCutoff] > threshold * maxValue and endCutoff < len(channel) - 1:
+        endCutoff += 1
+    endCutoff = min(endCutoff + 10, len(channel))
+
+    # Trim data from the start
+    startCutoff = channel.index(maxValue)
+    while channel[startCutoff] > threshold * maxValue and startCutoff > 0:
+        startCutoff -= 1
+    return startCutoff, endCutoff
+
 NUM_CAL_FRAMES = 10
 
 def processRawData(rawData, forceConv, presConv, motorInfo):
@@ -173,20 +193,21 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
 
     # Remove amplifier offset
     # Assumes that there are 10+ points before thrust begins. The firmware waits 10 before firing to make sure.
-    startupForces = f[:NUM_CAL_FRAMES]
-    startupForces.sort()
-    startupForcesAverage = startupForces[5]
-    baseForce = forceConv.toRaw(0)
-    logger.log('Startup force median: {}, conv: {}'.format(startupForcesAverage, forceConv.convert(startupForcesAverage)))
+    if forceConv is not None:
+        startupForces = f[:NUM_CAL_FRAMES]
+        startupForces.sort()
+        startupForcesAverage = startupForces[5]
+        baseForce = forceConv.toRaw(0)
+        logger.log('Startup force median: {}, conv: {}'.format(startupForcesAverage, forceConv.convert(startupForcesAverage)))
+        f = [d - startupForcesAverage + baseForce for d in f]
 
-    startupPressures = p[:NUM_CAL_FRAMES]
-    startupPressures.sort()
-    startupPressuresAverage = startupPressures[5]
-    basePressure = presConv.toRaw(0)
-    logger.log('Startup pressure median: {}, conv: {}'.format(startupPressuresAverage, presConv.convert(startupPressuresAverage)))
-
-    f = [d - startupForcesAverage + baseForce for d in f]
-    p = [d - startupPressuresAverage + basePressure for d in p]
+    if presConv is not None:
+        startupPressures = p[:NUM_CAL_FRAMES]
+        startupPressures.sort()
+        startupPressuresAverage = startupPressures[5]
+        basePressure = presConv.toRaw(0)
+        logger.log('Startup pressure median: {}, conv: {}'.format(startupPressuresAverage, presConv.convert(startupPressuresAverage)))
+        p = [d - startupPressuresAverage + basePressure for d in p]
 
     t = t[NUM_CAL_FRAMES:]
     f = f[NUM_CAL_FRAMES:]
@@ -201,23 +222,16 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
 
     # Convert to proper units
     t = [d / 1000 for d in t]
-    f = forceConv.convertMultiple(f)
-    p = presConv.convertMultiple(p)
+    if forceConv is not None:
+        f = forceConv.convertMultiple(f)
+    if presConv is not None:
+        p = presConv.convertMultiple(p)
 
-    # Trim data from the end
-    maxForce = max(f)
-    endCutoff = f.index(maxForce)
-    while f[endCutoff] > cutoff * maxForce and endCutoff < len(f) - 1:
-        endCutoff += 1
-    endCutoff = min(endCutoff + 10, len(f))
-    t, f, p = t[:endCutoff], f[:endCutoff], p[:endCutoff]
-
-    # Trim data from the start
-    startCutoff = f.index(maxForce)
-    while f[startCutoff] > cutoff * maxForce and startCutoff > 0:
-        startCutoff -= 1
-    endCutoff = max(startCutoff - 15, 0)
-    t, f, p = t[startCutoff:], f[startCutoff:], p[startCutoff:]
+    if forceConv is not None:
+        start, end = getTrimPoints(f, cutoff)
+    else:
+        start, end = getTrimPoints(p, cutoff)
+    t, f, p = t[start:end], f[start:end], p[start:end]
 
     # Final adjustments and calculations
     burnTime = t[-1] - t[0]
