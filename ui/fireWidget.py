@@ -103,7 +103,7 @@ class FireWidget(QWidget):
             forceConvName = self.forceConv.getProperty('name')
         pressureConvName = 'None'
         if self.pressConv is not None:
-            pressureConvName = self.pressureConv.getProperty('name')
+            pressureConvName = self.pressConv.getProperty('name')
         logger.log('Using LC profile: "{}", PT: "{}"'.format(forceConvName, pressureConvName))
 
         fireData = FiringConfig()
