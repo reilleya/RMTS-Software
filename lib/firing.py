@@ -6,7 +6,7 @@ from time import sleep
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from .converter import Converter
-from .radio import RadioManager, SetupPacket, FirePacket, ResultPacket, ErrorPacket, StopPacket, VersionPacket
+from .radio import RadioManager, SetupPacket, FirePacket, ResultPacket, ErrorPacket, StopPacket, VersionPacket, FiringPacket
 from .motor import processRawData
 from .firmwareVersions import checkVersionPacket
 from .logger import logger
@@ -23,6 +23,7 @@ class Firing(QObject):
     newGraph = pyqtSignal(object)
     newSetupPacket = pyqtSignal(object)
     newErrorPacket = pyqtSignal(object)
+    newFiringPacket = pyqtSignal(object)
 
     fullSizeKnown = pyqtSignal(int)
     newResultsPacket = pyqtSignal()
@@ -82,6 +83,8 @@ class Firing(QObject):
             self.newSetupPacket.emit(packet)
         elif type(packet) is ErrorPacket:
             self.newErrorPacket.emit(packet)
+        elif type(packet) is FiringPacket:
+            self.newFiringPacket.emit(packet)
         elif type(packet) is ResultPacket:
             self.newResultsPacket.emit()
             if not packet.validate():

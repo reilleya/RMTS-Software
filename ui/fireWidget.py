@@ -74,6 +74,10 @@ class FireWidget(QWidget):
         self.toggleFields(self.firingFields, False)
         self.emptyFiringControls()
 
+        self.ui.lineEditForce.setText('-')
+        self.ui.lineEditPressure.setText('-')
+        self.ui.lineEditContinuity.setText('-')
+
         self.ui.pushButtonStop.setEnabled(False)
         self.ui.pushButtonFire.setEnabled(False)
         self.ui.widgetDataAge.reset(False)
@@ -110,8 +114,9 @@ class FireWidget(QWidget):
         fireData.setProperties(self.ui.firingConfig.getProperties())
         logger.log('Firing properties: {}'.format(fireData.getProperties()))
         self.firing = Firing(self.forceConv, self.pressConv, fireData, port)
-        self.firing.newSetupPacket.connect(self.newPacket)
+        self.firing.newSetupPacket.connect(self.newSetupPacket)
         self.firing.newErrorPacket.connect(self.errorCollector.recordError)
+        self.firing.newFiringPacket.connect(self.newFiringPacket)
         self.firing.fullSizeKnown.connect(self.gotoResults)
         self.firing.newResultsPacket.connect(QApplication.instance().newResultsPacket)
         self.firing.newGraph.connect(QApplication.instance().newResult)
@@ -121,10 +126,11 @@ class FireWidget(QWidget):
         self.ui.widgetDataAge.start()
         self.firing.newSetupPacket.connect(self.ui.widgetDataAge.reset)
         self.firing.newErrorPacket.connect(self.ui.widgetDataAge.reset)
+        self.firing.newFiringPacket.connect(self.ui.widgetDataAge.reset)
         self.toggleFields(self.setupFields, False)
         self.toggleFields(self.firingFields, True)
 
-    def newPacket(self, packet):
+    def newSetupPacket(self, packet):
         if self.tared:
             if self.forceConv is not None:
                 realForce = self.forceConv.convert(self.forceBuff.addData(packet.force)) - self.tareOffsetForce
@@ -150,7 +156,15 @@ class FireWidget(QWidget):
 
         self.ui.lineEditContinuity.setText("Yes" if packet.continuity else "No")
 
+    def newFiringPacket(self, packet):
+        self.ui.lineEditForce.setText('FIRING')
+        self.ui.lineEditPressure.setText('FIRING')
+        self.ui.lineEditContinuity.setText("Yes" if packet.continuity else "No")
+
     def initialResultsTime(self, time):
+        self.ui.lineEditForce.setText('Stopped')
+        self.ui.lineEditPressure.setText('Stopped')
+        self.ui.lineEditContinuity.setText("-")
         self.ui.lineEditInitialResults.setText('{:.2f} s'.format(time))
 
     def armBoxTextChanged(self):

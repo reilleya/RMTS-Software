@@ -63,6 +63,17 @@ class VersionPacket(RadioRecvPacket):
     def __str__(self):
         return "Hardware Version: {}, Firmware Version: {}".format(self.hardwareVersion, self.firmwareVersion)
 
+class FiringPacket(RadioRecvPacket):
+    def __init__(self, data):
+        super().__init__(data)
+        self.force = self.interpret24Bit(self.payload[0:])
+        self.pressure = self.interpret24Bit(self.payload[3:])
+        self.time = self.payload[6] + ((self.payload[7] & 0xFE) * (2 ** 7))
+        self.continuity = bool(self.payload[7] & 0b1)
+
+    def __str__(self):
+        return "Force: {}, Pressure: {}, Time: {}, Continuity: {}".format(self.force, self.pressure, self.time, self.continuity)
+
 
 class ErrorPacket(RadioRecvPacket):
     def __init__(self, data):
@@ -150,7 +161,8 @@ class RadioManager(QObject):
         0: SetupPacket,
         1: ErrorPacket,
         2: ResultPacket,
-        3: VersionPacket
+        3: VersionPacket,
+        4: FiringPacket
     }
 
     newPacket = pyqtSignal(object)
