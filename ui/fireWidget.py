@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
 from lib.filter import LowPass
@@ -202,14 +202,32 @@ class FireWidget(QWidget):
         self.results.emit()
         QApplication.instance().configureLiveResults(resultsSize)
 
-    def exit(self): # TODO: confirm before closing if connected to radio
+    def exit(self):
         if self.firing is not None:
             self.firing.exit()
 
-    def backPressed(self): # TODO: confirm before closing if connected to radio
-        if self.firing is not None:
-            self.firing.exit()
+    def backPressed(self):
+        if not self.exitCheck():
+            return
+        self.exit()
         self.back.emit()
 
     def hasError(self):
         self.toggleFields(self.firingFields, False)
+
+    def exitCheck(self):
+        if self.firing is None:
+            return True
+        logger.log('Checking if user really wants to exit firing widget')
+        msg = QMessageBox()
+        msg.setText("The radio is currently connected. Close anyway?")
+        msg.setWindowTitle("Close while connected?")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        res = msg.exec_()
+        if res == QMessageBox.Yes:
+            logger.log('User chose to close')
+            return True
+        if res == QMessageBox.No:
+            logger.log('User chose to stay on page')
+            return False
+        return False

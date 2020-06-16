@@ -73,7 +73,11 @@ class MainWindow(QMainWindow):
         self.ui.pageAbout.back.connect(self.gotoStartPage)
 
     def closeEvent(self, event=None):
-        if not self.ui.pageResults.unsavedCheck() or not self.ui.pageCalibration.unsavedCheck():
+        if (
+            not self.ui.pageFire.exitCheck()
+            or not self.ui.pageResults.unsavedCheck()
+            or not self.ui.pageCalibration.unsavedCheck()
+        ):
             logger.log('Canceling close event')
             if event is not None and not isinstance(event, bool):
                     event.ignore()
