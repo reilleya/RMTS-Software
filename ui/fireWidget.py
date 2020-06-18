@@ -216,7 +216,7 @@ class FireWidget(QWidget):
         self.toggleFields(self.firingFields, False)
 
     def exitCheck(self):
-        if self.firing is None:
+        if self.firing is None or self.firing.onResultsView:
             return True
         logger.log('Checking if user really wants to exit firing widget')
         msg = QMessageBox()

@@ -44,6 +44,7 @@ class Firing(QObject):
         self.lastSequenceMod = None
         self.fullSize = None
         self.firing = False
+        self.onResultsView = False
 
         self.forceConverter = forceConverter
         self.pressureConverter = pressureConverter
@@ -106,6 +107,7 @@ class Firing(QObject):
                         self.fullSizeKnown.emit(self.fullSize)
                         self.lastSequenceMod = packet.seqNum % PACKET_STRIDE
                         self.processAndSend()
+                        self.onResultsView = True
 
                 diffSeqMod = self.lastSequenceMod is not None and packet.seqNum % PACKET_STRIDE != self.lastSequenceMod
                 if diffSeqMod and len(self.rawData) > self.lastSend and self.motorInfo is not None:
