@@ -5,6 +5,8 @@ from time import sleep
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from pyFileIO import fileIO
+
 from .converter import Converter
 from .radio import RadioManager, SetupPacket, FirePacket, ResultPacket, ErrorPacket, StopPacket, VersionPacket, FiringPacket
 from .motor import processRawData
@@ -38,6 +40,9 @@ class Firing(QObject):
         self.versionChecked = VERSION_CHECK_STATE.UNCHECKED
         self._exiting = False
 
+        self.lastFiringPacket = None
+        self.firingPackets = []
+
         self.rawData = {}
         self.startIndex = None
         self.lastSend = 0
@@ -53,6 +58,8 @@ class Firing(QObject):
         self.radioManager = RadioManager()
         self.radioManager.newPacket.connect(self.newPacket)
         self.radioManager.run(port)
+
+        Thread(target=self._backupThread).start()
 
     def processAndSend(self):
         logger.log('Processing more data ({}->{})'.format(self.lastSend, len(self.rawData)))
@@ -86,6 +93,9 @@ class Firing(QObject):
             self.newErrorPacket.emit(packet)
         elif type(packet) is FiringPacket:
             self.newFiringPacket.emit(packet)
+            if self.lastFiringPacket is None or packet.time != self.lastFiringPacket.time:
+                self.lastFiringPacket = packet
+                self.firingPackets.append(packet)
         elif type(packet) is ResultPacket:
             self.newResultsPacket.emit()
             if not packet.validate():
@@ -150,6 +160,26 @@ class Firing(QObject):
             sleep(0.1)
         self.radioManager.clearSendBuffer()
         self.stopped.emit()
+
+    def _backupThread(self):
+        dataLine = '\nT:{},F:{},P:{}'
+        backupFilePath = '{}/{}'.format(fileIO.getDataDirectory(), 'firings.bak')
+        try:
+            with open(backupFilePath, 'a') as backupFile:
+                backupFile.write('\n{} Firing {}'.format('#' * 30, '#' * 30))
+                backupFile.write('\nMotor info: {}'.format(self.motorInfo.getProperties()))
+                forceProps = self.forceConverter.getProperties() if self.forceConverter is not None else None
+                backupFile.write('\nLoad Cell: {}'.format(forceProps))
+                pressProps = self.pressureConverter.getProperties() if self.pressureConverter is not None else None
+                backupFile.write('\nPressure Transducer: {}'.format(pressProps))
+                backupFile.write('\nData:')
+                while not self._exiting:
+                    sleep(0.05)
+                    while len(self.firingPackets) > 0:
+                        packet = self.firingPackets.pop(0)
+                        backupFile.write(dataLine.format(packet.time, packet.force, packet.pressure))
+        except:
+            logger.error('Failed to open firing data backup file at ({})'.format(backupFilePath))
 
     def exit(self):
         self._exiting = True
