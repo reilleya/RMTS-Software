@@ -29,7 +29,7 @@ class RecvResultsWidget(QWidget):
 
     def reset(self):
         self.ui.widgetPortSelector.refreshPorts()
-        self.ui.widgetMotorConfig.loadProperties(MotorConfig())
+        self.ui.widgetMotorConfig.loadProperties(MotorConfig({'cutoffThreshold': 5}))
         self.ui.widgetTransducerSelector.reset()
         self.ui.lineEditInitialResults.setText('0 s')
         self.ui.pushButtonConnect.setEnabled(True)

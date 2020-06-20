@@ -109,9 +109,10 @@ class ResultPacket(RadioRecvPacket):
         return out
 
     def validate(self):
-        lowerBound = 5 + (6 * self.seqNum)
-        upperBound = 15 + (7 * self.seqNum)
-        return lowerBound < self.time < upperBound
+        timeValid = 5 + (6 * self.seqNum) < self.time < 15 + (7 * self.seqNum)
+        forceValid = 0 <= self.force <= 0x7FFFFF
+        pressureValid = 0 <= self.pressure <= 0x7FFFFF
+        return timeValid and forceValid and pressureValid
 
 
 class FirePacket(RadioSendPacket):
