@@ -155,8 +155,8 @@ class MotorResults():
         out = {
             'rawData': self.raw,
             'motorInfo': self.motorInfo.getProperties(),
-            'forceConv': self.forceConv.getProperties(),
-            'pressureConv': self.presConv.getProperties()
+            'forceConv': None if self.forceConv is None else self.forceConv.getProperties(),
+            'pressureConv': None if self.presConv is None else self.presConv.getProperties()
         }
         return out
 
