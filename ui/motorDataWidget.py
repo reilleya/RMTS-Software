@@ -44,10 +44,15 @@ class MotorDataWidget(QWidget):
         self.ui.motorData.loadProperties(MotorConfig({'cutoffThreshold': 5}))
 
     def nextPressed(self):
-        # Validate motor data object
+        forceConv, pressConv = self.ui.widgetTransducerSelector.getConverters()
+        if forceConv == None and pressConv == None:
+            QApplication.instance().outputMessage('At least one transducer must be used.')
+            logger.log('Both transducers set to "None", cancelling')
+            return
+
+        # TODO: Validate motor data object
         motorData = MotorConfig()
         motorData.setProperties(self.ui.motorData.getProperties())
-        forceConv, pressConv = self.ui.widgetTransducerSelector.getConverters()
         motor = processRawData(self.raw, forceConv, pressConv, motorData)
         QApplication.instance().newResult(motor)
         self.nextPage.emit()

@@ -61,8 +61,8 @@ class StartWidget(QWidget):
                 return
             try:
                 motor = processRawData(data['rawData'],
-                        Converter(data['forceConv']),
-                        Converter(data['pressureConv']),
+                        None if data['forceConv'] is None else Converter(data['forceConv']),
+                        None if data['pressureConv'] is None else Converter(data['pressureConv']),
                         FiringConfig(data['motorInfo'])
                     )
             except Exception as err:

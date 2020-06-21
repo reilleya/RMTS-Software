@@ -7,6 +7,8 @@ from lib.filter import LowPass
 from lib.radio import RadioManager, SetupPacket, FirePacket, ResultPacket, StopPacket
 from lib.motor import MotorConfig
 from lib.firing import Firing
+from lib.logger import logger
+
 from ui.views.RecvResultsWidget_ui import Ui_RecvResultsWidget
 
 class RecvResultsWidget(QWidget):
@@ -36,12 +38,19 @@ class RecvResultsWidget(QWidget):
         self.firing = None
 
     def connect(self):
-        self.ui.pushButtonConnect.setEnabled(False)
-        port = self.ui.widgetPortSelector.getPort()
         self.forceConv, self.pressConv = self.ui.widgetTransducerSelector.getConverters()
+        if self.forceConv == None and self.pressConv == None:
+            QApplication.instance().outputMessage('At least one transducer must be used.')
+            logger.log('Both transducers set to "None", cancelling')
+            return
+
+        port = self.ui.widgetPortSelector.getPort()
 
         motorConfig = MotorConfig()
         motorConfig.setProperties(self.ui.widgetMotorConfig.getProperties())
+
+        self.ui.pushButtonConnect.setEnabled(False)
+
         self.firing = Firing(self.forceConv, self.pressConv, motorConfig, port)
         self.firing.newGraph.connect(QApplication.instance().newResult)
         self.firing.fullSizeKnown.connect(self.gotoResults)
