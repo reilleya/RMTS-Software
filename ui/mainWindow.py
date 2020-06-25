@@ -2,6 +2,7 @@ import sys
 from enum import IntEnum
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QIcon
 
 from ui.views.MainWindow_ui import Ui_MainWindow
 from lib.logger import logger
@@ -40,6 +41,8 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.app = app
+
+        self.setWindowIcon(QIcon('resources/icon.png'))
 
         self.ui.pageStart.beginSetup.connect(self.gotoSetupPage)
         self.ui.pageStart.recvResults.connect(self.gotoRecvResultsPage)
