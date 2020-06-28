@@ -73,7 +73,7 @@ class StartWidget(QWidget):
             self.showResultsPage.emit()
 
     def processRawData(self):
-        path = QFileDialog.getOpenFileName(None, 'Load Raw Data', '', 'Raw Firing Data File (*.LOG)')[0]
+        path = QFileDialog.getOpenFileName(None, 'Load Raw Data', '', 'Raw Firing Data File (*.MFL)')[0]
         if path != '':
             logger.log('Loading raw data from "{}"'.format(path))
             with open(path, 'rb') as fileData:
