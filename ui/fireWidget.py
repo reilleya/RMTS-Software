@@ -205,6 +205,7 @@ class FireWidget(QWidget):
     def exit(self):
         if self.firing is not None:
             self.firing.exit()
+        self.firing = None
 
     def backPressed(self):
         if not self.exitCheck():

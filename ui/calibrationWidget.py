@@ -99,7 +99,7 @@ class CalibrationWidget(QWidget):
 
     def savePressed(self):
         self.save()
-        self.calibration.exit()
+        self.exitCalibration()
         self.back.emit()
 
     def save(self):
@@ -128,7 +128,7 @@ class CalibrationWidget(QWidget):
     def backPressed(self):
         if not self.unsavedCheck():
             return
-        self.calibration.exit()
+        self.exitCalibration()
         self.back.emit()
 
     def newInfo(self, properties):
@@ -143,3 +143,8 @@ class CalibrationWidget(QWidget):
             ['Raw', '{} ({})'.format(field, self.app.getUserUnit(self.baseUnit))]
         )
         self.ui.widgetGraph.setUnit(field, self.baseUnit)
+
+    def exitCalibration(self):
+        if self.calibration is not None:
+            self.calibration.exit()
+        self.calibration = None

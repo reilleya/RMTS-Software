@@ -64,3 +64,4 @@ class CalibrationSetupWidget(QWidget):
     def exit(self):
         if self.calibration is not None:
             self.calibration.exit()
+        self.calibration = None
