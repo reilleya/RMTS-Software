@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QApplication, QTableWidgetItem, QHeaderView, QMessageBox
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 
 from lib.logger import logger
 
@@ -57,7 +57,7 @@ class CalibrationWidget(QWidget):
         for row, point in enumerate(points):
             self.ui.tableWidgetPoints.setItem(row, 0, QTableWidgetItem(str(point.raw)))
             try:
-                conv = str(self.app.convertToUserUnits(point.converted, self.baseUnit))
+                conv = str(round(self.app.convertToUserUnits(point.converted, self.baseUnit), 6))
             except TypeError:
                 conv = '-'
             self.ui.tableWidgetPoints.setItem(row, 1, QTableWidgetItem(conv))
@@ -80,6 +80,10 @@ class CalibrationWidget(QWidget):
         if converter is None:
             self.ui.lineEditCurrentConverted.setText('-')
 
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Space:
+            self.capturePressed()
+
     def capturePressed(self):
         self.calibration.capture()
 
@@ -91,6 +95,8 @@ class CalibrationWidget(QWidget):
                 self.calibration.setReal(row, conv)
             except ValueError:
                 logger.log('Invalid value "{}" entered to cell ({}, {})'.format(value, row, col))
+        self.ui.tableWidgetPoints.clearSelection()
+        self.ui.pushButtonCapture.setFocus()
 
     def removePressed(self):
         selected = self.ui.tableWidgetPoints.selectionModel().selectedIndexes()
