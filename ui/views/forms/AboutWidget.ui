@@ -85,7 +85,7 @@
    <item>
     <widget class="QLabel" name="labelLiability">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Though this system was designed with safety in mind and proven with thorough testing, its output should be verified before each use to ensure it was configured correctly and that it hasn't been damaged. By using the device, you affirm that you understand the proper operation of the system and accept responsibilty for any loss of property, injury, or death that may occur as a result of using RMTS. The creators of the device shall not be held liable for any damage it may cause due to the inherent risks associated with the operation of solid rocket motors. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Though this system was designed with safety in mind and proven with thorough testing, its output should be verified before each use to ensure it was configured correctly and that it hasn't been damaged. By using the device, you affirm that you understand the proper operation of the system and accept responsibility for any loss of property, injury, or death that may occur as a result of using RMTS. The creators of the device shall not be held liable for any damage it may cause due to the inherent risks associated with the operation of solid rocket motors. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
