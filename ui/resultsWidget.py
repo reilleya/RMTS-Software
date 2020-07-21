@@ -72,9 +72,9 @@ class ResultsWidget(QWidget):
         force = None
         pressure = None
         grid = self.ui.checkBoxGridLines.isChecked()
+        if self.motorData is None:
+            return
         if self.ui.radioButtonTranslated.isChecked():
-            if self.motorData is None:
-                return
             if self.ui.checkBoxForce.isChecked():
                 force = self.motorData.getForce()
             if self.ui.checkBoxPressure.isChecked():

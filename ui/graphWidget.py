@@ -47,8 +47,12 @@ class GraphWidget(FigureCanvas):
             self.forceAxes.plot(time, force, color=FORCE_COLOR)
         if pressure is not None:
             self.pressureAxes.plot(time, pressure, color=PRESSURE_COLOR)
+        self.forceAxes.relim()
+        self.forceAxes.autoscale()
         self.forceAxes.set_ylim(bottom=0)
         self.forceAxes.grid(gridLines)
+        self.pressureAxes.relim()
+        self.pressureAxes.autoscale()
         self.pressureAxes.set_ylim(bottom=0)
         self.draw()
 
