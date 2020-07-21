@@ -136,6 +136,7 @@ class ResultsWidget(QWidget):
             self.saved = True
         except Exception as err:
             logger.log('Failed to save firing data, err: {}'.format(repr(err)))
+            QApplication.instance().outputException(err, 'Error saving file:')
 
     def saveCSV(self):
         path = QFileDialog.getSaveFileName(None, 'Save CSV', '', 'Comma Separated Values (*.csv)')[0]
@@ -145,8 +146,12 @@ class ResultsWidget(QWidget):
             path += '.csv'
         data = self.motorData.getCSV()
         logger.log('Saving CSV to {}'.format(path))
-        with open(path, 'w') as outFile:
-            outFile.write(data)
+        try:
+            with open(path, 'w') as outFile:
+                outFile.write(data)
+        except Exception as err:
+            logger.log('Failed to save firing data, err: {}'.format(repr(err)))
+            QApplication.instance().outputException(err, 'Error saving file:')
 
     def saveRawCSV(self):
         path = QFileDialog.getSaveFileName(None, 'Save Raw CSV', '', 'Comma Separated Values (*.csv)')[0]
@@ -156,8 +161,12 @@ class ResultsWidget(QWidget):
             path += '.csv'
         data = self.motorData.getRawCSV()
         logger.log('Saving raw CSV to {}'.format(path))
-        with open(path, 'w') as outFile:
-            outFile.write(data)
+        try:
+            with open(path, 'w') as outFile:
+                outFile.write(data)
+        except Exception as err:
+            logger.log('Failed to save firing data, err: {}'.format(repr(err)))
+            QApplication.instance().outputException(err, 'Error saving file:')
 
     def saveENG(self):
         logger.log('Showing ENG exporter')

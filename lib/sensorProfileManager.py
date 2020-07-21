@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QApplication
 
 from pyFileIO import fileIO
 from lib.converter import ConverterType, Converter
@@ -21,6 +22,7 @@ class SensorProfileManager(QObject):
             transducerData = fileIO.loadFromDataDirectory(FILE_TYPES.TRANSDUCERS, self.TRANSDUCERS_PATH)
             self.profiles = [Converter(properties) for properties in transducerData]
         except Exception as err:
+            QApplication.instance().outputException(err, 'Error reading transducers, resetting to default.')
             logger.error('Could not read transducer data, saving empty. Error: {}'.format(repr(err)))
             fromPath = '{}/{}'.format(fileIO.getDataDirectory(), self.TRANSDUCERS_PATH)
             toPath = '{}/{}'.format(fileIO.getDataDirectory(), self.TRANSDUCERS_PATH + '.bak')
@@ -36,6 +38,7 @@ class SensorProfileManager(QObject):
             transducerData = [profile.getProperties() for profile in self.profiles]
             fileIO.saveToDataDirectory(FILE_TYPES.TRANSDUCERS, transducerData, self.TRANSDUCERS_PATH)
         except Exception as err:
+            QApplication.instance().outputException(err, 'Error saving transducers:')
             logger.error('Could not save transducer data. Error: {}'.format(repr(err)))
 
     def getProfile(self, name):

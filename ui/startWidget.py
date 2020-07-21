@@ -58,6 +58,7 @@ class StartWidget(QWidget):
                 data = fileIO.load(FILE_TYPES.FIRING, path)
             except Exception as err:
                 logger.log('Failed to load firing, err: {}'.format(repr(err)))
+                QApplication.instance().outputException(err, 'Error loading file:')
                 return
             try:
                 motor = processRawData(data['rawData'],
@@ -67,6 +68,7 @@ class StartWidget(QWidget):
                     )
             except Exception as err:
                 logger.log('Failed to process firing, err: {}'.format(repr(err)))
+                QApplication.instance().outputException(err, 'Error loading file:')
                 return
             logger.log('Loaded saved firing data from "{}"'.format(path))
             QApplication.instance().newResult(motor)

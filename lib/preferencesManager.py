@@ -1,4 +1,5 @@
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QApplication
 
 from pyFileIO import fileIO
 from pyFormGen.unitPreferences import UnitPreferences
@@ -22,6 +23,7 @@ class PreferencesManager(QObject):
             self.preferences.setProperties(fileIO.loadFromDataDirectory(FILE_TYPES.PREFERENCES, self.PREFERENCES_PATH))
             self.preferencesChanged.emit()
         except Exception as err:
+            QApplication.instance().outputException(err, 'Error reading preferences, resetting to default.')
             logger.error('Could not read preferences, using default. Error: {}'.format(repr(err)))
             self.loadDefault()
             fromPath = '{}/{}'.format(fileIO.getDataDirectory(), self.PREFERENCES_PATH)
@@ -35,6 +37,7 @@ class PreferencesManager(QObject):
         try:
             fileIO.saveToDataDirectory(FILE_TYPES.PREFERENCES, self.preferences.getProperties(), self.PREFERENCES_PATH)
         except Exception as err:
+            QApplication.instance().outputException(err, 'Error saving preferences:')
             logger.error('Could not save preferences. Error: {}'.format(repr(err)))
 
     def setPreferences(self, pref):
