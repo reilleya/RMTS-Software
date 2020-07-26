@@ -63,9 +63,22 @@
     </widget>
    </item>
    <item>
-    <widget class="Line" name="lineUpper">
+    <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please read and understand the &lt;a href=&quot;https://github.com/reilleya/RMTS-Manual&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;manual&lt;/span&gt;&lt;/a&gt; before attempting to use the system!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
