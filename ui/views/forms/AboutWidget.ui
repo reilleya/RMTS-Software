@@ -55,7 +55,7 @@
    <item>
     <widget class="QLabel" name="labelCredits">
      <property name="text">
-      <string>Created by Andrew Reilley. Special thanks to Shreeyam Kacker and Peter Emidy.</string>
+      <string>Created by Andrew Reilley. Special thanks to Shreeyam Kacker,  Peter Emidy, and Harry Amadeo.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

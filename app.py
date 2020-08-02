@@ -17,7 +17,7 @@ from ui.mainWindow import MainWindow
 class App(QApplication):
 
     NAME = 'RMTS'
-    VERSION = (0, 2, 0)
+    VERSION = (0, 3, 0)
 
     newConverter = pyqtSignal(object)
     newFiringConfig = pyqtSignal(object)
@@ -90,3 +90,7 @@ class App(QApplication):
         fileIO.registerMigration(FILE_TYPES.PREFERENCES, (0, 1, 0), (0, 2, 0), lambda data: data)
         fileIO.registerMigration(FILE_TYPES.TRANSDUCERS, (0, 1, 0), (0, 2, 0), lambda data: data)
         fileIO.registerMigration(FILE_TYPES.FIRING, (0, 1, 0), (0, 2, 0), migrateFiring_0_1_0_to_0_2_0)
+
+        fileIO.registerMigration(FILE_TYPES.PREFERENCES, (0, 2, 0), (0, 3, 0), lambda data: data)
+        fileIO.registerMigration(FILE_TYPES.TRANSDUCERS, (0, 2, 0), (0, 3, 0), lambda data: data)
+        fileIO.registerMigration(FILE_TYPES.FIRING, (0, 2, 0), (0, 3, 0), lambda data: data)
