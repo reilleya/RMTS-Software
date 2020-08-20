@@ -1,6 +1,7 @@
 import sys
 import yaml
 import binascii
+import os
 
 from serial.tools.list_ports import comports
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QVBoxLayout
@@ -49,7 +50,7 @@ class StartWidget(QWidget):
         logo = QtSvg.QSvgWidget()
         self.ui.widgetLogo.setLayout(QVBoxLayout())
         self.ui.widgetLogo.layout().addWidget(logo)
-        logo.load('resources/logo_large.svg')
+        logo.load(os.path.join(os.path.dirname(sys.argv[0]), 'resources/logo_large.svg'))
 
     def showSavedResultsPressed(self):
         path = QFileDialog.getOpenFileName(None, 'Load FIRE', '', 'Firing Data File (*.fire)')[0]

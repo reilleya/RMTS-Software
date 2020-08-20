@@ -2,6 +2,8 @@ import time
 import datetime
 import sys
 import traceback
+import os
+import appdirs
 
 class Logger():
     def __init__(self):
@@ -14,7 +16,10 @@ class Logger():
         self.log('Application started at {}'.format(startDate))
 
     def _openLogFile(self):
-        self._file = open('RMTS.log', 'a')
+        path = appdirs.user_log_dir('RMTS', 'RMTS')
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        self._file = open(os.path.join(path, "RMTS.log"), 'a')
 
     def log(self, message):
         self._write('LOG', message)

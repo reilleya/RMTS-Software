@@ -1,3 +1,6 @@
+import os
+import sys
+
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import QtSvg
@@ -22,7 +25,7 @@ class AboutWidget(QWidget):
         logo = QtSvg.QSvgWidget()
         self.ui.widgetLogo.setLayout(QVBoxLayout())
         self.ui.widgetLogo.layout().addWidget(logo)
-        logo.load('resources/logo_large.svg')
+        logo.load(os.path.join(os.path.dirname(sys.argv[0]), 'resources/logo_large.svg'))
 
         self.reset()
 
