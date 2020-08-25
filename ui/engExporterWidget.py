@@ -10,6 +10,7 @@ class EngSettings(PropertyCollection):
         super().__init__()
         self.props['diameter'] = FloatProperty('Motor Diameter', 'm', 0, 1)
         self.props['length'] = FloatProperty('Motor Length', 'm', 0, 4)
+        self.props['totalMass'] = FloatProperty('Total Mass', 'kg', 0, 1000)
         self.props['designation'] = StringProperty('Motor Designation')
         self.props['manufacturer'] = StringProperty('Motor Manufacturer')
         self.props['append'] = EnumProperty('Existing File', ['Append', 'Overwrite'])

@@ -75,9 +75,6 @@ class MotorResults():
     def getPropMass(self):
         return self.propMass
 
-    def getHardwareMass(self):
-        return self.hardwareMass
-
     def getPeakThrust(self):
         return max(self.force)
 
@@ -108,8 +105,8 @@ class MotorResults():
 
     def getThrustCoefficient(self):
         throatArea = self.getThroatArea()
-        modPressure = [pressure if pressure != 0 else 1E-6 for pressure in self.getPressure()]
-        cf = [thrust / (throatArea * pressure) for thrust, pressure in zip(self.getForce(), self.getPressure())]
+        modPressure = [pressure if abs(pressure) != 0 else 1E-6 for pressure in self.getPressure()]
+        cf = [thrust / (throatArea * pressure) for thrust, pressure in zip(self.getForce(), modPressure)]
         cf.sort()
         return cf[int(len(cf) / 2)]
 

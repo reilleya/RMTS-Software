@@ -193,7 +193,7 @@ class ResultsWidget(QWidget):
                                  str(round(config['length'] * 1000, 6)),
                                  'P',
                                  str(round(propMass, 6)),
-                                 str(round(propMass + self.motorData.getHardwareMass(), 6)),
+                                 str(round(config['totalMass'], 6)),
                                  config['manufacturer']
                                  ]) + '\n'
 
