@@ -28,3 +28,10 @@ class DataAgeWidget(QLineEdit):
 
     def updateText(self):
         self.setText('{}'.format(self.timerValue / 1000))
+        # Slowly fade to red as data age increases
+        red = min(255, 150 + (self.timerValue / 10))
+        green = max(150, 255 - (self.timerValue / 10))
+        self.setBackgroundColor((red, green, 150))
+
+    def setBackgroundColor(self, color):
+        self.setStyleSheet("background-color: rgb{};".format(color))
