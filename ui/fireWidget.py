@@ -135,9 +135,14 @@ class FireWidget(QWidget):
             if self.forceConv is not None:
                 realForce = self.forceConv.convert(self.forceBuff.addData(packet.force)) - self.tareOffsetForce
                 self.ui.lineEditForce.setText(QApplication.instance().convertToUserAndFormat(realForce, 'N', 1))
+            else:
+                self.ui.lineEditForce.setText('N/A')
+
             if self.pressConv is not None:
                 realPressure = self.pressConv.convert(self.pressureBuff.addData(packet.pressure)) - self.tareOffsetPressure
                 self.ui.lineEditPressure.setText(QApplication.instance().convertToUserAndFormat(realPressure, 'Pa', 1))
+            else:
+                self.ui.lineEditPressure.setText('N/A')
         else:
             self.tareDataForce.append(packet.force)
             self.tareDataPressure.append(packet.pressure)

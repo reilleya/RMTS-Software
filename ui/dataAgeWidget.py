@@ -25,6 +25,9 @@ class DataAgeWidget(QLineEdit):
         self.updateText()
         if restart:
             self.timer.start()
+            return
+        self.setText('-')
+        self.setBackgroundColor((255, 255, 255))
 
     def updateText(self):
         self.setText('{}'.format(self.timerValue / 1000))
