@@ -191,6 +191,9 @@ def processRawData(rawData, forceConv, presConv, motorInfo):
 
     cutoff = motorInfo.getProperty('cutoffThreshold') / 100
 
+    if len(t) == 0:
+        raise ValueError('No datapoints')
+
     # Remove amplifier offset
     # Assumes that there are 10+ points before thrust begins. The firmware waits 10 before firing to make sure.
     if forceConv is not None:

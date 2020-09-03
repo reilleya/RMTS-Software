@@ -5,6 +5,7 @@ from PyQt5.QtCore import pyqtSignal
 from ui.views.MotorDataWidget_ui import Ui_MotorDataWidget
 from lib.motor import MotorConfig, processRawData
 from lib.logger import logger
+from traceback import format_exc
 
 class MotorDataWidget(QWidget):
 
@@ -51,8 +52,12 @@ class MotorDataWidget(QWidget):
             return
 
         # TODO: Validate motor data object
-        motorData = MotorConfig()
-        motorData.setProperties(self.ui.motorData.getProperties())
-        motor = processRawData(self.raw, forceConv, pressConv, motorData)
-        QApplication.instance().newResult(motor)
-        self.nextPage.emit()
+        try:
+            motorData = MotorConfig()
+            motorData.setProperties(self.ui.motorData.getProperties())
+            motor = processRawData(self.raw, forceConv, pressConv, motorData)
+            QApplication.instance().newResult(motor)
+            self.nextPage.emit()
+        except Exception as err:
+            QApplication.instance().outputException(err, 'Could not load motor')
+            logger.error('Could not load motor. Error: {}'.format(format_exc()))
