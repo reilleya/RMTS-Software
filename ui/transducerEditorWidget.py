@@ -70,7 +70,7 @@ class TransducerEditorWidget(QWidget):
         props = {
             "name": "Transducer #{}".format(number),
             "offset": 0,
-            "ratio": 0,
+            "ratio": 1e-8,
         }
         self.manager.profiles.append(Converter(props))
         self.manager.saveProfiles()

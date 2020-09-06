@@ -14,7 +14,7 @@ class BaseConverter(PropertyCollection):
 class Converter(BaseConverter):
     def __init__(self, propDict=None):
         super().__init__()
-        self.props['ratio'] = FloatProperty('Ratio', '', -1e10, 1e10)
+        self.props['ratio'] = FloatProperty('Ratio', '', 1e-8, 1e10)
         self.props['offset'] = FloatProperty('Offset', '', -1e10, 1e10)
 
         if propDict is not None:
