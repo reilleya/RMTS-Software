@@ -437,7 +437,7 @@
       <item>
        <widget class="QLabel" name="labelArm">
         <property name="text">
-         <string>Type &quot;ARM&quot; into the box to arm, and press &quot;Fire&quot; to fire the motor and begin recording.</string>
+         <string>Type &quot;ARM&quot; into the box and hold CTRL/COMMAND to arm. Press &quot;Fire&quot; to fire the motor and begin recording.</string>
         </property>
        </widget>
       </item>
@@ -500,7 +500,7 @@
       <item>
        <widget class="QLabel" name="labelStop">
         <property name="text">
-         <string>Type &quot;STOP&quot; into the box to enable the button, and press it when the motor has finished firing and the recording should end.</string>
+         <string>Type &quot;STOP&quot; into the box and hold CTRL/COMMAND to enable the button. Press it when the motor has finished firing and the recording should end.</string>
         </property>
        </widget>
       </item>

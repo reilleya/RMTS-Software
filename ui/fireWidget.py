@@ -1,7 +1,8 @@
 import sys
 
 from PyQt5.QtWidgets import QWidget, QApplication, QMessageBox
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QGuiApplication
 
 from lib.filter import LowPass
 from lib.radio import RadioManager, SetupPacket, FirePacket, ResultPacket, StopPacket
@@ -34,8 +35,8 @@ class FireWidget(QWidget):
 
         self.ui.pushButtonConnect.pressed.connect(self.connect)
 
-        self.ui.lineEditArm.textChanged.connect(self.armBoxTextChanged)
-        self.ui.lineEditStop.textChanged.connect(self.stopBoxTextChanged)
+        self.ui.lineEditArm.textChanged.connect(self.toggleFireButton)
+        self.ui.lineEditStop.textChanged.connect(self.toggleStopButton)
         self.ui.pushButtonFire.pressed.connect(self.fireButtonPressed)
         self.ui.pushButtonFire.released.connect(self.fireButtonReleased)
         self.ui.pushButtonStop.pressed.connect(self.stopButtonPressed)
@@ -94,13 +95,41 @@ class FireWidget(QWidget):
         for field in fields:
             field.setEnabled(enabled)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Control:
+            self.toggleFireButton()
+            self.toggleStopButton()
+
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Control:
+            self.toggleFireButton()
+            self.toggleStopButton()
+
+    def checkFireButtonEnabled(self):
+        return self.ui.lineEditArm.text() == "ARM" and QGuiApplication.queryKeyboardModifiers() == Qt.ControlModifier
+
+    def checkStopButtonEnabled(self):
+        return self.ui.lineEditStop.text() == "STOP" and QGuiApplication.queryKeyboardModifiers() == Qt.ControlModifier
+
+    def toggleFireButton(self):
+        enabled = self.checkFireButtonEnabled()
+        self.ui.pushButtonFire.setEnabled(enabled)
+        if enabled:
+            logger.log('Fire button enabled')
+
+    def toggleStopButton(self):
+        enabled = self.checkStopButtonEnabled()
+        self.ui.pushButtonStop.setEnabled(enabled)
+        if enabled:
+            logger.log('Stop button enabled')
+
     def connect(self):
         logger.log('Connect clicked, setting up firing')
         port = self.ui.widgetPortSelector.getPort()
         self.forceConv, self.pressConv = self.ui.widgetTransducerSelector.getConverters()
         if self.forceConv == None and self.pressConv == None:
             QApplication.instance().outputMessage('At least one transducer must be used.')
-            logger.log('Both transducers set to "None", cancelling')
+            logger.log('Both transducers set to "None", canceling')
             return
         forceConvName = 'None'
         if self.forceConv is not None:
@@ -172,18 +201,13 @@ class FireWidget(QWidget):
         self.ui.lineEditContinuity.setText("-")
         self.ui.lineEditInitialResults.setText('{:.2f} s'.format(time))
 
-    def armBoxTextChanged(self):
-        enabled = self.ui.lineEditArm.text() == "ARM"
-        self.ui.pushButtonFire.setEnabled(enabled)
-        if enabled:
-            logger.log('Fire button enabled')
-
-    def stopBoxTextChanged(self):
-        self.ui.pushButtonStop.setEnabled(self.ui.lineEditStop.text() == "STOP")
-
     def fireButtonPressed(self):
         if self.firing is None:
-            logger.error("Tried to fire without a firing!")
+            logger.error('Tried to fire without a firing!')
+            return
+        if not self.checkFireButtonEnabled():
+            # The UI should prevent this from happening, but this will catch it if that doesn't work
+            logger.warn('Fire button pressed while not enabled!')
             return
         logger.log('Fire button pressed')
         self.firing.fire()
@@ -197,6 +221,10 @@ class FireWidget(QWidget):
     def stopButtonPressed(self):
         if self.firing is None:
             logger.error("Tried to stop without a firing!")
+            return
+        if not self.checkStopButtonEnabled():
+            # The UI should prevent this from happening, but this will catch it if that doesn't work
+            logger.warn('Stop button pressed while not enabled!')
             return
         logger.log('Stop button pressed')
         self.toggleFields(self.firingFields, False)
