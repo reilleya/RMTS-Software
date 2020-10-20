@@ -41,6 +41,8 @@ class Calibration(QObject):
         self.converter = Converter(baseConfig)
         self.gotSetupPacket = False
 
+        self.tare = []
+
     def connect(self):
         self.radioManager.run(self.port)
 
@@ -55,6 +57,10 @@ class Calibration(QObject):
                 self.gotSetupPacket = True
                 self.ready.emit()
             if self.converter.getProperty('type') == 'Load Cell':
+                if len(self.tare) < 10:
+                    self.tare.append(packet.pressure)
+                else: 
+                    logger.log((packet.pressure - (sum(self.tare) / len(self.tare))) * 1.58908799 * 0.000145038 * 2.2425)
                 value = packet.force
             else:
                 value = packet.pressure
