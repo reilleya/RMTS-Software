@@ -68,8 +68,8 @@ class App(QApplication):
     def getPreferences(self):
         return self.preferencesManager.preferences
 
-    def newResult(self, motorInfo):
-        self.window.ui.pageResults.showResults(motorInfo)
+    def newResult(self, motorInfo, fileName = None):
+        self.window.ui.pageResults.showResults(motorInfo, fileName)
 
     def configureLiveResults(self, size):
         self.window.ui.pageResults.setupLive(size)

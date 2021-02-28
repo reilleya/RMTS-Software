@@ -72,7 +72,7 @@ class StartWidget(QWidget):
                 QApplication.instance().outputException(err, 'Error loading file:')
                 return
             logger.log('Loaded saved firing data from "{}"'.format(path))
-            QApplication.instance().newResult(motor)
+            QApplication.instance().newResult(motor, os.path.basename(path))
             self.showResultsPage.emit()
 
     def processRawData(self):

@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
@@ -42,6 +43,7 @@ class ResultsWidget(QWidget):
         self.ui.pushButtonBack.pressed.connect(self.backPressed)
 
         self.resultsFields = [
+            self.ui.labelFileName, self.ui.labelRecordingDuration,
             self.ui.labelMotorDesignation, self.ui.labelBurnTime, self.ui.labelStartupTime,
             self.ui.labelImpulse, self.ui.labelPropellantMass, self.ui.labelISP,
             self.ui.labelPeakThrust, self.ui.labelAverageThrust, self.ui.labelThrustCoefficient,
@@ -87,7 +89,7 @@ class ResultsWidget(QWidget):
                 pressure = self.motorData.getRawPressure()
             self.ui.widgetGraph.plotData(self.motorData.getRawTime(), force=force, pressure=pressure, gridLines=grid)
 
-    def showResults(self, motorData):
+    def showResults(self, motorData, fileName = None):
         app = QApplication.instance()
         self.ui.labelBurnTime.setText(app.convertToUserAndFormat(motorData.getBurnTime(), 's', 3))
         self.ui.labelStartupTime.setText(app.convertToUserAndFormat(motorData.getStartupTime(), 's', 3))
@@ -115,6 +117,10 @@ class ResultsWidget(QWidget):
         if showForce and showPressure:
             self.ui.labelThrustCoefficient.setText(str(round(motorData.getThrustCoefficient(), 3)))
 
+        if fileName is not None:
+            self.ui.labelFileName.setText(fileName)
+        self.ui.labelRecordingDuration.setText(app.convertToUserAndFormat(max(motorData.getRawTime()) / 1000, 's', 3))
+
         if self.liveMode:
             self.ui.progressBarReceived.setValue(len(motorData.getRawTime()))
 
@@ -133,6 +139,7 @@ class ResultsWidget(QWidget):
         logger.log('Saving firing to {}'.format(path))
         try:
             fileIO.save(FILE_TYPES.FIRING, self.motorData.toDictionary(), path)
+            self.ui.labelFileName.setText(os.path.basename(path))
             self.saved = True
         except Exception as err:
             logger.log('Failed to save firing data, err: {}'.format(repr(err)))
