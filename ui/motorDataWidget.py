@@ -35,7 +35,7 @@ class MotorDataWidget(QWidget):
             t = minTime + int(frame[0:2], 16) + (256 * int(frame[2:4], 16))
             if len(self.raw['time']) > 0 and t < self.raw['time'][-1]:
                 minTime += 2 ** 16
-                t += minTime
+                t += 2 ** 16
             self.raw['time'].append(t)
             self.raw['force'].append(int(frame[4:6], 16) + (int(frame[6:8], 16) << 8) + (int(frame[8:10], 16) << 16))
             self.raw['pressure'].append(int(frame[10:12], 16) + (int(frame[12:14], 16) << 8) + (int(frame[14:16], 16) << 16))
