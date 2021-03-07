@@ -109,11 +109,12 @@ class ResultPacket(RadioRecvPacket):
         return out
 
     def validate(self):
-        timeValid = 5 + (6 * self.seqNum) < self.time < 15 + (7 * self.seqNum)
+        # Because frames take either 6 ms or 7 ms, we check that time is between packNum*6 and packNum*7
+        # It breaks down when it loops around, so we allow all packets after that point, which should be improved
+        timeValid = 5 + (6 * self.seqNum) < self.time < 15 + (7 * self.seqNum) or self.seqNum > 9000
         forceValid = 0 <= self.force <= 0x7FFFFF
         pressureValid = 0 <= self.pressure <= 0x7FFFFF
         return timeValid and forceValid and pressureValid
-
 
 class FirePacket(RadioSendPacket):
     def __init__(self, fireDuration):

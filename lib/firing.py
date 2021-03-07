@@ -71,6 +71,14 @@ class Firing(QObject):
             raw['time'].append(self.rawData[i].time)
             raw['force'].append(self.rawData[i].force)
             raw['pressure'].append(self.rawData[i].pressure)
+
+        # Adjust for 16 bit time rolling over. This logic is duplicated from motorDataWidget.py
+        minTime = 0
+        for i, time in enumerate(raw['time']):
+            if i > 0 and time + minTime < raw['time'][i - 1]:
+                minTime += 2 ** 16
+            raw['time'][i] = time + minTime
+
         self.lastSend = len(self.rawData)
 
         self.newGraph.emit(processRawData(raw, self.forceConverter, self.pressureConverter, self.motorInfo))
