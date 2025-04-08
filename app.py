@@ -1,7 +1,7 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QMessageBox
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QApplication, QMessageBox
+from PyQt6.QtCore import pyqtSignal
 
 from pyFormGen.units import convert
 from pyFileIO import fileIO
@@ -17,7 +17,7 @@ from ui.mainWindow import MainWindow
 class App(QApplication):
 
     NAME = 'RMTS'
-    VERSION = (0, 3, 2)
+    VERSION = (0, 4, 0)
 
     newConverter = pyqtSignal(object)
     newFiringConfig = pyqtSignal(object)
@@ -40,14 +40,14 @@ class App(QApplication):
         msg = QMessageBox()
         msg.setText(content)
         msg.setWindowTitle(title)
-        msg.exec_()
+        msg.exec()
 
     def outputException(self, exception, text, title='RMTS - Error'):
         msg = QMessageBox()
         msg.setText(text)
         msg.setInformativeText(str(exception))
         msg.setWindowTitle(title)
-        msg.exec_()
+        msg.exec()
 
     def convertToUserUnits(self, value, units):
         return self.preferencesManager.preferences.convert(value, units)
@@ -102,3 +102,7 @@ class App(QApplication):
         fileIO.registerMigration(FILE_TYPES.PREFERENCES, (0, 3, 1), (0, 3, 2), lambda data: data)
         fileIO.registerMigration(FILE_TYPES.TRANSDUCERS, (0, 3, 1), (0, 3, 2), lambda data: data)
         fileIO.registerMigration(FILE_TYPES.FIRING, (0, 3, 1), (0, 3, 2), lambda data: data)
+
+        fileIO.registerMigration(FILE_TYPES.PREFERENCES, (0, 3, 2), (0, 4, 0), lambda data: data)
+        fileIO.registerMigration(FILE_TYPES.TRANSDUCERS, (0, 3, 2), (0, 4, 0), lambda data: data)
+        fileIO.registerMigration(FILE_TYPES.FIRING, (0, 3, 2), (0, 4, 0), lambda data: data)

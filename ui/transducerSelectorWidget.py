@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt6.QtWidgets import QWidget, QApplication
 
 from ui.views.TransducerSelectorWidget_ui import Ui_TransducerSelectorWidget
 

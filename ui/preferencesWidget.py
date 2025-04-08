@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QWidget, QApplication
+from PyQt6.QtCore import pyqtSignal
 
 from ui.views.PreferencesWidget_ui import Ui_PreferencesWidget
 from pyFormGen.unitPreferences import UnitPreferences

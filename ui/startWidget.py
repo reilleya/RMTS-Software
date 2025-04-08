@@ -4,9 +4,9 @@ import binascii
 import os
 
 from serial.tools.list_ports import comports
-from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QVBoxLayout
-from PyQt5.QtCore import pyqtSignal
-from PyQt5 import QtSvg
+from PyQt6.QtWidgets import QWidget, QApplication, QFileDialog, QVBoxLayout
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtSvgWidgets import QSvgWidget
 from pyFileIO import fileIO
 
 from lib.converter import Converter
@@ -47,7 +47,7 @@ class StartWidget(QWidget):
         self.ui.pushButtonEditTransducer.pressed.connect(self.editTransducer.emit)
         self.ui.pushButtonAbout.pressed.connect(self.showAbout.emit)
 
-        logo = QtSvg.QSvgWidget()
+        logo = QSvgWidget()
         self.ui.widgetLogo.setLayout(QVBoxLayout())
         self.ui.widgetLogo.layout().addWidget(logo)
         logo.load(os.path.join(os.path.dirname(sys.argv[0]), 'resources/logo_large.svg'))

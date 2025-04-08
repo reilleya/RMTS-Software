@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtWidgets import QWidget, QApplication, QMessageBox
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QGuiApplication
+from PyQt6.QtWidgets import QWidget, QApplication, QMessageBox
+from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtGui import QGuiApplication
 
 from lib.filter import LowPass
 from lib.radio import RadioManager, SetupPacket, FirePacket, ResultPacket, StopPacket
@@ -96,20 +96,20 @@ class FireWidget(QWidget):
             field.setEnabled(enabled)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Control:
+        if event.key() == Qt.Key.Key_Control:
             self.toggleFireButton()
             self.toggleStopButton()
 
     def keyReleaseEvent(self, event):
-        if event.key() == Qt.Key_Control:
+        if event.key() == Qt.Key.Key_Control:
             self.toggleFireButton()
             self.toggleStopButton()
 
     def checkFireButtonEnabled(self):
-        return self.ui.lineEditArm.text() == "ARM" and QGuiApplication.queryKeyboardModifiers() == Qt.ControlModifier
+        return self.ui.lineEditArm.text() == "ARM" and QGuiApplication.queryKeyboardModifiers() == Qt.KeyboardModifier.ControlModifier
 
     def checkStopButtonEnabled(self):
-        return self.ui.lineEditStop.text() == "STOP" and QGuiApplication.queryKeyboardModifiers() == Qt.ControlModifier
+        return self.ui.lineEditStop.text() == "STOP" and QGuiApplication.queryKeyboardModifiers() == Qt.KeyboardModifier.ControlModifier
 
     def toggleFireButton(self):
         enabled = self.checkFireButtonEnabled()
@@ -256,12 +256,12 @@ class FireWidget(QWidget):
         msg = QMessageBox()
         msg.setText("The radio is currently connected. Close anyway?")
         msg.setWindowTitle("Close while connected?")
-        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        res = msg.exec_()
-        if res == QMessageBox.Yes:
+        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        res = msg.exec()
+        if res == QMessageBox.StandardButton.Yes:
             logger.log('User chose to close')
             return True
-        if res == QMessageBox.No:
+        if res == QMessageBox.StandardButton.No:
             logger.log('User chose to stay on page')
             return False
         return False

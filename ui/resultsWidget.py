@@ -1,7 +1,7 @@
 import sys
 import os
-from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QMessageBox
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QWidget, QApplication, QFileDialog, QMessageBox
+from PyQt6.QtCore import pyqtSignal
 
 from pyFileIO import fileIO
 from ui.views.ResultsWidget_ui import Ui_ResultsWidget
@@ -238,12 +238,12 @@ class ResultsWidget(QWidget):
         msg = QMessageBox()
         msg.setText("The received results have not been saved. Close anyway?")
         msg.setWindowTitle("Close without saving?")
-        msg.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
-        res = msg.exec_()
-        if res == QMessageBox.Discard:
+        msg.setStandardButtons(QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Cancel)
+        res = msg.exec()
+        if res == QMessageBox.StandardButton.Discard:
             logger.log('User chose to discard results')
             return True
-        if res == QMessageBox.Save:
+        if res == QMessageBox.StandardButton.Save:
             logger.log('User chose to save first')
             self.saveFIRE()
             return self.saved

@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtCore import QTimer
+from PyQt6.QtWidgets import QLineEdit
+from PyQt6.QtCore import QTimer
 
 class DataAgeWidget(QLineEdit):
 

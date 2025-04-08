@@ -1,8 +1,8 @@
 import sys
 from enum import IntEnum
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QIcon
+from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QIcon
 
 from ui.views.MainWindow_ui import Ui_MainWindow
 from lib.logger import logger

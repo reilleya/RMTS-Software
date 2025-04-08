@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget
 from serial.tools.list_ports import comports
 
 from ui.views.PortSelectorWidget_ui import Ui_PortSelectorWidget

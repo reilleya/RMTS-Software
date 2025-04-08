@@ -1,7 +1,7 @@
 import sys
 
-from PyQt5.QtWidgets import QWidget, QApplication
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QWidget, QApplication
+from PyQt6.QtCore import pyqtSignal
 
 from lib.filter import LowPass
 from lib.radio import RadioManager, SetupPacket, FirePacket, ResultPacket, StopPacket

@@ -2,7 +2,7 @@ import serial
 import time
 from threading import Thread
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 
 from .errors import formatErrorMessage
 from .logger import logger

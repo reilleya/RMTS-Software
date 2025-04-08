@@ -1,5 +1,5 @@
 from scipy import stats
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 
 from .radio import RadioManager, SetupPacket, ErrorPacket
 from .filter import LowPass

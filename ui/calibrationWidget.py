@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QApplication, QTableWidgetItem, QHeaderView, QMessageBox
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt6.QtWidgets import QWidget, QApplication, QTableWidgetItem, QHeaderView, QMessageBox
+from PyQt6.QtCore import pyqtSignal, Qt
 
 from lib.logger import logger
 
@@ -20,7 +20,7 @@ class CalibrationWidget(QWidget):
         self.ui.pushButtonSave.pressed.connect(self.savePressed)
         self.ui.tableWidgetPoints.cellChanged.connect(self.cellChanged)
 
-        self.ui.tableWidgetPoints.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch);
+        self.ui.tableWidgetPoints.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch);
 
         self.app = QApplication.instance()
 
@@ -81,7 +81,7 @@ class CalibrationWidget(QWidget):
             self.ui.lineEditCurrentConverted.setText('-')
 
     def keyPressEvent(self, e):
-        if e.key() == Qt.Key_Space:
+        if e.key() == Qt.Key.Key_Space:
             self.capturePressed()
 
     def capturePressed(self):
@@ -119,13 +119,13 @@ class CalibrationWidget(QWidget):
         msg = QMessageBox()
         msg.setText("The calibration has not been saved. Close anyway?")
         msg.setWindowTitle("Close without saving?")
-        msg.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
-        res = msg.exec_()
+        msg.setStandardButtons(QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Cancel)
+        res = msg.exec()
 
-        if res == QMessageBox.Discard:
+        if res == QMessageBox.StandardButton.Discard:
             logger.log('User chose to discard results')
             return True
-        if res == QMessageBox.Save:
+        if res == QMessageBox.StandardButton.Save:
             logger.log('User chose to save first')
             self.save()
             return True

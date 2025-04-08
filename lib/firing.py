@@ -3,7 +3,7 @@ from math import ceil
 from threading import Thread
 from time import sleep
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 
 from pyFileIO import fileIO
 

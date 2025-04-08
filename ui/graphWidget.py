@@ -3,7 +3,7 @@ matplotlib.use('Qt5Agg')
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 
 FORCE_COLOR = 'tab:blue'
 PRESSURE_COLOR = 'tab:red'
