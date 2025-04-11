@@ -50,7 +50,7 @@ class StartWidget(QWidget):
         logo = QSvgWidget()
         self.ui.widgetLogo.setLayout(QVBoxLayout())
         self.ui.widgetLogo.layout().addWidget(logo)
-        logo.load(os.path.join(os.path.dirname(sys.argv[0]), 'resources/logo_large.svg'))
+        logo.load(QApplication.instance().getLogoPath())
 
     def showSavedResultsPressed(self):
         path = QFileDialog.getOpenFileName(None, 'Load FIRE', '', 'Firing Data File (*.fire)')[0]

@@ -1,7 +1,10 @@
 import sys
+import os
+import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 from PyQt6.QtWidgets import QApplication, QMessageBox
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal
 
 from pyFormGen.units import convert
 from pyFileIO import fileIO
@@ -24,6 +27,13 @@ class App(QApplication):
 
     def __init__(self, args):
         super().__init__(args)
+
+        if self.isDarkMode():
+            # Change these settings before any graph widgets are built, so they apply everywhere
+            plt.style.use('dark_background')
+            mpl.rcParams['axes.facecolor'] = '1e1e1e'
+            mpl.rcParams['figure.facecolor'] = '1e1e1e'
+
         self.setupFileIO()
         self.sensorProfileManager = SensorProfileManager()
         self.sensorProfileManager.loadProfiles()
@@ -32,9 +42,22 @@ class App(QApplication):
 
         logger.log('Application version: {}.{}.{}'.format(*self.VERSION))
 
+        usingDarkMode = self.isDarkMode()
+        currentTheme = self.style().objectName()
+        logger.log('Opening window (dark mode: {}, default theme: "{}")'.format(usingDarkMode, currentTheme))
+        # Windows 10 and before don't have dark mode versions of their themes, so if the user wants dark mode, we have to switch to fusion
+        if usingDarkMode and currentTheme in ['windows', 'windowsvista']:
+            logger.log('Overriding theme to fusion to get dark mode')
+            self.setStyle('fusion')
+
         self.window = MainWindow(self)
-        logger.log('Showing window')
         self.window.show()
+
+    def isDarkMode(self):
+        return self.styleHints().colorScheme() == Qt.ColorScheme.Dark
+
+    def getLogoPath(self):
+        return os.path.join(os.path.dirname(sys.argv[0]), 'resources/logo_large_light.svg' if self.isDarkMode() else 'resources/logo_large.svg')
 
     def outputMessage(self, content, title='RMTS'):
         msg = QMessageBox()

@@ -37,6 +37,8 @@ class GraphWidget(FigureCanvas):
             self.forceAxes.yaxis.label.set_color(FORCE_COLOR)
         if pressure is not None:
             self.pressureAxes.set_ylabel('Pressure ({})'.format(app.getUserUnit('Pa')))
+            self.pressureAxes.yaxis.set_label_position("right")
+            self.pressureAxes.yaxis.tick_right()
             self.pressureAxes.yaxis.label.set_color(PRESSURE_COLOR)
         self.draw()
 
