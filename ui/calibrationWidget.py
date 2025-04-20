@@ -119,6 +119,7 @@ class CalibrationWidget(QWidget):
         msg = QMessageBox()
         msg.setText("The calibration has not been saved. Close anyway?")
         msg.setWindowTitle("Close without saving?")
+        msg.setWindowIcon(self.app.icon)
         msg.setStandardButtons(QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Discard | QMessageBox.StandardButton.Cancel)
         res = msg.exec()
 

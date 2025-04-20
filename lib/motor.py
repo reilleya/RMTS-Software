@@ -171,7 +171,7 @@ def getTrimPoints(channel, threshold):
     endCutoff = channel.index(maxValue)
     while channel[endCutoff] > threshold * maxValue and endCutoff < len(channel) - 1:
         endCutoff += 1
-    endCutoff = min(endCutoff + 10, len(channel))
+    endCutoff = min(endCutoff, len(channel))
 
     # Trim data from the start
     startCutoff = channel.index(maxValue)

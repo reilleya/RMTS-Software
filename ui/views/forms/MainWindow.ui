@@ -38,6 +38,7 @@
       <widget class="TransducerEditorWidget" name="pageEditTransducer"/>
       <widget class="RecvResultsWidget" name="pageRecvResults"/>
       <widget class="CalibrationSetupWidget" name="pageCalibrationSetup"/>
+      <widget class="CharacterizationWidget" name="pageCharacterization"/>
       <widget class="AboutWidget" name="pageAbout"/>
      </widget>
     </item>
@@ -102,6 +103,12 @@
    <class>CalibrationWidget</class>
    <extends>QWidget</extends>
    <header>ui.calibrationWidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CharacterizationWidget</class>
+   <extends>QWidget</extends>
+   <header>ui.characterizationWidget</header>
    <container>1</container>
   </customwidget>
   <customwidget>

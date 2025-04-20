@@ -28,6 +28,7 @@ class StartWidget(QWidget):
     editPreferences = pyqtSignal()
     editTransducer = pyqtSignal()
 
+    characterizePropellant = pyqtSignal()
     showAbout = pyqtSignal()
 
     def __init__(self):
@@ -41,7 +42,7 @@ class StartWidget(QWidget):
 
         self.ui.pushButtonRawData.pressed.connect(self.processRawData)
         self.ui.pushButtonSavedData.pressed.connect(self.showSavedResultsPressed)
-        #self.ui.pushButtonCharacterize.pressed.connect()
+        self.ui.pushButtonCharacterize.pressed.connect(self.characterizePropellant.emit)
 
         self.ui.pushButtonPreferences.pressed.connect(self.editPreferences.emit)
         self.ui.pushButtonEditTransducer.pressed.connect(self.editTransducer.emit)

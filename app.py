@@ -5,8 +5,9 @@ import matplotlib as mpl
 
 from PyQt6.QtWidgets import QApplication, QMessageBox
 from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QIcon
 
-from pyFormGen.units import convert
+from pyFormGen.units import convert, getConversion
 from pyFileIO import fileIO
 
 from lib.sensorProfileManager import SensorProfileManager
@@ -27,6 +28,8 @@ class App(QApplication):
 
     def __init__(self, args):
         super().__init__(args)
+
+        self.icon = QIcon('resources/icon.png')
 
         if self.isDarkMode():
             # Change these settings before any graph widgets are built, so they apply everywhere
@@ -63,6 +66,7 @@ class App(QApplication):
         msg = QMessageBox()
         msg.setText(content)
         msg.setWindowTitle(title)
+        msg.setWindowIcon(self.icon)
         msg.exec()
 
     def outputException(self, exception, text, title='RMTS - Error'):
@@ -70,6 +74,7 @@ class App(QApplication):
         msg.setText(text)
         msg.setInformativeText(str(exception))
         msg.setWindowTitle(title)
+        msg.setWindowIcon(self.icon)
         msg.exec()
 
     def convertToUserUnits(self, value, units):
@@ -87,6 +92,29 @@ class App(QApplication):
 
     def getUserUnit(self, unit):
         return self.preferencesManager.preferences.getUnit(unit)
+
+    # This is really gross, but because ft/s is an impractical unit for burn rate,
+    # we override the user's preference to in/s if they have ft/s set
+    def getBurnRateUnit(self):
+        configuredUnit = self.getUserUnit('m/s')
+        if configuredUnit in ('ft/s', 'in/s'):
+            return 'in/s'
+        if configuredUnit in ('m/s', 'cm/s', 'mm/s'):
+            return 'mm/s'
+        return configuredUnit
+
+    def getBurnRateCoefficientUnit(self):
+        lengthUnit = 'mm' if self.getBurnRateUnit() == 'mm/s' else 'in'
+
+        return lengthUnit, self.getUserUnit('Pa')
+
+    def getBurnRateCoefficientUnitString(self):
+        return '{}/(s*{}^n)'.format(*self.getBurnRateCoefficientUnit())
+
+    # Another gross one! Burn rate coefficient can't be converted like other units because of the exponent, so we do it here
+    def convertBurnRateCoefficientToUserUnits(self, a, n):
+        lengthUnit, pressureUnit = self.getBurnRateCoefficientUnit()
+        return getConversion('m', lengthUnit) * a * (getConversion(pressureUnit, 'Pa') ** n)
 
     def getPreferences(self):
         return self.preferencesManager.preferences

@@ -2,7 +2,6 @@ import sys
 from enum import IntEnum
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtGui import QIcon
 
 from ui.views.MainWindow_ui import Ui_MainWindow
 from lib.logger import logger
@@ -17,7 +16,8 @@ class MainWindowPages(IntEnum):
     EDIT_TRANSDUCER = 6
     RECV_RESULTS = 7
     CALIBRATION_SETUP = 8
-    ABOUT = 9
+    CHARACTERIZATION = 9
+    ABOUT = 10
 
 PAGE_NAMES = {
     0: 'Start',
@@ -29,7 +29,8 @@ PAGE_NAMES = {
     6: 'Transducer editor',
     7: 'Receive results',
     8: 'Calibration setup',
-    9: 'About'
+    9: 'Characterization',
+    10: 'About'
 }
 
 class MainWindow(QMainWindow):
@@ -42,7 +43,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.app = app
 
-        self.setWindowIcon(QIcon('resources/icon.png'))
+        self.setWindowIcon(self.app.icon)
 
         self.ui.pageStart.beginSetup.connect(self.gotoSetupPage)
         self.ui.pageStart.recvResults.connect(self.gotoRecvResultsPage)
@@ -51,6 +52,7 @@ class MainWindow(QMainWindow):
         self.ui.pageStart.editTransducer.connect(self.gotoEditTransducerPage)
         self.ui.pageStart.showResultsPage.connect(lambda: self.gotoResultsPage(False))
         self.ui.pageStart.showRawData.connect(self.gotoRawDataMotorInfoPage)
+        self.ui.pageStart.characterizePropellant.connect(self.gotoCharacterizationPage)
         self.ui.pageStart.showAbout.connect(self.gotoAboutPage)
 
         self.ui.pageRawDataMotorInfo.back.connect(self.gotoStartPage)
@@ -73,6 +75,8 @@ class MainWindow(QMainWindow):
         self.ui.pageCalibrationSetup.back.connect(self.gotoStartPage)
         self.ui.pageCalibrationSetup.nextPage.connect(self.gotoCalibrationPage)
 
+        self.ui.pageCharacterization.back.connect(self.gotoStartPage)
+
         self.ui.pageAbout.back.connect(self.gotoStartPage)
 
     def closeEvent(self, event=None):
@@ -80,6 +84,7 @@ class MainWindow(QMainWindow):
             not self.ui.pageFire.exitCheck()
             or not self.ui.pageResults.unsavedCheck()
             or not self.ui.pageCalibration.unsavedCheck()
+            or not self.ui.pageCharacterization.exitCheck()
         ):
             logger.log('Canceling close event')
             if event is not None and not isinstance(event, bool):
@@ -137,6 +142,10 @@ class MainWindow(QMainWindow):
         self.ui.pageRecvResults.exit()
         self.ui.pageFire.exit()
         self.gotoStartPage()
+
+    def gotoCharacterizationPage(self):
+        self.ui.pageCharacterization.reset()
+        self.gotoPage(MainWindowPages.CHARACTERIZATION)
 
     def gotoAboutPage(self):
         self.ui.pageAbout.reset()

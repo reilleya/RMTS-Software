@@ -256,6 +256,7 @@ class FireWidget(QWidget):
         msg = QMessageBox()
         msg.setText("The radio is currently connected. Close anyway?")
         msg.setWindowTitle("Close while connected?")
+        msg.setWindowIcon(QApplication.instance().icon)
         msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         res = msg.exec()
         if res == QMessageBox.StandardButton.Yes:
