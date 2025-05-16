@@ -165,19 +165,64 @@ def rejectOutliers(d):
                 d[i] = (d[i - 1] + d[i + 1]) / 2
     return d
 
+# Returns the indices of the start and end of the firing
 def getTrimPoints(channel, threshold):
+    nearZeroThreshold = max(channel) * threshold
+
+    inRangeOfInterest = False
+    # Ranges of data that _might_ be the firing, but could also be the igniter, a chuff, noise, etc
+    rangesOfInterest = []
+
+    # This loop finds the "ranges of interest", consecutive points that are above the threshold
+    for index, value in enumerate(channel):
+        if value > nearZeroThreshold:
+            if inRangeOfInterest:
+                rangesOfInterest[-1]['total'] += value
+                continue
+            rangesOfInterest.append({
+                    'start': index,
+                    'end': None,
+                    'total': value
+                })
+            inRangeOfInterest = True
+        else:
+            if not inRangeOfInterest:
+                continue
+            rangesOfInterest[-1]['end'] = index
+            inRangeOfInterest = False
+
+    # If the data ends before going back to ~0, close the last range
+    if len(rangesOfInterest[-1]) == 1:
+        rangesOfInterest[-1]['end'] = index
+
+    logger.log('Ranges of interest: {}'.format(rangesOfInterest))
+
+    # If there were no regions significantly above 0, bail out
+    if len(rangesOfInterest) == 0:
+        raise ValueError('No firing found in data')
+
+    # The range that has the highest integral is probably the firing
+    roi = max(rangesOfInterest, key = lambda r: r['total'])
+
+    logger.log('Firing is likely in this range: {}'.format(roi))
+
+    # Find the highest value in the range of interest to trim from
+    # Note that this isn't the max of the entire signal, because a chuff, etc might produce a bigger spike than the actual burn
+    roiMaxValue = max(channel[roi['start']:roi['end']])
+
     # Trim data from the end
-    maxValue = max(channel)
-    endCutoff = channel.index(maxValue)
-    while channel[endCutoff] > threshold * maxValue and endCutoff < len(channel) - 1:
+    endCutoff = channel.index(roiMaxValue)
+    while channel[endCutoff] > threshold * roiMaxValue and endCutoff < len(channel) - 1:
         endCutoff += 1
     endCutoff = min(endCutoff, len(channel))
 
     # Trim data from the start
-    startCutoff = channel.index(maxValue)
-    while channel[startCutoff] > threshold * maxValue and startCutoff > 0:
+    startCutoff = channel.index(roiMaxValue)
+    while channel[startCutoff] > threshold * roiMaxValue and startCutoff > 0:
         startCutoff -= 1
-    return startCutoff, endCutoff
+
+    # Increments are because the loops above go to the first point below the threshold
+    return startCutoff + 1, endCutoff - 1
 
 NUM_CAL_FRAMES = 10
 
