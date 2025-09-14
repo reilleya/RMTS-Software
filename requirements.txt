@@ -1,6 +1,6 @@
 appdirs==1.4.3
 decorator==4.4.0
-matplotlib==3.7.1
+matplotlib==3.9.1
 pyqt-distutils==0.7.3
 PyQt6==6.7.1
 PyQt6-sip==13.8.0
