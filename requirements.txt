@@ -1,6 +1,6 @@
 appdirs==1.4.3
 decorator==4.4.0
-matplotlib==3.7.1
+matplotlib==3.9.1
 pyqt-distutils==0.7.3
 PyQt6==6.7.1
 PyQt6-sip==13.8.0
@@ -8,3 +8,5 @@ PyYAML==5.1
 pySerial==3.4
 git+https://github.com/reilleya/pyFormGen.git@8942e1cb20bd7e9d2575abc164b08bde078ff612
 git+https://github.com/reilleya/pyFileIO.git
+setuptools==80.9.0
+scipy==1.16.2
