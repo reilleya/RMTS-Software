@@ -184,7 +184,7 @@ class ResultsWidget(QWidget):
         formats = 'RASP ENG File (*.eng)'
         if config['append'] == 'Append':
             mode = 'a'
-            path = QFileDialog.getSaveFileName(None, title, '', formats, options=QFileDialog.DontConfirmOverwrite)[0]
+            path = QFileDialog.getSaveFileName(None, title, '', formats, options=QFileDialog.Option.DontConfirmOverwrite)[0]
         else:
             mode = 'w'
             path = QFileDialog.getSaveFileName(None, title, '', formats)[0]
