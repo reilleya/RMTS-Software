@@ -40,7 +40,7 @@ coll = COLLECT(exe,
 app = BUNDLE(coll,
              name='RMTS.app',
              icon='../resources/icon.icns',
-             version='0.4.0',
+             version='0.4.1',
              info_plist={
               'NSHighResolutionCapable': True,
              },
