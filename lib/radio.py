@@ -96,6 +96,9 @@ class ErrorPacket(RadioRecvPacket):
         return [self.storageError, self.adcError, 0] # Radio errors are currently not sent
 
 class ResultPacket(RadioRecvPacket):
+    MIN_FRAME_MS = 0.5
+    MAX_FRAME_MS = 7
+
     def __init__(self, data):
         super().__init__(data)
         if data is None:
@@ -109,9 +112,9 @@ class ResultPacket(RadioRecvPacket):
         return out
 
     def validate(self):
-        # Because frames take either 6 ms or 7 ms, we check that time is between packNum*6 and packNum*7
-        # It breaks down when it loops around, so we allow all packets after that point, which should be improved
-        timeValid = 5 + (6 * self.seqNum) < self.time < 15 + (7 * self.seqNum) or self.seqNum > 9000
+        # Bounds accept frame periods from 0.5 ms (2 ksps) to 7 ms, so only gross timestamp corruption is rejected.
+        # The 16-bit time wraps, so packets after seq 9000 are not checked, which should be improved
+        timeValid = self.MIN_FRAME_MS * self.seqNum <= self.time < 15 + (self.MAX_FRAME_MS * self.seqNum) or self.seqNum > 9000
         forceValid = 0 <= self.force <= 0x7FFFFF
         pressureValid = 0 <= self.pressure <= 0x7FFFFF
         return timeValid and forceValid and pressureValid
