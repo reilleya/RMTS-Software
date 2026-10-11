@@ -158,6 +158,7 @@ class RadioManager(QObject):
     PACKET_SIZE = 12
     PREAMBLE = [0xAA, 0xBB]
     ESCAPE = 0x11
+    RECONNECT_INTERVAL = 1
 
     PACKET_TYPE_MAP = {
         0: SetupPacket,
@@ -174,6 +175,7 @@ class RadioManager(QObject):
         self.toSend = []
         self.clearOutputBuffer = False
         self.port = None
+        self.connected = False
         self._lastPacketRecv = 0
         self.setupSerialThread()
 
@@ -184,6 +186,8 @@ class RadioManager(QObject):
         return checksum and rightLength
 
     def sendPacket(self, packet, resendCount=5):
+        if not self.connected:
+            return
         logger.log('Sending packet with details ({}) {} times'.format(packet, resendCount))
         seqNumLow = packet.seqNum & 0xFF
         seqNumHigh = (packet.seqNum >> 8) & 0xFF
@@ -204,44 +208,72 @@ class RadioManager(QObject):
         self.newPacket.emit(pack)
 
     def setupSerialThread(self):
-        self.serialThread = Thread(target=self._serialThread)
+        self.serialThread = Thread(target=self._serialThread, daemon=True)
         self.running = False
         self.closed = False
 
     def _serialThread(self):
-        with serial.Serial(self.port, 9600) as serport:
-            logger.log('Connected to radio on port ({})'.format(self.port))
-            self.closed = False
-            escape = False
-            packetBuff = []
-            inPreamble = False
-            inPacket = False
-            while self.running:
-                while serport.in_waiting > 0 and len(self.toSend) == 0:
-                    b = int.from_bytes(serport.read(), 'big')
-                    if b == RadioManager.PREAMBLE[0] and not escape:
-                        inPreamble = True
-                        inPacket = False
-                    elif b == RadioManager.PREAMBLE[1] and not escape and inPreamble:
-                        packetBuff = []
-                        inPacket = True
-                    elif inPacket and (b != RadioManager.ESCAPE or escape):
-                        packetBuff.append(b)
-                        if self.checkPacket(packetBuff):
-                            self.buildPacket(packetBuff)
-                            inPacket = False
-                    escape = b == RadioManager.ESCAPE and not escape
-
-                if len(self.toSend) > 0:
-                    packet = self.toSend.pop(0)
-                    serport.write(packet)
-
-                if self.clearOutputBuffer:
-                    self.toSend = []
-                    self.clearOutputBuffer = False
+        lastFailure = None
+        while self.running:
+            try:
+                with serial.Serial(self.port, 9600) as serport:
+                    logger.log('Connected to radio on port ({})'.format(self.port))
+                    self.closed = False
+                    lastFailure = None
+                    self._communicate(serport)
+            except Exception as e:
+                failure = '{}: {}'.format(type(e).__name__, e)
+                if failure != lastFailure:
+                    logger.warn('Radio on port ({}) unavailable, retrying every {} s: {}'.format(
+                        self.port, RadioManager.RECONNECT_INTERVAL, failure))
+                    lastFailure = failure
+                self._waitToReconnect()
+            finally:
+                self.connected = False
+                self._discardUnsentPackets()
 
         self.closed = True
         logger.log('Serial thread exited')
+
+    def _discardUnsentPackets(self):
+        self.toSend = []
+        self.clearOutputBuffer = False
+
+    def _waitToReconnect(self):
+        deadline = time.monotonic() + RadioManager.RECONNECT_INTERVAL
+        while self.running and time.monotonic() < deadline:
+            time.sleep(0.05)
+
+    def _communicate(self, serport):
+        self._discardUnsentPackets()
+        self.connected = True
+        escape = False
+        packetBuff = []
+        inPreamble = False
+        inPacket = False
+        while self.running:
+            while serport.in_waiting > 0 and len(self.toSend) == 0:
+                b = int.from_bytes(serport.read(), 'big')
+                if b == RadioManager.PREAMBLE[0] and not escape:
+                    inPreamble = True
+                    inPacket = False
+                elif b == RadioManager.PREAMBLE[1] and not escape and inPreamble:
+                    packetBuff = []
+                    inPacket = True
+                elif inPacket and (b != RadioManager.ESCAPE or escape):
+                    packetBuff.append(b)
+                    if self.checkPacket(packetBuff):
+                        self.buildPacket(packetBuff)
+                        inPacket = False
+                escape = b == RadioManager.ESCAPE and not escape
+
+            if len(self.toSend) > 0:
+                packet = self.toSend.pop(0)
+                serport.write(packet)
+
+            if self.clearOutputBuffer:
+                self.toSend = []
+                self.clearOutputBuffer = False
 
     def run(self, port):
         if self.running:
